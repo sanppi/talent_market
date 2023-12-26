@@ -36,3 +36,5 @@ function member(sequelize, DataTypes) {
         }
     )
 }
+
+module.exports = member;
