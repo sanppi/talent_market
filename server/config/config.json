@@ -1,0 +1,16 @@
+{
+    "development": {
+        "host": "localhost",
+        "database": "jnsam",
+        "username": "root",
+        "password": "",
+        "dialect": "mysql"
+    },
+    "production": {
+        "host": "",
+        "database": "",
+        "username": "",
+        "password": "",
+        "dialect": ""
+    }
+}
