@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .signup-input {
+    margin: 20px 0;
+    height: 1.5rem;
+
+    input {
+      padding: 10px;
+      border-radius: 20px;
+      border: 0;
+      box-shadow: 0 1px 2px black;
+    }
+  }
+}
