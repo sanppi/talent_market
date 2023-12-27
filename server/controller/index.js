@@ -1,4 +1,4 @@
 // 메인 화면
 exports.index = (req, res) => {
-    res.render("index");
+    // res.render("index");
   };
