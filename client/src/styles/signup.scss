@@ -2,21 +2,35 @@
   box-sizing: border-box;
 }
 
+// padding, border-radius
 .signup-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .signup-input {
-    margin: 20px 0;
-    height: 1.5rem;
+  .signup-input-form {
+    max-width: 400px;
+    width: 100%;
 
-    input {
-      padding: 10px;
-      border-radius: 20px;
-      border: 0;
-      box-shadow: 0 1px 2px black;
+    .signup-input {
+      margin: 20px 0;
+      max-width: 600px;
+      input {
+        display: block;
+        padding: 10px;
+        border-radius: 20px;
+        border: 0;
+        width: 100%;
+        box-shadow: 0 1px 2px black;
+      }
     }
+  }
+
+  .signup-button {
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    width: 100px;
   }
 }
