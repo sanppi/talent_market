@@ -1,11 +1,16 @@
 import "./App.css";
-import Navbar from "./components/Navbar";
+import Main from "./components/Main";
+import SalePost from "./components/SalePost";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<Main />} />
+        <Route path="/write" element={<SalePost />} />
+      </Routes>
+    </Router>
   );
 }
 
