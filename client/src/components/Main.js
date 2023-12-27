@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // 상품 카드..?
 function ProductCard({ product }) {
@@ -22,8 +22,9 @@ function Main() {
   useEffect(() => {
     async function getProduct() {
       // 일단 API 명세서 보고 경로 가져왔는데 아니라면 수정 부탁드립니다.
-      const response = await axios.get("/board/:boardId");
-      setProducts(response.data);
+      // 에러 발생해서 주석 처리해뒀습니다.
+      // const response = await axios.get('/board/:boardId');
+      // setProducts(response.data);
     }
 
     getProduct();
