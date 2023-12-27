@@ -3,19 +3,20 @@
 }
 
 // padding, border-radius
-.signup-form {
+.signUpForm {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .signup-input-form {
+  .signUpInputForm {
     max-width: 400px;
     width: 100%;
 
-    .signup-input {
+    .signUpInput {
       margin: 20px 0;
       max-width: 600px;
+
       input {
         display: block;
         padding: 10px;
@@ -27,7 +28,7 @@
     }
   }
 
-  .signup-button {
+  .signUpButton {
     border: none;
     padding: 10px;
     border-radius: 20px;
