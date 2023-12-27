@@ -1,55 +1,42 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import React, { useState } from "react";
+import "../styles/navbar.scss";
 
-export default function NavbarComponents() {
+export default function NavBar() {
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
+  const handleHamburgerClick = () => {
+    setIsCategoryOpen(!isCategoryOpen);
+  };
+
   return (
-    <>
-      <Navbar expand="lg" className="bg-body-tertiary">
-        <Container>
-          <Navbar.Brand href="#home">재능 마켓</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Link</Nav.Link>
-              <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Another action
-                </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">
-                  Something
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">
-                  Separated link
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-        <Form inline>
-          <Row>
-            <Col xs="auto">
-              <Form.Control
-                type="text"
-                placeholder="Search"
-                className=" mr-sm-2"
-              />
-            </Col>
-            <Col xs="auto">
-              <Button type="submit">Submit</Button>
-            </Col>
-          </Row>
-        </Form>
-      </Navbar>
-    </>
+    <div className="navBar">
+      {/* 햄버거 버튼 */}
+      <button className="hamburgerButton" onClick={handleHamburgerClick}>
+        ☰
+      </button>
+
+      {/* 카테고리 창 */}
+      {isCategoryOpen && (
+        <div className="categoryWindow">
+          <div>카테고리들카테고리들</div>
+        </div>
+      )}
+
+      {/* 페이지 이름 부분 */}
+      <h1 className="pageTitle">페이지 이름</h1>
+
+      {/* 검색창과 검색 버튼 */}
+      <div className="searchSection">
+        <input
+          type="text"
+          className="searchInput"
+          placeholder="검색어를 입력하세요"
+        />
+        <button className="searchButton">검색</button>
+      </div>
+
+      {/* 로그인 버튼 */}
+      <button className="loginButton">로그인</button>
+    </div>
   );
 }

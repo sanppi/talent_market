@@ -1,0 +1,59 @@
+.navBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #030c3f;
+  padding: 20px;
+  box-sizing: border-box;
+
+  .hamburgerButton {
+    width: 30px;
+    height: 30px;
+    margin-right: auto;
+    cursor: pointer;
+  }
+
+  .categoryWindow {
+    position: absolute;
+    top: 100%; // 버튼 바로 아래에 위치
+    left: 0; // 왼쪽에 붙어있게 위치
+    background-color: #1c37a3;
+    opacity: 0.45;
+    width: 300px;
+    height: 500px;
+  }
+
+  .pageTitle {
+    color: white;
+    margin: 0 0 0 -1050px; // 왼쪽으로 더 이동
+  }
+
+  .searchSection {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .searchInput {
+      width: 300px;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .searchButton {
+      cursor: pointer;
+    }
+  }
+
+  .loginButton {
+    width: 70px;
+    height: 30px;
+    margin-left: auto;
+    cursor: pointer;
+  }
+}
