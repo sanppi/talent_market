@@ -11,16 +11,17 @@ const sequelize = new Sequelize(
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-db.member = require("./member")(sequelize, Sequelize);
-db.board = require("./board")(sequelize, Sequelize);
+db.Member = require("./Member")(sequelize, Sequelize);
+db.Board = require("./Board")(sequelize, Sequelize);
+db.Comment = require("./Comment")(sequelize, Sequelize);
 
-db.member.hasMany(db.board, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
-db.board.belongsTo(db.member, { foreignKey: 'writtenBy', targetKey: 'memberId' });
+db.Member.hasMany(db.Board, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
+db.Board.belongsTo(db.Member, { foreignKey: 'writtenBy', targetKey: 'memberId' });
 
-db.member.hasMany(db.comment, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
-db.comment.belongsTo(db.member, { foreignKey: 'writtenBy', targetKey: 'memberId' });
+db.Member.hasMany(db.Comment, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
+db.Comment.belongsTo(db.Member, { foreignKey: 'writtenBy', targetKey: 'memberId' });
 
-db.board.hasMany(db.comment, { foreignKey: 'writtenAt', sourceKey: 'boardId' });
-db.comment.belongsTo(db.board, { foreignKey: 'writtenAt', targetKey: 'boardId' });
+db.Board.hasMany(db.Comment, { foreignKey: 'writtenAt', sourceKey: 'boardId' });
+db.Comment.belongsTo(db.Board, { foreignKey: 'writtenAt', targetKey: 'boardId' });
 
 module.exports = db;
