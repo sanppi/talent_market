@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@import './styles/reset.css';
+
+:root {
+  --header-margin: 90px;
+  --main-navy: #040262;
+  --main-brown: #ab6142;
+}

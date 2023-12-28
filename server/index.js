@@ -11,7 +11,7 @@ const { Board } = require("./model");
 const { Comment } = require("./model");
 
 const cors = require("cors");
-const { emit } = require("process");
+// const { emit } = require("process");
 app.use(cors());
 
 const io = require("socket.io")(server, {
@@ -34,6 +34,9 @@ app.use('/board', boardRouter);
 app.get('/', (req,res) => {
   res.send({message:'server client connections'});
 });
+
+const memberRouter = require("./routes/member");
+app.use("/member", memberRouter);
 
 app.get("*", function (req, res) {
   res.send("404");
