@@ -7,8 +7,11 @@ function Comment(sequelize, DataTypes){
                 autoIncrement: true,
                 allowNull: false,
             },
-            comment: {
+            review: {
                 type: DataTypes.TEXT,
+            },
+            stars: {
+                type: DataTypes.INTEGER,
             },
             writtenAt: {
                 type: DataTypes.INTEGER,

@@ -15,12 +15,18 @@ function Board(sequelize, DataTypes) {
                 type: DataTypes.TEXT,
                 allowNull: false,
             },
-            stars: {
+            price: {
+                type: DataTypes.INTEGER, 
+                allowNull: false,
+            },
+            likeNum: {
                 type: DataTypes.INTEGER, 
             },
-            email: {
-                type: DataTypes.STRING(50), 
-                allowNull: false,
+            starAvg: {
+                type: DataTypes.DOUBLE,
+            },
+            urlImg: {
+                type: DataTypes.STRING(500), 
             },
             writtenBy: {
                 type: DataTypes.INTEGER,
