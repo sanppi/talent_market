@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Navbar from "./Navbar";
-import "../styles/salepost.scss";
+import React, { useState } from 'react';
+import axios from 'axios';
+import Navbar from './Navbar';
+import '../../styles/salepost.scss';
 
 export default function SalePost() {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
 
   const handleImageUpload = (e) => {
@@ -18,33 +18,33 @@ export default function SalePost() {
     // 페이지 새로고침 방지
     e.preventDefault();
 
-    if (category === "") {
-      alert("카테고리를 선택해주세요.");
+    if (category === '') {
+      alert('카테고리를 선택해주세요.');
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", image);
-    formData.append("title", title);
-    formData.append("price", price);
-    formData.append("category", category);
-    formData.append("content", content);
+    formData.append('image', image);
+    formData.append('title', title);
+    formData.append('price', price);
+    formData.append('category', category);
+    formData.append('content', content);
 
     // 데이터 받으십쇼~~!!
     try {
       const response = await axios.post(
-        "http://localhost:8000/board/create",
+        'http://localhost:8000/board/create',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
 
       console.log(response.data);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
 
@@ -54,14 +54,14 @@ export default function SalePost() {
       <div className="SalePost">
         <form
           onSubmit={handleSubmit}
-          style={{ top: "140px", position: "absolute" }}
+          style={{ top: '140px', position: 'absolute' }}
         >
           <div>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
               <h3>상품이미지</h3>
@@ -75,7 +75,7 @@ export default function SalePost() {
                   id="fileInput"
                   type="file"
                   onChange={handleImageUpload}
-                  style={{ display: "none" }}
+                  style={{ display: 'none' }}
                 />
                 {image && (
                   <img src={URL.createObjectURL(image)} alt="preview" />
