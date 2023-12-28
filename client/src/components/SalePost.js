@@ -51,77 +51,81 @@ export default function SalePost() {
   return (
     <>
       <Navbar />
-      <form
-        onSubmit={handleSubmit}
-        style={{ top: "140px", position: "absolute" }}
-      >
-        <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <h3>상품이미지</h3>
-            <label htmlFor="fileInput">
-              <img
-                src="/static/img.png"
-                alt="img example"
-                className="exImage"
-              />
-              <input
-                id="fileInput"
-                type="file"
-                onChange={handleImageUpload}
-                style={{ display: "none" }}
-              />
-              {image && <img src={URL.createObjectURL(image)} alt="preview" />}
-            </label>
-          </div>
-          <br />
-          <hr />
+      <div className="SalePost">
+        <form
+          onSubmit={handleSubmit}
+          style={{ top: "140px", position: "absolute" }}
+        >
           <div>
-            <input
-              type="text"
-              placeholder="제목"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <div className="priceInput">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <h3>상품이미지</h3>
+              <label htmlFor="fileInput">
+                <img
+                  src="/static/img.png"
+                  alt="img example"
+                  className="exImage"
+                />
+                <input
+                  id="fileInput"
+                  type="file"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+                {image && (
+                  <img src={URL.createObjectURL(image)} alt="preview" />
+                )}
+              </label>
+            </div>
+            <br />
+            <hr />
+            <div>
               <input
-                type="number"
-                placeholder="가격"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                type="text"
+                placeholder="제목"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
-              {/* <div className="fakePlaceHolder">원</div> */}
+              <div className="priceInput">
+                <input
+                  type="number"
+                  placeholder="가격"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                {/* <div className="fakePlaceHolder">원</div> */}
+              </div>
             </div>
           </div>
-        </div>
-        <hr />
-        <div>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">카테고리 선택</option>
-            <option value="category1">정치인 성대모사</option>
-            <option value="category2">그림</option>
-            <option value="category3">코디</option>
-          </select>
-        </div>
-        <hr />
-        <div>
-          <textarea
-            placeholder="상품 소개"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
+          <hr />
+          <div>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">카테고리 선택</option>
+              <option value="category1">정치인 성대모사</option>
+              <option value="category2">그림</option>
+              <option value="category3">코디</option>
+            </select>
+          </div>
+          <hr />
+          <div>
+            <textarea
+              placeholder="상품 소개"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
 
-        <button type="submit">등록하기</button>
-      </form>
+          <button type="submit">등록하기</button>
+        </form>
+      </div>
     </>
   );
 }
