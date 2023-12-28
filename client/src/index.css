@@ -13,3 +13,9 @@ code {
 }
 
 @import './styles/reset.css';
+
+:root {
+  --header-margin: 90px;
+  --main-navy: #040262;
+  --main-brown: #ab6142;
+}
