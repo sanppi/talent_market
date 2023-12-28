@@ -2,8 +2,8 @@
     "development": {
         "host": "localhost",
         "database": "jnsam",
-        "username": "root",
-        "password": "",
+        "username": "jnsam",
+        "password": "1234qwer",
         "dialect": "mysql"
     },
     "production": {
