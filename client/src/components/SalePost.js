@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
+import "../styles/salepost.scss";
 
 export default function SalePost() {
   const [title, setTitle] = useState("");
@@ -31,11 +32,15 @@ export default function SalePost() {
 
     // 데이터 받으십쇼~~!!
     try {
-      const response = await axios.post("/board/create", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:8000/board/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       console.log(response.data);
     } catch (error) {
@@ -48,16 +53,34 @@ export default function SalePost() {
       <Navbar />
       <form
         onSubmit={handleSubmit}
-        style={{ top: "90px", position: "absolute" }}
+        style={{ top: "140px", position: "absolute" }}
       >
         <div>
-          <label>
-            <input type="file" onChange={handleImageUpload} />
-            {/* 이미지 미리보기 되는데 크기는 css로 정해둘 예정 */}
-            {/* 그런데 영상이나 음성 파일은...? 그냥 이미지로만 파일 타입 정하는 게 낫겠죠 */}
-            {/* 하지만 성대모사 미리보기가 있다면 참 조을텐데. 아숩다 */}
-            {image && <img src={URL.createObjectURL(image)} alt="preview" />}
-          </label>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <h3>상품이미지</h3>
+            <label htmlFor="fileInput">
+              <img
+                src="/static/img.png"
+                alt="img example"
+                className="exImage"
+              />
+              <input
+                id="fileInput"
+                type="file"
+                onChange={handleImageUpload}
+                style={{ display: "none" }}
+              />
+              {image && <img src={URL.createObjectURL(image)} alt="preview" />}
+            </label>
+          </div>
+          <br />
+          <hr />
           <div>
             <input
               type="text"
@@ -65,14 +88,18 @@ export default function SalePost() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <input
-              type="number"
-              placeholder="가격"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
+            <div className="priceInput">
+              <input
+                type="number"
+                placeholder="가격"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              {/* <div className="fakePlaceHolder">원</div> */}
+            </div>
           </div>
         </div>
+        <hr />
         <div>
           <select
             value={category}
@@ -83,12 +110,16 @@ export default function SalePost() {
             <option value="category2">그림</option>
             <option value="category3">코디</option>
           </select>
+        </div>
+        <hr />
+        <div>
           <textarea
             placeholder="상품 소개"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
+
         <button type="submit">등록하기</button>
       </form>
     </>
