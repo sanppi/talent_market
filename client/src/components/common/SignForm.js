@@ -1,7 +1,15 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import '../../styles/signform.scss';
+import { Link } from 'react-router-dom';
 
 export default function SignForm({ type }) {
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  useEffect(() => {
+    if (type === 'signup') setIsSignUp(true);
+  }, [isSignUp]);
+
   const {
     register,
     watch,
@@ -9,10 +17,11 @@ export default function SignForm({ type }) {
     formState: { isValid, errors },
   } = useForm({ mode: 'onChange' });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const response = await fetch('/signup');
+    const res = response.json();
+    // 회원가입/로그인에 따른 POST/GET 요청
     console.log(data);
-    // POST 요청
-    fetch('');
   };
 
   const pw = useRef();
@@ -21,10 +30,10 @@ export default function SignForm({ type }) {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="signUpForm">
-          <div className="signUpInputForm">
-            <div className="signUpInput">
-              <label htmlFor="id">아이디 *</label>
+        <div className="signForm">
+          <div className="signInputForm">
+            <div className="signInput">
+              <label htmlFor="id">아이디</label>
               <input
                 type="text"
                 id="id"
@@ -36,10 +45,12 @@ export default function SignForm({ type }) {
                   },
                 })}
               />
-              {errors.id && <small role="alert">{errors.id.message}</small>}
+              {isSignUp && errors.id && (
+                <small role="alert">{errors.id.message}</small>
+              )}
             </div>
-            <div className="signUpInput">
-              <label htmlFor="pw">비밀번호 *</label>
+            <div className="signInput">
+              <label htmlFor="pw">비밀번호</label>
               <input
                 type="password"
                 id="pw"
@@ -54,12 +65,15 @@ export default function SignForm({ type }) {
                   },
                 })}
               />
-              {errors.pw && <small role="alert">{errors.pw.message}</small>}
+              {isSignUp && errors.pw && (
+                <small role="alert">{errors.pw.message}</small>
+              )}
             </div>
-            {type === 'signup' && (
+
+            {isSignUp ? (
               <>
-                <div className="signUpInput">
-                  <label htmlFor="pwCk">비밀번호 확인 *</label>
+                <div className="signInput">
+                  <label htmlFor="pwCk">비밀번호 확인</label>
                   <input
                     id="pwCk"
                     type="password"
@@ -77,8 +91,8 @@ export default function SignForm({ type }) {
                     <small role="alert">{errors.pwCk.message}</small>
                   )}
                 </div>
-                <div className="signUpInput">
-                  <label htmlFor="nickname">닉네임 *</label>
+                <div className="signInput">
+                  <label htmlFor="nickname">닉네임</label>
                   <input
                     type="text"
                     id="nickname"
@@ -90,8 +104,8 @@ export default function SignForm({ type }) {
                     <small role="alert">{errors.nickname.message}</small>
                   )}
                 </div>
-                <div className="signUpInput">
-                  <label htmlFor="email">이메일 *</label>
+                <div className="signInput">
+                  <label htmlFor="email">이메일</label>
                   <input
                     type="email"
                     id="email"
@@ -108,24 +122,38 @@ export default function SignForm({ type }) {
                     <small role="alert">{errors.email.message}</small>
                   )}
                 </div>
-                <div className="signUpInput">
+                <div className="signInput">
                   <label htmlFor="accountNum">계좌번호</label>
                   <input
                     type="number"
                     id="accountNum"
                     name="accountNum"
                     placeholder="(option) 판매글 등록시 필요한 정보입니다."
-                    // {...register("accountNum", {})}
                   />
                 </div>
-                {/* <div>로그인하러 가기</div> */}
+                <button
+                  type="submit"
+                  className="signButton"
+                  disabled={!isValid}
+                >
+                  회원가입
+                </button>
               </>
+            ) : (
+              <div className="signInButtonBox">
+                <button
+                  type="submit"
+                  className="signButton"
+                  disabled={!isValid}
+                >
+                  로그인
+                </button>
+                <div>
+                  <Link to="/signup">계정이 없으신가요?</Link>
+                </div>
+              </div>
             )}
           </div>
-          <button type="submit" className="signUpButton" disabled={!isValid}>
-            회원가입
-          </button>
-          {/* <Link to=""/> */}
         </div>
       </form>
     </>
