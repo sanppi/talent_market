@@ -1,7 +1,7 @@
-function ChattingRoom(sequelize, DataTypes){
+function ChattingList(sequelize, DataTypes){
     return sequelize.define(
-        'ChattingRoom', {
-            roomId: {
+        'ChattingList', {
+            roomListId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
@@ -11,20 +11,16 @@ function ChattingRoom(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false
               },
-              boardId: {
+              roomId: {
                 type: DataTypes.INTEGER,
-                allowNull: false
-              },
-              roomName: {
-                type: DataTypes.STRING(100),
                 allowNull: false
               }
             }, {
-              tableName: 'ChattingRoom',
+              tableName: 'ChattingList',
             freezeTableName: true,
             timestamps: false,
         }
     )
 }
 
-module.exports = ChattingRoom;
+module.exports = ChattingList;

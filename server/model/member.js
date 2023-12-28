@@ -4,35 +4,36 @@ function Member(sequelize, DataTypes) {
     {
       memberId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
         allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
       },
       id: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false
       },
       pw: {
         type: DataTypes.STRING(500),
-        allowNull: false,
+        allowNull: false
       },
       nickname: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false
       },
       email: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: true
       },
       redCard: {
         type: DataTypes.INTEGER,
+        allowNull: true
       },
       accountNum: {
         type: DataTypes.STRING(30),
-      },
-    },
-    {
-      tableName: "Member",
+        allowNull: true
+      }
+    }, {
+      tableName: 'Member',
       freezeTableName: true,
       timestamps: false,
     }

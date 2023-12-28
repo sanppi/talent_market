@@ -3,33 +3,36 @@ function Comment(sequelize, DataTypes){
         'Comment', {
             commentId: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
                 primaryKey: true,
-                autoIncrement: true,
-                allowNull: false,
-            },
-            comment: {
+                autoIncrement: true
+              },
+              memberId: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+              },
+              boardId: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+              },
+              review: {
                 type: DataTypes.TEXT,
-            },
-            writtenAt: {
+                allowNull: false
+              },
+              createdAt: {
+                type: DataTypes.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+              },
+              updatedAt: {
+                type: DataTypes.DATE,
+                allowNull: true
+              },
+              stars: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Board",
-                    key: 'boardId',
-                },
-                onDelete: 'CASCADE',
-            },
-            writtenBy: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Member",
-                    key: 'memberId',
-                },
-                onDelete: 'CASCADE',
-            },
-        }, {
-            tableName: 'Comment',
+                allowNull: false
+              }
+            }, {
+              tableName: 'Comment',
             freezeTableName: true,
             timestamps: true,
         }
