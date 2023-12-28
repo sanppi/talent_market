@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import '../styles/mypage.scss';
+import '../../styles/mypage.scss';
 
 export default function MyPage() {
   // 회원 정보 : nickname
