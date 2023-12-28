@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const member = require("../controller/member");
+const member = require("../controller/Cmember");
 
 // 회원가입
 router.get("/signup", member.signup);
