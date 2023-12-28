@@ -9,7 +9,7 @@ const { board } = require("./model");
 const { comment } = require("./model");
 
 const cors = require("cors");
-const { emit } = require("process");
+// const { emit } = require("process");
 app.use(cors());
 
 const io = require("socket.io")(server, {
@@ -23,10 +23,12 @@ app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 app.get('/', (req,res) => {
   res.send({message:'server client connections'});
 });
+
+const memberRouter = require("./routes/member");
+app.use("/member", memberRouter);
 
 app.get("*", function (req, res) {
   res.render("404");
