@@ -1,6 +1,6 @@
-function comment(sequelize, DataTypes){
+function Comment(sequelize, DataTypes){
     return sequelize.define(
-        'comment', {
+        'Comment', {
             commentId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -14,7 +14,7 @@ function comment(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "board",
+                    model: "Board",
                     key: 'boardId',
                 },
                 onDelete: 'CASCADE',
@@ -23,17 +23,17 @@ function comment(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "member",
+                    model: "Member",
                     key: 'memberId',
                 },
                 onDelete: 'CASCADE',
             },
         }, {
-            tableName: 'comment',
+            tableName: 'Comment',
             freezeTableName: true,
             timestamps: true,
         }
     )
 }
 
-module.exports = comment;
+module.exports = Comment;

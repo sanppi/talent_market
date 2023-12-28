@@ -1,6 +1,6 @@
-function board(sequelize, DataTypes) {
+function Board(sequelize, DataTypes) {
     return sequelize.define(
-        'board', {
+        'Board', {
             boardId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -26,7 +26,7 @@ function board(sequelize, DataTypes) {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "member",
+                    model: "Member",
                     key: 'memberId',
                 },
                 onDelete: 'CASCADE',
@@ -38,11 +38,11 @@ function board(sequelize, DataTypes) {
                 type: DataTypes.ENUM('yes', 'no'),
             }
         },{
-            tableName: 'board',
+            tableName: 'Board',
             freezeTableName: true,
             timestamps: true,
         }
     )
 }
 
-module.exports = board;
+module.exports = Board;

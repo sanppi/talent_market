@@ -1,6 +1,6 @@
-function member(sequelize, DataTypes) {
+function Member(sequelize, DataTypes) {
     return sequelize.define(
-        'member', {
+        'Member', {
             memberId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -30,11 +30,11 @@ function member(sequelize, DataTypes) {
                 type: DataTypes.STRING(30)
             }
         },{
-            tableName: "member",
+            tableName: "Member",
             freezeTableName: true,
             timestampes: false
         }
     )
 }
 
-module.exports = member;
+module.exports = Member;
