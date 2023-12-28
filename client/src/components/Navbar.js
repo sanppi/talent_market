@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../styles/navbar.scss";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import '../styles/navbar.scss';
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function NavBar() {
 
       {/* 로그인 버튼 */}
       <button className="loginButton">
-        <Link to="/signin">로그인</Link>
+        <Link to="/member/signin">로그인</Link>
       </button>
     </div>
   );
