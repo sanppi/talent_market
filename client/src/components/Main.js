@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
 
 // 상품 카드..?
 function ProductCard({ product }) {
@@ -31,14 +32,17 @@ function Main() {
   }, []);
 
   return (
-    <div className="mainPage">
-      <button className="writeButton">
-        <Link to="/write">판매글 작성</Link>
-      </button>
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <>
+      <Navbar />
+      <div className="mainPage" style={{ top: "90px", position: "absolute" }}>
+        <button className="writeButton">
+          <Link to="/write">판매글 작성</Link>
+        </button>
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </>
   );
 }
 
