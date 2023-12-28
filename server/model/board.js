@@ -25,7 +25,7 @@ function Board(sequelize, DataTypes) {
             starAvg: {
                 type: DataTypes.DOUBLE,
             },
-            urlImg: {
+            image: {
                 type: DataTypes.STRING(500), 
             },
             writtenBy: {
