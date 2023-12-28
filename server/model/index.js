@@ -17,7 +17,7 @@ db.Member = require("./Member")(sequelize, Sequelize);
 db.Board = require("./Board")(sequelize, Sequelize);
 db.Comment = require("./Comment")(sequelize, Sequelize);
 db.ChattingRoom = require("./ChattingRoom")(sequelize, Sequelize);
-db.LikeBoardTable = require("./LikeBoardTablem")(sequelize, Sequelize);
+db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
 
 // Member와 Board 연결 (1대 다)
 db.Member.hasMany(db.Board, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
