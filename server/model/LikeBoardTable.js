@@ -3,36 +3,20 @@ function LikeBoardTable(sequelize, DataTypes){
         'LikeBoardTable', {
             likeId: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
                 primaryKey: true,
-                autoIncrement: true,
-                allowNull: false,
-            },
-            likeNum: {
+                autoIncrement: true
+              },
+              memberId: {
                 type: DataTypes.INTEGER,
-            },
-            isPushLike: {
-                type: DataTypes.ENUM('true', 'false'),
-            },
-            likeBy: {
+                allowNull: false
+              },
+              boardId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Member",
-                    key: 'memberId',
-                },
-                onDelete: 'CASCADE',
-            },
-            likeAt: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Board",
-                    key: 'boardId',
-                },
-                onDelete: 'CASCADE',
-            },
-        }, {
-            tableName: 'LikeBoardTable',
+                allowNull: false
+              }
+            }, {
+              tableName: 'LikeBoardTable',
             freezeTableName: true,
             timestamps: false,
         }
