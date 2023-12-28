@@ -149,7 +149,7 @@ export default function SignForm({ type }) {
                   로그인
                 </button>
                 <div>
-                  <Link to="/signup">계정이 없으신가요?</Link>
+                  <Link to="/member/signup">계정이 없으신가요?</Link>
                 </div>
               </div>
             )}
