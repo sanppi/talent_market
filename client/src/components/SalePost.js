@@ -7,7 +7,7 @@ export default function SalePost() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
 
   const handleImageUpload = (e) => {
@@ -28,7 +28,7 @@ export default function SalePost() {
     formData.append("title", title);
     formData.append("price", price);
     formData.append("category", category);
-    formData.append("description", description);
+    formData.append("content", content);
 
     // 데이터 받으십쇼~~!!
     try {
@@ -118,8 +118,8 @@ export default function SalePost() {
           <div>
             <textarea
               placeholder="상품 소개"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             />
           </div>
 

@@ -30,12 +30,12 @@ function Board(sequelize, DataTypes) {
             },
             writtenBy: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Member",
-                    key: 'memberId',
-                },
-                onDelete: 'CASCADE',
+                // allowNull: false,
+                // references: {
+                //     model: "Member",
+                //     key: 'memberId',
+                // },
+                // onDelete: 'CASCADE',
             },
             category: {
                 type: DataTypes.STRING(50)
