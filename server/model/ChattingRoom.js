@@ -1,28 +1,25 @@
-function Comment(sequelize, DataTypes){
+function ChattingRoom(sequelize, DataTypes){
     return sequelize.define(
-        'Comment', {
-            commentId: {
+        'ChattingRoom', {
+            roomId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false,
             },
-            review: {
+            recordedChatting: {
                 type: DataTypes.TEXT,
             },
-            stars: {
-                type: DataTypes.INTEGER,
-            },
-            writtenAt: {
+            merchantId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "Board",
-                    key: 'boardId',
+                    model: "Member",
+                    key: 'memberId',
                 },
                 onDelete: 'CASCADE',
             },
-            writtenBy: {
+            customerId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
@@ -32,11 +29,11 @@ function Comment(sequelize, DataTypes){
                 onDelete: 'CASCADE',
             },
         }, {
-            tableName: 'Comment',
+            tableName: 'ChattingRoom',
             freezeTableName: true,
-            timestamps: true,
+            timestamps: false,
         }
     )
 }
 
-module.exports = Comment;
+module.exports = ChattingRoom;

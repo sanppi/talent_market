@@ -1,28 +1,19 @@
-function Comment(sequelize, DataTypes){
+function LikeBoardTable(sequelize, DataTypes){
     return sequelize.define(
-        'Comment', {
-            commentId: {
+        'LikeBoardTable', {
+            likeId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false,
             },
-            review: {
-                type: DataTypes.TEXT,
-            },
-            stars: {
+            likeNum: {
                 type: DataTypes.INTEGER,
             },
-            writtenAt: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "Board",
-                    key: 'boardId',
-                },
-                onDelete: 'CASCADE',
+            isPushLike: {
+                type: DataTypes.ENUM('true', 'false'),
             },
-            writtenBy: {
+            likeBy: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
@@ -31,12 +22,21 @@ function Comment(sequelize, DataTypes){
                 },
                 onDelete: 'CASCADE',
             },
+            likeAt: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: "Board",
+                    key: 'boardId',
+                },
+                onDelete: 'CASCADE',
+            },
         }, {
-            tableName: 'Comment',
+            tableName: 'LikeBoardTable',
             freezeTableName: true,
-            timestamps: true,
+            timestamps: false,
         }
     )
 }
 
-module.exports = Comment;
+module.exports = LikeBoardTable;

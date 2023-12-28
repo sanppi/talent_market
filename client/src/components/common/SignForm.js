@@ -1,9 +1,15 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import '../../styles/signform.scss';
 import { Link } from 'react-router-dom';
 
 export default function SignForm({ type }) {
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  useEffect(() => {
+    if (type === 'signup') setIsSignUp(true);
+  }, [isSignUp]);
+
   const {
     register,
     watch,
@@ -11,7 +17,9 @@ export default function SignForm({ type }) {
     formState: { isValid, errors },
   } = useForm({ mode: 'onChange' });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const response = await fetch('/signup');
+    const res = response.json();
     // 회원가입/로그인에 따른 POST/GET 요청
     console.log(data);
   };
@@ -37,7 +45,9 @@ export default function SignForm({ type }) {
                   },
                 })}
               />
-              {errors.id && <small role="alert">{errors.id.message}</small>}
+              {isSignUp && errors.id && (
+                <small role="alert">{errors.id.message}</small>
+              )}
             </div>
             <div className="signInput">
               <label htmlFor="pw">비밀번호</label>
@@ -55,10 +65,12 @@ export default function SignForm({ type }) {
                   },
                 })}
               />
-              {errors.pw && <small role="alert">{errors.pw.message}</small>}
+              {isSignUp && errors.pw && (
+                <small role="alert">{errors.pw.message}</small>
+              )}
             </div>
 
-            {type === 'signup' && (
+            {isSignUp ? (
               <>
                 <div className="signInput">
                   <label htmlFor="pwCk">비밀번호 확인</label>
@@ -119,23 +131,29 @@ export default function SignForm({ type }) {
                     placeholder="(option) 판매글 등록시 필요한 정보입니다."
                   />
                 </div>
+                <button
+                  type="submit"
+                  className="signButton"
+                  disabled={!isValid}
+                >
+                  회원가입
+                </button>
               </>
+            ) : (
+              <div className="signInButtonBox">
+                <button
+                  type="submit"
+                  className="signButton"
+                  disabled={!isValid}
+                >
+                  로그인
+                </button>
+                <div>
+                  <Link to="/signup">계정이 없으신가요?</Link>
+                </div>
+              </div>
             )}
           </div>
-          {type === 'signup' ? (
-            <>
-              <button type="submit" className="signButton" disabled={!isValid}>
-                회원가입
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="submit" className="signButton" disabled={!isValid}>
-                로그인
-              </button>
-              <Link to="/signup">계정이 없으신가요?</Link>
-            </>
-          )}
         </div>
       </form>
     </>
