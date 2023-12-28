@@ -9,7 +9,7 @@ const server = http.createServer(app);
 // const { comment } = require("./model");
 
 const cors = require("cors");
-const { emit } = require("process");
+// const { emit } = require("process");
 app.use(cors());
 
 const io = require("socket.io")(server, {
@@ -18,15 +18,16 @@ const io = require("socket.io")(server, {
   },
 });
 
-
 app.set("view engine", "ejs");
 app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 const router = require("./routes");
 app.use("/", router);
+
+const memberRouter = require("./routes/member");
+app.use("/member", memberRouter);
 
 app.get("*", function (req, res) {
   res.render("404");
