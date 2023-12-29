@@ -7,8 +7,11 @@ export default function SignForm({ type }) {
   const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
-    if (type === 'signup') setIsSignUp(true);
-  }, [isSignUp]);
+    if (type === 'signup') {
+      console.log(type);
+      setIsSignUp(true);
+    }
+  }, []);
 
   const {
     register,
@@ -122,15 +125,6 @@ export default function SignForm({ type }) {
                     <small role="alert">{errors.email.message}</small>
                   )}
                 </div>
-                <div className="signInput">
-                  <label htmlFor="accountNum">계좌번호</label>
-                  <input
-                    type="number"
-                    id="accountNum"
-                    name="accountNum"
-                    placeholder="(option) 판매글 등록시 필요한 정보입니다."
-                  />
-                </div>
                 <button
                   type="submit"
                   className="signButton"
@@ -144,7 +138,7 @@ export default function SignForm({ type }) {
                 <button
                   type="submit"
                   className="signButton"
-                  disabled={!isValid}
+                  disabled={!watch('id') || !watch('pw')}
                 >
                   로그인
                 </button>
