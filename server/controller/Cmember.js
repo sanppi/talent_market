@@ -27,9 +27,6 @@ exports.post_signin = (req, res) => {
 };
 
 // 로그아웃
-// exports.signout = (req, res) => {};
-
-// 로그아웃
 exports.signout = (req, res) => {};
 
 // 회원 정보 페이지 조회
