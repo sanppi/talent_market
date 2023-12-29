@@ -30,13 +30,13 @@ exports.post_signin = (req, res) => {
 // exports.signout = (req, res) => {};
 
 // 로그아웃
-// exports.signout = (req, res) => {};
+exports.signout = (req, res) => {};
 
 // 회원 정보 페이지 조회
-// exports.userInfo = (req, res) => {};
+exports.userInfo = (req, res) => {};
 
 // 회원 정보 수정
-// exports.updateUserInfo = (req, res) => {};
+exports.updateUserInfo = (req, res) => {};
 
 // 회원 탈퇴
-// exports.deleteUserInfo = (req, res) => {};
+exports.deleteUserInfo = (req, res) => {};

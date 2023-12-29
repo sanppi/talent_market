@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Main />} />
         <Route path="/write" element={<SalePost />} />
-        {/* <Route path="/chatting" element={<Chatting />} /> */}
+        <Route path="/chatting" element={<Chatting />} />
         <Route path="/member/mypage" element={<MyPage />} />
         <Route path="/member/signup" element={<SignUp />} />
         <Route path="/member/signin" element={<SignIn />} />

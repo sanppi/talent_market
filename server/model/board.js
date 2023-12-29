@@ -17,12 +17,12 @@ function Board(sequelize, DataTypes) {
               },
               createdAt: {
                 type: DataTypes.DATE,
-                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+                defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
               },
               updatedAt: {
                 type: DataTypes.DATE,
-                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-                onUpdate: Sequelize.literal('CURRENT_TIMESTAMP')
+                defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+                onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
               },
               category: {
                 type: DataTypes.STRING(50),
