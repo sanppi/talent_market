@@ -31,12 +31,15 @@ app.use("/", router);
 const boardRouter = require('./routes/board');
 app.use('/board', boardRouter);
 
-app.get('/', (req,res) => {
-  res.send({message:'server client connections'});
-});
+const chattingRouter = require("./routes/chatting");
+app.use("/chatting", chattingRouter);
 
 const memberRouter = require("./routes/member");
 app.use("/member", memberRouter);
+
+app.get('/', (req,res) => {
+  res.send({message:'server client connections'});
+});
 
 app.get("*", function (req, res) {
   res.send("404");
@@ -54,7 +57,7 @@ const updateUserList = () => {
 
 io.on("connection", (socket) => {
   updateUserList();
-  console.log("socket id", socket.id);
+  // console.log("socket id", socket.id);
 
   socket.on("entry", (res) => {
     if (Object.values(userIdArr).includes(res.userId)) {
@@ -66,13 +69,13 @@ io.on("connection", (socket) => {
       socket.emit("entrySuccess", { userId: res.userId });
       userIdArr[socket.id] = res.userId;
     }
-    console.log(userIdArr);
+    // console.log(userIdArr);
   });
 
   socket.on("disconnect", () => {
     io.emit("notice", { msg: `${userIdArr[socket.id]}님이 퇴장하셨습니다.` });
     delete userIdArr[socket.id];
-    console.log(userIdArr);
+    // console.log(userIdArr);
     updateUserList();
   });
 

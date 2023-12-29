@@ -3,17 +3,58 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Chat from './Chat';
 import Notice from './Notice';
 import io from 'socket.io-client';
+import axios from 'axios';
 
 const socket = io.connect('http://localhost:8000', { autoConnect: false });
 export default function Chatting() {
+  const [id, setId] = useState("example_id")
+  const [nickname, setNickname] = useState("")
   const [msgInput, setMsgInput] = useState('');
   const [userIdInput, setUserIdInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userList, setUserList] = useState({});
 
+  const userCheck = async (e) => {
+    if (id === '') {
+      alert('로그인이 필요한 서비스입니다.');
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/chatting/userCheck?id=${id}`,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+  
+      console.log(response.data.nickname);
+      setNickname(response.data.nickname)
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const entryChat = () => {
+    // initSocketConnect();
+    // socket.emit('entry', { userId: userIdInput });
+    userCheck();
+  };
+
+
+
+
+
+
+
+
+
+
   const initSocketConnect = () => {
-    console.log('connected', socket.connected);
+    // console.log('connected', socket.connected);
     if (!socket.connected) socket.connect();
   };
 
@@ -76,16 +117,13 @@ export default function Chatting() {
     }
   };
 
-  const entryChat = () => {
-    initSocketConnect();
-    socket.emit('entry', { userId: userIdInput });
-  };
+
 
   return (
     <>
-      {userId ? (
+      {nickname ? (
         <>
-          <div>{userId}님 환영합니다.</div>
+          <div>{nickname}님 환영합니다.</div>
           <div className="chat-container">
             {chatList.map((chat, i) => {
               if (chat.type === 'notice') return <Notice key={i} chat={chat} />;
@@ -109,7 +147,8 @@ export default function Chatting() {
               value={userIdInput}
               onChange={(e) => setUserIdInput(e.target.value)}
             />
-            <button onClick={entryChat}>입장</button>
+            {/* <button onClick={entryChat}>입장</button> */}
+            <button onClick={entryChat}>구매하기</button>
           </div>
         </>
       )}
