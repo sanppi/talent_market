@@ -13,11 +13,13 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 // 테이블 불러오기
-db.Member = require("./Member")(sequelize, Sequelize);
 db.Board = require("./Board")(sequelize, Sequelize);
-db.Comment = require("./Comment")(sequelize, Sequelize);
+db.ChattingList = require("./ChattingList")(sequelize, Sequelize);
 db.ChattingRoom = require("./ChattingRoom")(sequelize, Sequelize);
+db.ChattingtText = require("./ChattingtText")(sequelize, Sequelize);
+db.Comment = require("./Comment")(sequelize, Sequelize);
 db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
+db.Member = require("./Member")(sequelize, Sequelize);
 
 // Member와 Board 연결 (1대 다)
 db.Member.hasMany(db.Board, { foreignKey: 'memberId' });

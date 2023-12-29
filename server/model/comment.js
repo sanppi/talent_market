@@ -21,7 +21,7 @@ function Comment(sequelize, DataTypes){
               },
               createdAt: {
                 type: DataTypes.DATE,
-                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+                defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
               },
               updatedAt: {
                 type: DataTypes.DATE,
