@@ -1,3 +1,5 @@
+@import './utilies';
+
 * {
   box-sizing: border-box;
 }
@@ -68,9 +70,8 @@
   }
 
   .signButton {
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
+    @include button(20px, 10px);
+
     width: 100%;
     background-color: var(--main-navy);
     color: white;

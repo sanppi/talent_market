@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import '../../styles/mypage.scss';
 
 export default function MyPage() {
-  // 회원 정보 : nickname
-
   return (
     <>
       <div className="myPage">
@@ -13,12 +11,12 @@ export default function MyPage() {
               <img src="" alt="" />
             </div>
             <Link to="/member/mypage/update">
-              <button>회원 정보 수정</button>
+              <button>회원정보 수정</button>
             </Link>
           </div>
           <div className="myProfileBox2">
             <div className="myProfileNickname">닉네임</div>
-            <div className="myProfileDescription">
+            <div className="myProfileContent">
               소개글
               <button>수정</button>
             </div>
@@ -31,7 +29,7 @@ export default function MyPage() {
             <li>나의 판매상품</li>
             <li>후기</li>
           </ul>
-          <div>각 카테고리에 맞는 내용</div>
+          <div className="myListContent">각 카테고리에 맞는 내용</div>
         </div>
       </div>
     </>
