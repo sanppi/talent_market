@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import '../../styles/signform.scss';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function SignForm({ type }) {
   const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (type === 'signup') {
@@ -21,10 +22,50 @@ export default function SignForm({ type }) {
   } = useForm({ mode: 'onChange' });
 
   const onSubmit = async (data) => {
-    const response = await fetch('/signup');
-    const res = response.json();
-    // 회원가입/로그인에 따른 POST/GET 요청
-    console.log(data);
+    // 회원가입 시
+    if (isSignUp) {
+      const { pwCk, ...signUpData } = data;
+      try {
+        const response = await fetch('http://localhost:8000/member/signup', {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(signUpData),
+        });
+
+        if (response.ok) {
+          const res = await response.json();
+          res.result && setIsSignUp(false);
+        } else {
+          console.error('회원가입 실패!');
+          // TODO : 유저에게 보여주기
+        }
+      } catch (err) {
+        console.error('signup err: ', err.message);
+      }
+    } else {
+      // 로그인 시
+      try {
+        const response = await fetch('http://localhost:8000/member/signin', {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const res = await response.json();
+          res.result && navigate('/');
+        } else {
+          console.err('로그인 실패!');
+          // TODO : 유저에게 보여주기
+        }
+      } catch (err) {
+        console.error('signin err: ', err.message);
+      }
+    }
   };
 
   const pw = useRef();
