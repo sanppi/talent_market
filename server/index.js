@@ -5,6 +5,7 @@ const PORT = 8000;
 const server = http.createServer(app);
 const multer = require("multer");
 const path = require("path");
+const session = require("express-session");
 
 const { Member } = require("./model");
 const { Board } = require("./model");
@@ -28,8 +29,8 @@ app.use(express.json());
 const router = require("./routes");
 app.use("/", router);
 
-const boardRouter = require('./routes/board');
-app.use('/board', boardRouter);
+const boardRouter = require("./routes/board");
+app.use("/board", boardRouter);
 
 const chattingRouter = require("./routes/chatting");
 app.use("/chatting", chattingRouter);
@@ -37,23 +38,19 @@ app.use("/chatting", chattingRouter);
 const memberRouter = require("./routes/member");
 app.use("/member", memberRouter);
 
-app.get('/', (req,res) => {
-  res.send({message:'server client connections'});
+app.get("/", (req, res) => {
+  res.send({ message: "server client connections" });
 });
 
 app.get("*", function (req, res) {
   res.send("404");
 });
 
-
-
-
-
 const userIdArr = {};
 
 const updateUserList = () => {
-  io.emit("userList", userIdArr)
-}
+  io.emit("userList", userIdArr);
+};
 
 io.on("connection", (socket) => {
   updateUserList();
@@ -80,13 +77,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    io.emit("chat", { userId: res.userId, msg: res.msg })
+    io.emit("chat", { userId: res.userId, msg: res.msg });
   });
 });
 
+// 로그인 세션
+app.use(
+  session({
+    secret: "secretKey",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  })
+);
 
-
-
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isAuthenticated;
+  res.locals.user = req.session.user;
+  console.log("res.locals.user", res.locals.user);
+  next();
+});
 
 server.listen(PORT, function () {
   console.log(`Sever Open: ${PORT}`);
