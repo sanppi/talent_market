@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #030c3f;
+  background-color: #5585a7;
   padding: 20px;
   box-sizing: border-box;
   z-index: 8900;
@@ -75,6 +75,11 @@
     font-size: 17px;
     margin-left: auto;
     cursor: pointer;
+    background-color: #ffffff;
+    display: block;
+    font-size: 17px;
+    border: none;
+    border-radius: 5px;
   }
 }
 
