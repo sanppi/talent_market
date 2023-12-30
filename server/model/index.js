@@ -13,11 +13,11 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 // 테이블 불러오기
-db.Board = require("./Board")(sequelize, Sequelize);
+db.Board = require("./board")(sequelize, Sequelize);
 db.ChattingList = require("./ChattingList")(sequelize, Sequelize);
 db.ChattingRoom = require("./ChattingRoom")(sequelize, Sequelize);
 db.ChattingtText = require("./ChattingtText")(sequelize, Sequelize);
-db.Comment = require("./Comment")(sequelize, Sequelize);
+db.Comment = require("./comment")(sequelize, Sequelize);
 db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
 db.Member = require("./Member")(sequelize, Sequelize);
 
@@ -33,8 +33,6 @@ db.Comment.belongsTo(db.Member, { foreignKey: 'writtenBy', targetKey: 'memberId'
 // Board와 Comment 연결 (1대 다)
 db.Board.hasMany(db.Comment, { foreignKey: 'boardId' });
 db.Comment.belongsTo(db.Board, { foreignKey: 'boardId' });
-
-// 채팅방 연결은 일단 패스했습니다.
 
 // Member와 LikeBoardTable 연결 (1대 다)
 db.Member.hasMany(db.LikeBoardTable, { foreignKey: 'memberId' });
