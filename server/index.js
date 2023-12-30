@@ -59,16 +59,19 @@ app.get("*", function (req, res) {
   res.send("404");
 });
 
+
+
+
+
 const userIdArr = {};
 
 const updateUserList = () => {
-  io.emit("userList", userIdArr);
-};
+  io.emit("userList", userIdArr)
+}
 
 io.on("connection", (socket) => {
   updateUserList();
   // console.log("socket id", socket.id);
-
   socket.on("entry", (res) => {
     if (Object.values(userIdArr).includes(res.userId)) {
       socket.emit("error", {
@@ -90,7 +93,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    io.emit("chat", { userId: res.userId, msg: res.msg });
+    if (res.dm === "all") io.emit("chat", { userId: res.userId, msg: res.msg })
+    else {
+      io.to(res.dm).emit("chat", { userId: res.userId, msg: res.msg, dm: true })
+      socket.emit("chat", { userId: res.userId, msg: res.msg, dm: true })
+    }
   });
 });
 

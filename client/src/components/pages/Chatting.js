@@ -1,7 +1,6 @@
 import '../../styles/chat.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Chat from './Chat';
-import Notice from './Notice';
+import ChattingRoomList from './ChattingRoomList';
 import io from 'socket.io-client';
 import axios from 'axios';
 
@@ -15,12 +14,27 @@ export default function Chatting() {
   const [nickname, setNickname] = useState("")
   const [chattingRoomList, setChattingRoomList] = useState([]);
 
-  const [msgInput, setMsgInput] = useState('');
+
   const [userIdInput, setUserIdInput] = useState('');
-  const [chatList, setChatList] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userList, setUserList] = useState({});
   
+
+  useEffect(() => {
+    // 서버로부터 로그인 세션 정보를 가져오는 요청을 보냅니다.
+    axios.get("http://localhost:8000/chatting/getSessionInfo").then((response) => {
+        const data = response.data;
+        setIsAuthenticated(data.isAuthenticated);
+        setUser(data.user);
+        // console.log("hey");
+        // console.log(data.user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+
   useEffect( async () => {
     if (memberId === '') {
       alert('로그인이 필요한 서비스입니다.');
@@ -38,48 +52,28 @@ export default function Chatting() {
     }
   }, []);
 
-  
 
-  useEffect(() => {
-    // 서버로부터 로그인 세션 정보를 가져오는 요청을 보냅니다.
-    axios.get("http://localhost:8000/chatting/getSessionInfo").then((response) => {
-        const data = response.data;
-        setIsAuthenticated(data.isAuthenticated);
-        setUser(data.user);
-        // console.log("hey");
-        // console.log(data.user);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  useEffect( async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/chatting/getRoomList?memberId=${memberId}`,
+      );
+
+      for(let i = 0; i < response.data.length; i++) {
+        setChattingRoomList(prevList => [
+          ...prevList,
+          { roomId: response.data[i].roomId, roomName: response.data[i].roomName, title: response.data[i].title }
+          // 리더님 response.data도 배열인데 왜 바로 데이터를 넣을 순 없는 걸까요
+        ])
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }, []);
-
-  // const userCheck = async (e) => {
-  //   if (id === '') {
-  //     alert('로그인이 필요한 서비스입니다.');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:8000/chatting/userCheck?id=${id}`,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       }
-  //     );
   
-  //     setNickname(response.data.nickname)
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-
-  const entryChat = () => {}
-
-
-
+  useEffect(() => {
+    console.log(chattingRoomList[0]);
+  }, [chattingRoomList]);
 
 
 
@@ -119,37 +113,11 @@ export default function Chatting() {
     return options;
   }, [userList]);
 
-  // const addChatList = useCallback(
-  //   (res) => {
-  //     const type = res.userId === userId ? 'my' : 'other';
-  //     const content = `${res.userId}: ${res.msg}`;
-  //     const newChatList = [...chatList, { type: type, content: content }];
-  //     setChatList(newChatList);
-  //   },
-  //   [userId, chatList]
-  // );
 
-  // useEffect(() => {
-  //   socket.on('chat', addChatList);
-  //   return () => socket.off('chat', addChatList);
-  // }, [addChatList]);
 
-  useEffect(() => {
-    const notice = (res) => {
-      const newChatList = [...chatList, { type: 'notice', content: res.msg }];
-      setChatList(newChatList);
-    };
 
-    socket.on('notice', notice);
-    return () => socket.off('notice', notice);
-  }, [chatList]);
 
-  const sendMsg = () => {
-    if (msgInput !== '') {
-      socket.emit('sendMsg', { userId: userId, msg: msgInput });
-      setMsgInput('');
-    }
-  };
+
 
 
 
@@ -159,9 +127,12 @@ export default function Chatting() {
       <>
         <div> {nickname}님의 채팅방</div>
         <div>
-          <div></div>
+          <div>
+            {chattingRoomList.map((chattingRoom, i) => (
+              <ChattingRoomList key={i} chattingRoom={chattingRoom}/>
+            ))}
+          </div>
         </div>
-        <button onClick={entryChat}>dd</button>
       </>
 
       ) : (<></>) }

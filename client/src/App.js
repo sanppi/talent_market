@@ -5,6 +5,8 @@ import SignUp from './components/pages/SignUp';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignIn from './components/pages/SignIn';
 import Chatting from './components/pages/Chatting';
+import ChatRoom from './components/pages/ChatRoom';
+import Chat from './components/pages/Chat';
 import MyPage from './components/pages/MyPage';
 import MyPageUpdate from './components/pages/MyPageUpdate';
 
@@ -16,6 +18,7 @@ function App() {
         <Route exact path="/" element={<Main />} />
         <Route path="/write" element={<SalePost />} />
         <Route path="/chatting" element={<Chatting />} />
+        <Route path="/chatRoom/:id" element={<ChatRoom />} />
         <Route path="/member/mypage" element={<MyPage />} />
         <Route
           path="/member/mypage/update:memberId"
