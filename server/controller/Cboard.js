@@ -33,7 +33,7 @@ module.exports = {
 };
 
 // 게시글 페이지 조회
-exports.boardPage = async (req, res) => {
+exports.boardDetailPage = async (req, res) => {
     try{
         const boardId = req.params.boardId;
         const board = await Board.findOne({
@@ -41,22 +41,13 @@ exports.boardPage = async (req, res) => {
             // include 추가 예정
         })
 
-        // 댓글 불러오기 추가 예정
-
-        // 로그인 확인 추가 예정
-
         res.json({ board: board }) // 이 코드는 수정 가능성이 있습니다.
-        console.log("show product details by boardId");
+        console.log("update product details by boardId");
     }
     catch (error) {
         console.log("에러 코드 ", error);
         res.status(500).send("상세 페이지에 접근할 수 없습니다.")
     }
-}
-
-// 게시글 검색
-exports.search = (req, res) => {
-    
 }
 
 // 게시글 수정 페이지
@@ -70,10 +61,6 @@ exports.updateBoardPage = async (req, res) => {
             where: { boardId: boardId }
             // include 추가 예정
         })
-
-        // 댓글 불러오기 추가 예정
-
-        // 로그인 확인 추가 예정
 
         res.json({ board: board }) // 이 코드는 수정 가능성이 있습니다.
         console.log("update product details by boardId");
