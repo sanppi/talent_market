@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../../styles/navbar.scss';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "../../styles/navbar.scss";
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -20,7 +20,7 @@ export default function NavBar() {
           ☰
         </button>
 
-        <Link to="/">HOME</Link>
+        {/* <Link to="/">HOME</Link> */}
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
@@ -36,7 +36,9 @@ export default function NavBar() {
         )}
 
         {/* 페이지 이름 부분 */}
-        <h2 className="pageTitle">산은 산이요 강은 강이로다 - 산하</h2>
+        <h2 className="pageTitle">
+          <Link to="/">로고</Link>
+        </h2>
 
         {/* 검색창과 검색 버튼 */}
         <div className="searchSection">
