@@ -1,5 +1,7 @@
 const { Comment } = require("../model");
 
+// 클라이언트 review, 서버 comment
+
 // 댓글 작성
 exports.writeComment = (req, res) => {
 
