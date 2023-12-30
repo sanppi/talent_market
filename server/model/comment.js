@@ -5,7 +5,7 @@ function Comment(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
-                autoIncrement: true
+                autoIncrement: true,
               },
               memberId: {
                 type: DataTypes.INTEGER,

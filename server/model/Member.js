@@ -22,15 +22,23 @@ function Member(sequelize, DataTypes) {
       },
       email: {
         type: DataTypes.STRING(50),
-        allowNull: true,
+        allowNull: false,
+        defaultValue: "NULL",
       },
       redCard: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      bankName : {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: "NULL",
       },
       accountNum: {
         type: DataTypes.STRING(30),
-        allowNull: true,
+        allowNull: false,
+        defaultValue: "NULL",
       },
     },
     {
