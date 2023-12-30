@@ -1,6 +1,8 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
 const { Board } = require("../model");
 
+// 클라이언트 product, 서버 board
+
 // SB: 클라이언트 등록하기 버튼과 연결된 부분입니다.
 // 미들웨어를 사용해야해서 양식이 다릅니다.
 // 게시글 작성
@@ -58,15 +60,47 @@ exports.search = (req, res) => {
 }
 
 // 게시글 수정 페이지
-exports.updateBoardPage = (req, res) => {
+exports.updateBoardPage = async (req, res) => {
     // 로그인 확인 추가 예정
 
     // 사용자 추가 예정
+    try{
+        const boardId = req.params.boardId;
+        const board = await Board.findOne({
+            where: { boardId: boardId }
+            // include 추가 예정
+        })
+
+        // 댓글 불러오기 추가 예정
+
+        // 로그인 확인 추가 예정
+
+        res.json({ board: board }) // 이 코드는 수정 가능성이 있습니다.
+        console.log("update product details by boardId");
+    }
+    catch (error) {
+        console.log("에러 코드 ", error);
+        res.status(500).send("상세 페이지에 접근할 수 없습니다.")
+    }
 }
 
 // 게시글 수정
-exports.updateBoard = (req, res) => {
+exports.updateBoard = async (req, res, next) => {
+    try{
+        const { title, price, category, content } = req.body;
 
+        // 이미지는 일단 보류 했습니다.
+
+        await Board.update(
+            { title, price, category, content },
+            { where: { boardId: req.params.boardId } }
+        )
+        res.send("update success")
+    }
+    catch{
+        console.error("에러 메시지 ", error);
+        res.status(500).send("게시글을 수정할 수 없습니다.")
+    }
 }
 
 // 게시글 삭제

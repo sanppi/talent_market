@@ -1,45 +1,78 @@
 const { Member } = require("../model");
 
-exports.post_signup = (req, res) => {
-  console.log(req.body);
-  Member.create(req.body).then((result) => {
+exports.signUp = async (req, res) => {
+  try {
+    console.log(req.body);
+    const result = await Member.create(req.body);
     console.log("User create:", result);
     res.send({ result: true });
+  } catch (error) {
+    console.error("회원가입 중 오류 발생:", error);
+    res.status(500).json({ error: "회원가입 중 오류 발생" });
+  }
+};
+
+exports.checkDuplicate = async (req, res) => {
+  try {
+    const { id, nickname } = req.body;
+
+    if (id) {
+      // 아이디 중복 확인
+      const existingIdUser = await Member.findOne({
+        where: { id: id },
+      });
+
+      if (existingIdUser) {
+        console.log({ error: "중복된 아이디입니다." });
+        res.send({ result: false });
+      } else {
+        res.send({ result: true });
+      }
+    } else if (nickname) {
+      // 닉네임 중복 확인
+      const existingNicknameUser = await Member.findOne({
+        where: { nickname: nickname },
+      });
+
+      if (existingNicknameUser) {
+        console.log({ error: "중복된 닉네임입니다." });
+        res.send({ result: false });
+      } else {
+        res.send({ result: true });
+      }
+    } else {
+      res.status(400).json({ error: "잘못된 요청입니다." });
+    }
+  } catch (error) {
+    console.error("중복 확인 중 오류 발생:", error);
+    res.status(500).json({ error: "중복 확인 중 오류 발생" });
+  }
+};
+
+
+exports.signIn = (req, res) => {
+  Member.findOne({
+    where: { id: req.body.id, pw: req.body.pw },
+  }).then((result) => {
+    console.log("User findOne:", result);
+    if (result) {
+      req.session.user = result.memberId;
+      console.log("req.session.user", req.session.user);
+      res.send({ result: true, memberId: result.memberId });
+    } else res.send({ result: false });
   });
 };
 
-exports.post_signin = async (req, res) => {
-  const member = await Member.findOne({ where: { id: req.body.id, pw: req.body.pw } });
-  if (!member) {
-    return res.send({ result: false });
-  }
-  req.session.user = member.memberId; // 세션에 사용자 정보 저장
-  req.session.isAuthenticated = true; // 로그인 상태를 true로 설정
-  // console.log("세션 생성:", req.session); // 세션 상태 출력
-  res.send({ result: true, id: member.id });
-
-  // Member.findOne({
-  //   where: { id: req.body.id, pw: req.body.pw },
-  // }).then((result) => {
-  //   console.log("User findOne:", result);
-  //   if (result) {
-  //     req.session.user = result.memberId;
-  //     console.log(req.session);
-  //     res.send({ result: true, memberId: result.memberId });
-  //   } else res.send({ result: false });
-  // });
-};
-
 // 로그아웃
-exports.signout = (req, res) => {
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     console.error("세션 삭제 중 에러:", err);
-  //     res.status(500).send("세션 삭제 중 에러 발생");
-  //   } else {
-  //     res.redirect("/"); // 메인 페이지로 리다이렉트
-  //   }
-  // });
+exports.signOut = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("세션 삭제 중 에러:", err);
+      res.status(500).send("세션 삭제 중 에러 발생");
+    } else {
+      res.redirect("/"); // 메인 페이지로 리다이렉트
+    }
+  });
 };
 
 // 회원 정보 페이지 조회

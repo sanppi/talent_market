@@ -38,6 +38,7 @@ app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 const router = require("./routes");
 app.use("/", router);
 

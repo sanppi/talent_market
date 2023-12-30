@@ -14,17 +14,18 @@ export default function SignForm({ type }) {
     register,
     watch,
     handleSubmit,
+    setValue,
     formState: { isValid, errors },
+    trigger,
   } = useForm();
 
   const idValue = watch('id') || '';
   const pwValue = watch('pw') || '';
+  const nicknameValue = watch('nickname') || '';
 
   useEffect(() => {
-    if (type === 'signup') {
-      setIsSignUp(true);
-    }
-  }, []);
+    setIsSignUp(type === 'signup');
+  }, [type]);
 
   useEffect(() => {
     const isIdValid = idValue.trim() !== '';
@@ -34,7 +35,13 @@ export default function SignForm({ type }) {
     setIsFormValid(isSignInValid);
   }, [idValue, pwValue]);
 
-  useEffect(() => {}, [msg]);
+  const handleInputChange = async (fieldName, value) => {
+    // 값 업데이트
+    setValue(fieldName, value);
+
+    // 유효성 검사 실행
+    await trigger(fieldName);
+  };
 
   const onSubmit = async (data) => {
     // 회원가입 시
@@ -48,6 +55,7 @@ export default function SignForm({ type }) {
         });
 
         if (response.data.result) {
+          // ERROR : 유효성 에러 메시지 안 뜸 (유효성 검사는 됨)
           setIsSignUp(false);
         }
       } catch (err) {
@@ -64,7 +72,6 @@ export default function SignForm({ type }) {
 
         if (response.data.result) navigate('/');
         else {
-          // console.error('로그인 실패!');
           setMsg('아이디와 비밀번호가 일치하지 않습니다.');
         }
       } catch (err) {
@@ -75,6 +82,20 @@ export default function SignForm({ type }) {
 
   const pw = useRef();
   pw.current = watch('pw');
+
+  const handleCheck = async (endpoint, value) => {
+    // TODO : endpoint
+    // const response = await axios({
+    //   url: `http://localhost:8000/member/${endpoint}`,
+    //   method: 'POST',
+    //   data: value,
+    // });
+    // if (response.data.result) {
+    //   console.log('아이디 중복 아님');
+    // } else {
+    //   console.log('아이디 중복');
+    // }
+  };
 
   return (
     <>
@@ -95,8 +116,14 @@ export default function SignForm({ type }) {
                         message: '아이디는 영소문자 2자리 이상 입력하세요.',
                       },
                     })}
+                    onChange={(e) => handleInputChange('id', e.target.value)}
                   />
-                  <button type="submit">아이디 중복 확인</button>
+                  <button
+                    type="button"
+                    onClick={() => handleCheck('endpoint', idValue)}
+                  >
+                    아이디 중복 확인
+                  </button>
                   {errors.id && <small role="alert">{errors.id.message}</small>}
                 </div>
                 <div className="signInput">
@@ -114,6 +141,7 @@ export default function SignForm({ type }) {
                           '비밀번호는 숫자, 영소문자, 영대문자, 특수기호 포함 8자 이상 입력하세요.',
                       },
                     })}
+                    onChange={(e) => handleInputChange('pw', e.target.value)}
                   />
                   {errors.pw && <small role="alert">{errors.pw.message}</small>}
                 </div>
@@ -132,6 +160,9 @@ export default function SignForm({ type }) {
                           },
                         },
                       })}
+                      onChange={(e) =>
+                        handleInputChange('pwCk', e.target.value)
+                      }
                     />
                     {errors.pwCk && (
                       <small role="alert">{errors.pwCk.message}</small>
@@ -145,8 +176,16 @@ export default function SignForm({ type }) {
                       {...register('nickname', {
                         required: '닉네임은 필수값입니다.',
                       })}
+                      onChange={(e) =>
+                        handleInputChange('nickname', e.target.value)
+                      }
                     />
-                    <button type="submit">닉네임 중복 확인</button>
+                    <button
+                      type="button"
+                      onClick={() => handleCheck('endpoint', nicknameValue)}
+                    >
+                      닉네임 중복 확인
+                    </button>
                     {errors.nickname && (
                       <small role="alert">{errors.nickname.message}</small>
                     )}
@@ -156,14 +195,16 @@ export default function SignForm({ type }) {
                     <input
                       type="email"
                       id="email"
-                      placeholder="test@email.com"
+                      placeholder="(선택) test@email.com"
                       {...register('email', {
-                        required: '이메일은 필수값입니다.',
                         pattern: {
                           value: /^[a-zA-Z0-9]+@[a-z]+.[a-z]+$/,
                           message: '올바른 이메일 형식을 입력하세요.',
                         },
                       })}
+                      onChange={(e) =>
+                        handleInputChange('email', e.target.value)
+                      }
                     />
                     {errors.email && (
                       <small role="alert">{errors.email.message}</small>
