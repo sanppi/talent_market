@@ -1,44 +1,44 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-@import "./styles/reset.css";
+@import './styles/reset.css';
 
 @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
 
 @font-face {
-  font-family: "TAEBAEKfont";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/TAEBAEKfont.woff2")
-    format("woff2");
+  font-family: 'TAEBAEKfont';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/TAEBAEKfont.woff2')
+    format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "KNUTRUTHTTF";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2312-1@1.1/KNUTRUTHTTF.woff2")
-    format("woff2");
+  font-family: 'KNUTRUTHTTF';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2312-1@1.1/KNUTRUTHTTF.woff2')
+    format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 * {
-  font-family: "KNUTRUTHTTF";
+  font-family: 'KNUTRUTHTTF';
 }
 @import './styles/reset.css';
 
 :root {
   --header-margin: 90px;
-  --main-navy: #040262;
+  --main-navy: #5585a7;
   --main-brown: #ab6142;
 }
