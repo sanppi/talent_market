@@ -3,11 +3,9 @@ const router = express.Router();
 const member = require("../controller/Cmember");
 
 // 회원가입
-router.get("/signup", member.signup);
 router.post("/signup", member.post_signup);
 
 // 로그인
-router.get("/signin", member.signin);
 router.post("/signin", member.post_signin);
 
 // 회원 정보 페이지 (조회, 수정, 탈퇴)

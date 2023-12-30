@@ -1,20 +1,11 @@
 const { Member } = require("../model");
 
-// 회원 가입
-exports.signup = (req, res) => {
-  res.render("signup");
-};
 exports.post_signup = (req, res) => {
   console.log(req.body);
   Member.create(req.body).then((result) => {
     console.log("User create:", result);
     res.send({ result: true });
   });
-};
-
-// 로그인
-exports.signin = async (req, res) => {
-  res.render("signin");
 };
 
 exports.post_signin = (req, res) => {
@@ -24,6 +15,7 @@ exports.post_signin = (req, res) => {
     console.log("User findOne:", result);
     if (result) {
       req.session.user = result.memberId;
+      console.log(req.session);
       res.send({ result: true, memberId: result.memberId });
     } else res.send({ result: false });
   });
