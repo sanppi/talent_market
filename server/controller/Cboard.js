@@ -65,8 +65,22 @@ exports.updateBoardPage = (req, res) => {
 }
 
 // 게시글 수정
-exports.updateBoard = (req, res) => {
+exports.updateBoard = async (req, res, next) => {
+    try{
+        const { title, price, category, content } = req.body;
 
+        // 이미지는 일단 보류 했습니다.
+
+        await Board.update(
+            { title, price, category, content },
+            { where: { boardId: req.params.boardId } }
+        )
+        res.send("update success")
+    }
+    catch{
+        console.error("에러 메시지 ", error);
+        res.status(500).send("게시글을 수정할 수 없습니다.")
+    }
 }
 
 // 게시글 삭제
