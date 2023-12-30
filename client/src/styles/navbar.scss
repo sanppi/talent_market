@@ -8,7 +8,7 @@
   background-color: #030c3f;
   padding: 20px;
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: 8900;
 
   .hamburgerButton {
     width: 37px;
@@ -27,7 +27,7 @@
     opacity: 1;
     width: 20%;
     height: 500px;
-    z-index: 1000;
+    z-index: 850;
 
     div {
       font-size: 25px;
@@ -38,8 +38,12 @@
   }
 
   .pageTitle {
-    color: white;
-    margin: 0 0 0 -1050px; // 왼쪽으로 더 이동
+    margin: 0 0 0 -50%; // 왼쪽으로 더 이동
+    z-index: 999;
+  }
+
+  .pageTitle a {
+    color: white !important;
   }
 
   .searchSection {
