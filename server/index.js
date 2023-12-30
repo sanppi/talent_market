@@ -25,6 +25,25 @@ app.set("view engine", "ejs");
 app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// 로그인 세션
+app.use(
+  session({
+    secret: "secretKey",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  })
+);
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isAuthenticated;
+  res.locals.user = req.session.user;
+  console.log("res.locals.user", res.locals.user);
+  next();
+});
 
 const router = require("./routes");
 app.use("/", router);
@@ -79,26 +98,6 @@ io.on("connection", (socket) => {
   socket.on("sendMsg", (res) => {
     io.emit("chat", { userId: res.userId, msg: res.msg });
   });
-});
-
-// 로그인 세션
-app.use(
-  session({
-    secret: "secretKey",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-  })
-);
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isAuthenticated;
-  res.locals.user = req.session.user;
-  console.log("res.locals.user", res.locals.user);
-  next();
 });
 
 server.listen(PORT, function () {
