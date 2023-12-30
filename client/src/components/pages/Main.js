@@ -25,6 +25,16 @@ function ProductCard({ product }) {
 
 function Main() {
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // 상품 검색 함수
+  const searchProducts = (products, searchTerm) => {
+    return products.filter(
+      (product) =>
+        product.title.includes(searchTerm) ||
+        product.content.includes(searchTerm)
+    );
+  };
 
   useEffect(() => {
     async function getProduct() {
@@ -43,14 +53,14 @@ function Main() {
 
   return (
     <>
-      <Navbar />
+      <Navbar setSearchTerm={setSearchTerm} />
       <div className="mainPageWrapper">
         <div className="mainPage" style={{ top: "90px", position: "absolute" }}>
           <button className="writeButton">
             <Link to="/write">판매글 작성</Link>
           </button>
           {products &&
-            products.map((product) => (
+            searchProducts(products, searchTerm).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
         </div>

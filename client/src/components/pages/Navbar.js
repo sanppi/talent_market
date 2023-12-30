@@ -1,13 +1,41 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../../styles/navbar.scss";
 
-export default function NavBar() {
+export default function NavBar({ setSearchTerm }) {
+  console.log(typeof setSearchTerm);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [searchTermLocal, setSearchTermLocal] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleHamburgerClick = () => {
     setIsCategoryOpen(!isCategoryOpen);
   };
+
+  const handleSearchTermChange = (event) => {
+    setSearchTermLocal(event.target.value);
+  };
+
+  const handleSearchButtonClick = () => {
+    setSearchTerm(searchTermLocal);
+    navigate(`/?search=${searchTermLocal}`);
+    setSearchTermLocal("");
+  };
+
+  const handleOnKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchButtonClick(); // Enter 입력이 되면 클릭 이벤트 실행
+    }
+  };
+
+  useEffect(() => {
+    if (!location.search) {
+      if (typeof setSearchTerm === "function") {
+        setSearchTerm("");
+      }
+    }
+  }, [location.search, setSearchTerm]);
 
   return (
     <>
@@ -46,8 +74,13 @@ export default function NavBar() {
             type="text"
             className="searchInput"
             placeholder="검색어를 입력하세요"
+            value={searchTermLocal}
+            onChange={handleSearchTermChange}
+            onKeyPress={handleOnKeyPress}
           />
-          <button className="searchButton">검색</button>
+          <button className="searchButton" onClick={handleSearchButtonClick}>
+            검색
+          </button>
         </div>
 
         {/* 로그인 버튼 */}
