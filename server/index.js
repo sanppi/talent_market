@@ -21,35 +21,29 @@ const io = require("socket.io")(server, {
   },
 });
 
-app.set("view engine", "ejs");
-app.use("/static", express.static("static"));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 // 로그인 세션
 app.use(
   session({
     secret: "secretKey",
     resave: false,
     saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
+    // cookie: {
+    //   httpOnly: true,
+    //   secure: false,
+    // },
   })
 );
 
-// app.use((req, res, next) => {
-//   res.locals.isAuthenticated = req.session.isAuthenticated;
-//   res.locals.user = req.session.user;
-//   console.log("res.locals.user", res.locals.user);
-//   next();
-// });
+app.use("/static", express.static("static"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 const router = require("./routes");
 app.use("/", router);
 
 const boardRouter = require("./routes/board");
-app.use("/board", boardRouter);
+app.use("/product", boardRouter);
 
 const chattingRouter = require("./routes/chatting");
 app.use("/chatting", chattingRouter);

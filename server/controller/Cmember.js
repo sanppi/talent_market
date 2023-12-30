@@ -49,6 +49,7 @@ exports.checkDuplicate = async (req, res) => {
   }
 };
 
+
 exports.signIn = (req, res) => {
   Member.findOne({
     where: { id: req.body.id, pw: req.body.pw },
