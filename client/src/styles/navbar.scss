@@ -11,12 +11,16 @@
   z-index: 8900;
 
   .hamburgerButton {
-    width: 37px;
+    width: 40px;
     height: 40px;
+    font-size: 17px;
     margin-right: auto;
     cursor: pointer;
-    font-size: 25px;
-    text-align: center;
+    background-color: #ffffff;
+    display: block;
+    font-size: 17px;
+    border: none;
+    border-radius: 5px;
   }
 
   .categoryWindow {
@@ -38,8 +42,9 @@
   }
 
   .pageTitle {
-    margin: 0 0 0 -50%; // 왼쪽으로 더 이동
+    margin: 0 0 0 -60%;
     z-index: 999;
+    font-size: 35px;
   }
 
   .pageTitle a {
@@ -59,6 +64,9 @@
       height: 40px;
       margin-right: 10px;
       font-size: 20px;
+      border: none;
+      border-radius: 5px;
+      padding-left: 10px;
     }
 
     .searchButton {
@@ -66,6 +74,9 @@
       height: 37px;
       width: 40px;
       font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ffffff;
     }
   }
 
