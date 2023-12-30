@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignIn from './components/pages/SignIn';
 import Chatting from './components/pages/Chatting';
 import MyPage from './components/pages/MyPage';
+import MyPageUpdate from './components/pages/MyPageUpdate';
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
         <Route path="/write" element={<SalePost />} />
         <Route path="/chatting" element={<Chatting />} />
         <Route path="/member/mypage" element={<MyPage />} />
+        <Route
+          path="/member/mypage/update:memberId"
+          element={<MyPageUpdate />}
+        />
         <Route path="/member/signup" element={<SignUp />} />
         <Route path="/member/signin" element={<SignIn />} />
       </Routes>
