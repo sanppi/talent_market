@@ -64,7 +64,7 @@ export default function SalePost() {
                 justifyContent: "space-between",
               }}
             >
-              <h3>상품이미지</h3>
+              <div>상품이미지</div>
               <label htmlFor="fileInput">
                 {!image && (
                   <img
@@ -129,7 +129,9 @@ export default function SalePost() {
             />
           </div>
 
-          <button type="submit">등록하기</button>
+          <button type="submit" className="submitButton">
+            상품 등록하기
+          </button>
         </form>
       </div>
     </>

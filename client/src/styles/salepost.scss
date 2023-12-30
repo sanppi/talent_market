@@ -1,21 +1,23 @@
 .SalePost {
+  padding-bottom: 20px;
   form {
     position: absolute;
     top: 90px;
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
-    height: 100%;
     margin: auto;
     padding: 20px;
     background-color: #f5f5f5;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
 
     div {
-      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
 
       label {
         position: relative;
@@ -23,23 +25,25 @@
           position: absolute;
           top: 0;
           left: 0;
-          width: 100px;
-          height: 100px;
+          width: 250px;
+          height: 250px;
           margin-top: 30px;
         }
       }
 
       input[type="text"],
-      input[type="number"] {
+      input[type="number"],
+      select,
+      textarea {
         width: 60%;
         height: 40px;
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
-        // display: block;
-        margin: 10px;
         margin-left: auto;
         margin-right: auto;
+        margin-top: 15px;
+        margin-bottom: 15px;
       }
 
       input::-webkit-outer-spin-button,
@@ -48,7 +52,7 @@
       }
 
       select {
-        width: 100%;
+        width: 60%;
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
@@ -56,35 +60,44 @@
       }
 
       textarea {
-        width: 100%;
+        width: 60%;
+        height: 200px;
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
-        resize: vertical;
         margin-bottom: 10px;
+        resize: none;
       }
     }
 
     button {
       width: 50%;
       padding: 10px;
-      background-color: #ff5722;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      position: absolute;
+      // position: absolute;
       right: 20px;
       bottom: 20px;
       &:hover {
-        background-color: #e64a19;
+        background-color: #1c72bd;
       }
+      margin-top: 20px; /* 위쪽 마진 설정 */
+    }
+
+    .submitButton {
+      background-color: #3c7db6;
+      display: block;
+      margin-left: auto;
+      width: 30%;
+      font-size: 15px;
     }
   }
 
   .exImage {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     cursor: pointer;
     object-fit: cover;
     position: relative;
