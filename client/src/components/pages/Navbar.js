@@ -65,7 +65,7 @@ export default function NavBar({ setSearchTerm }) {
 
         {/* 페이지 이름 부분 */}
         <h2 className="pageTitle">
-          <Link to="/">로고</Link>
+          <Link to="/">재능마켓🏞️</Link>
         </h2>
 
         {/* 검색창과 검색 버튼 */}
