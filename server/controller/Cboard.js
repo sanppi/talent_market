@@ -1,6 +1,8 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
 const { Board } = require("../model");
 
+// 클라이언트 product, 서버 board
+
 // SB: 클라이언트 등록하기 버튼과 연결된 부분입니다.
 // 미들웨어를 사용해야해서 양식이 다릅니다.
 // 게시글 작성
