@@ -8,7 +8,7 @@ exports.index = async(req, res) => {
     console.log(boards);
     res.json({ products: boards })
 
-    console.log("server controller index")
+    console.log("server controller index", req.session)
   }
   catch(error){
     console.log("에러 코드 ", error);

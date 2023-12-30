@@ -7,18 +7,38 @@ import axios from 'axios';
 
 const socket = io.connect('http://localhost:8000', { autoConnect: false });
 export default function Chatting() {
-  const [id, setId] = useState("example_id")
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
-
+  const [memberId, setMemberId] = useState("1")
+  const [id, setId] = useState("seobon")
   const [nickname, setNickname] = useState("")
+  const [chattingRoomList, setChattingRoomList] = useState([]);
+
   const [msgInput, setMsgInput] = useState('');
   const [userIdInput, setUserIdInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userList, setUserList] = useState({});
+  
+  useEffect( async () => {
+    if (memberId === '') {
+      alert('로그인이 필요한 서비스입니다.');
+      return;
+    }
 
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/chatting/userCheck?memberId=${memberId}`,
+      );
+
+      setNickname(response.data.nickname)
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, []);
+
+  
 
   useEffect(() => {
     // 서버로부터 로그인 세션 정보를 가져오는 요청을 보냅니다.
@@ -26,43 +46,38 @@ export default function Chatting() {
         const data = response.data;
         setIsAuthenticated(data.isAuthenticated);
         setUser(data.user);
-        console.log("hey");
-        console.log(data.user);
+        // console.log("hey");
+        // console.log(data.user);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  const userCheck = async (e) => {
-    if (id === '') {
-      alert('로그인이 필요한 서비스입니다.');
-      return;
-    }
+  // const userCheck = async (e) => {
+  //   if (id === '') {
+  //     alert('로그인이 필요한 서비스입니다.');
+  //     return;
+  //   }
 
-    try {
-      const response = await axios.get(
-        `http://localhost:8000/chatting/userCheck?id=${id}`,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:8000/chatting/userCheck?id=${id}`,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       }
+  //     );
   
-      console.log(response.data.nickname);
-      console.log(user)
-      setNickname(response.data.nickname)
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+  //     setNickname(response.data.nickname)
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
 
-  const entryChat = () => {
-    // initSocketConnect();
-    // socket.emit('entry', { userId: userIdInput });
-    userCheck();
-  };
+  const entryChat = () => {}
+
 
 
 
@@ -104,20 +119,20 @@ export default function Chatting() {
     return options;
   }, [userList]);
 
-  const addChatList = useCallback(
-    (res) => {
-      const type = res.userId === userId ? 'my' : 'other';
-      const content = `${res.userId}: ${res.msg}`;
-      const newChatList = [...chatList, { type: type, content: content }];
-      setChatList(newChatList);
-    },
-    [userId, chatList]
-  );
+  // const addChatList = useCallback(
+  //   (res) => {
+  //     const type = res.userId === userId ? 'my' : 'other';
+  //     const content = `${res.userId}: ${res.msg}`;
+  //     const newChatList = [...chatList, { type: type, content: content }];
+  //     setChatList(newChatList);
+  //   },
+  //   [userId, chatList]
+  // );
 
-  useEffect(() => {
-    socket.on('chat', addChatList);
-    return () => socket.off('chat', addChatList);
-  }, [addChatList]);
+  // useEffect(() => {
+  //   socket.on('chat', addChatList);
+  //   return () => socket.off('chat', addChatList);
+  // }, [addChatList]);
 
   useEffect(() => {
     const notice = (res) => {
@@ -140,6 +155,18 @@ export default function Chatting() {
 
   return (
     <>
+     { id ? (
+      <>
+        <div> {nickname}님의 채팅방</div>
+        <div>
+          <div></div>
+        </div>
+        <button onClick={entryChat}>dd</button>
+      </>
+
+      ) : (<></>) }
+
+      
       {/* {nickname ? (
         <>
           <div>{nickname}님 환영합니다.</div>
@@ -171,9 +198,9 @@ export default function Chatting() {
           </div>
         </>
       )} */}
-      <div>
+      {/* <div> */}
         {/* 세션 정보를 사용하는 내용을 여기에 작성합니다 */}
-        <button onClick={entryChat}>구매하기</button>
+        {/* <button onClick={entryChat}>구매하기</button>
         {isAuthenticated ? (
           <div>
             <p>사용자가 인증되었습니다.</p>
@@ -182,7 +209,7 @@ export default function Chatting() {
         ) : (
           <p>사용자가 인증되지 않았습니다.</p>
         )}
-      </div>
+      </div> */}
     </>
   );
 }
