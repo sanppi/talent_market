@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Member } = require("../model");
 const { ChattingRoom } = require("../model");
 const { Board } = require("../model");
@@ -27,7 +28,6 @@ exports.userCheck = (req, res) => {
         nickname: results.dataValues.nickname
       };
       res.send(data);
-      // console.log(data)
     } else {
       res.send(false);
     }
@@ -41,7 +41,10 @@ exports.userCheck = (req, res) => {
 exports.getRoomList = (req, res) => {
   ChattingRoom.findAll({
     where: {
-      memberId: req.query.memberId,
+      [Op.or]: [
+        { sellerMemberId: req.query.memberId },
+        { buyerMemberId: req.query.memberId }
+      ]
     },
     include: [
       { model: Board, attributes: ["title"] },
@@ -51,6 +54,8 @@ exports.getRoomList = (req, res) => {
     if (results.length > 0) {
       const data = results.map((result) => ({
         roomId: result.dataValues.roomId,
+        sellerMemberId: result.dataValues.sellerMemberId,
+        buyerMemberId: result.dataValues.buyerMemberId,
         roomName: result.dataValues.roomName,
         title: result.dataValues.Board.title,
       }));

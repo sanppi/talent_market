@@ -48,6 +48,9 @@ app.use("/product", boardRouter);
 const chattingRouter = require("./routes/chatting");
 app.use("/chatting", chattingRouter);
 
+const chatRoomRouter = require("./routes/chatRoom");
+app.use("/chatRoom", chatRoomRouter);
+
 const memberRouter = require("./routes/member");
 app.use("/member", memberRouter);
 

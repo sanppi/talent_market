@@ -1,22 +1,56 @@
 import "../../styles/chat.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import Chat from "./Chat";
 import Notice from "./Notice";
 import io from "socket.io-client";
 
 const socket = io.connect("http://localhost:8000", { autoConnect: false });
+
 export default function ChatRoom() {
+  const { id } = useParams();
+
+  const [boardInfo, setBoardInfo] = useState({});
+  const [userId, setUserId] = useState("null");
+
   const [msgInput, setMsgInput] = useState("");
   const [userIdInput, setUserIdInput] = useState("");
   const [chatList, setChatList] = useState([]);
-  const [userId, setUserId] = useState(null);
+
   const [userList, setUserList] = useState({});
-  const [dmTo, setDmTo] = useState("all");
+  const [dmTo, setDmTo] = useState('all');
+
+  useEffect(() => {
+    console.log("id", id);
+  }, []);
 
   const initSocketConnect = () => {
     console.log("connected", socket.connected);
     if (!socket.connected) socket.connect();
   };
+
+  useEffect( async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/chatRoom/:id/getBoardInfo?roomId=${id}`,
+      );  
+      setBoardInfo({
+        image: response.data.image,
+        nickname : response.data.nickname,
+        price: response.data.price,
+        starAvg: response.data.starAvg,
+        title: response.data.title,
+      })
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("boardInfo", boardInfo);
+  }, [boardInfo]);
+
 
   useEffect(() => {
     socket.on("error", (res) => {
@@ -29,36 +63,26 @@ export default function ChatRoom() {
 
     socket.on("userList", (res) => {
       setUserList(res);
-    });
+    })
   }, []);
 
-  // useMemo: 값을 메모라이징 한다.
-  // 뒤에 있는 의존성 배열에 있는 값이 update 될 때마다 연산을 실행함.
   const userListOptions = useMemo(() => {
-    // [<option></option>, <option></option>]
     const options = [];
-    for (const key in userList) {
-      // key : userList의 key값 (socket id)
-      // userList[key] : userList의 value값 (사용자 id)
+    for(const key in userList) {
       if (userList[key] === userId) continue;
-      options.push(
-        <option key={key} value={key}>
-          {userList[key]}
-        </option>
-      );
+      options.push(<option key={key} value={key}>{userList[key]}</option>)
     }
-    return options;
-  }, [userList]);
+    return options
+  }, [userList])
 
-  // useCallback: 함수를 메모라이징 한다
-  // 뒤에 있는 의존성 배열에 있는 값이 update 될 때만 함수를 다시 선언함.
   const addChatList = useCallback(
     (res) => {
       const type = res.userId === userId ? "my" : "other";
-      const content = `${res.dm ? "(속닥속닥) " : ""} ${res.userId}: ${
-        res.msg
-      }`;
-      const newChatList = [...chatList, { type: type, content: content }];
+      const content = `${res.msg}`
+      const newChatList = [
+        ...chatList,
+        { type: type, content: content },
+      ];
       setChatList(newChatList);
     },
     [userId, chatList]
@@ -67,7 +91,10 @@ export default function ChatRoom() {
   useEffect(() => {
     socket.on("chat", addChatList);
     return () => socket.off("chat", addChatList);
-  }, [addChatList]);
+  }, [addChatList])
+  
+
+
 
   useEffect(() => {
     const notice = (res) => {
@@ -80,6 +107,7 @@ export default function ChatRoom() {
   }, [chatList]);
 
   const sendMsg = () => {
+    // initSocketConnect();
     if (msgInput !== "") {
       socket.emit("sendMsg", { userId: userId, msg: msgInput, dm: dmTo });
       setMsgInput("");
@@ -90,33 +118,40 @@ export default function ChatRoom() {
     initSocketConnect();
     socket.emit("entry", { userId: userIdInput });
   };
+
   return (
     <>
-      {userId ? (
-        <>
-          <div>{userId}님 환영합니다.</div>
-          <div className="chat-container">
-            {chatList.map((chat, i) => {
-              if (chat.type === "notice") return <Notice key={i} chat={chat} />;
-              else return <Chat key={i} chat={chat} />;
-            })}
+      <div class="container text-center" style={{ backgroundColor: 'lightyellow', marginBottom: '10px' }}>
+        <div class="row">
+          <div class="col">
+          {boardInfo.image}
           </div>
-          <div className="input-container">
-            <select value={dmTo} onChange={(e) => setDmTo(e.target.value)}>
-              <option value="all">전체</option>
-              {userListOptions}
-            </select>
-            <input
-              type="text"
-              value={msgInput}
-              onChange={(e) => setMsgInput(e.target.value)}
-            />
-            <button onClick={sendMsg}>전송</button>
+          <div class="col-6">
+            <div>{boardInfo.title}</div>
+            <div>{boardInfo.price}</div>
+            <div>{boardInfo.starAvg}</div>
           </div>
-        </>
-      ) : (
-        <>
-          <div className="input-container">
+          <div class="col">
+            <div>{boardInfo.nickname}</div>
+            <div>판매자설명</div>
+          </div>
+        </div>
+        <div className="chat-container">
+
+          {chatList.map((chat, i) => {
+            if (chat.type === "notice") return <Notice key={i} chat={chat} />;
+            else return <Chat key={i} chat={chat} />;
+          })}
+        </div>
+        <div className="input-container">
+          <input
+            type="text"
+            value={msgInput}
+            onChange={(e) => setMsgInput(e.target.value)}
+          />
+          <button onClick={sendMsg}>전송</button>
+        </div>
+        <div className="input-container">
             <input
               type="text"
               value={userIdInput}
@@ -124,8 +159,7 @@ export default function ChatRoom() {
             />
             <button onClick={entryChat}>입장</button>
           </div>
-        </>
-      )}
+      </div>
     </>
   );
 }
