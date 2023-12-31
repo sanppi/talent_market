@@ -12,8 +12,6 @@ code {
     monospace;
 }
 
-@import './styles/reset.css';
-
 @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
 
 @font-face {
@@ -39,6 +37,7 @@ code {
 
 :root {
   --header-margin: 90px;
-  --main-navy: #5585a7;
+  --main-blue: #5585a7;
   --main-brown: #ab6142;
+  --bright-blue: #00bbea;
 }

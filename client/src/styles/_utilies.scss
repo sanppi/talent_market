@@ -4,3 +4,14 @@
   padding: $padding;
   cursor: pointer;
 }
+
+@mixin smallText($size, $color, $mtop) {
+  font-size: $size;
+  color: $color;
+  margin-top: $mtop;
+}
+
+@mixin size($width, $height) {
+  width: $width;
+  height: $height;
+}
