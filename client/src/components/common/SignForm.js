@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/signform.scss';
-import { useNavigate, Link } from 'react-router-dom';
 
 export default function SignForm({ type }) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [signInCk, setSignInCk] = useState(false);
   const [signUpCk, setSignUpCk] = useState({ id: null, nickname: null });
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState({
+    valid: '',
+    idDuplicate: '',
+    nicknameDuplicate: '',
+  });
   const navigate = useNavigate();
 
   const {
@@ -28,45 +32,50 @@ export default function SignForm({ type }) {
     setIsSignUp(type === 'signup');
   }, [type]);
 
+  // 로그인 시 빈값 확인
   useEffect(() => {
     const isIdValid = idValue.trim() !== '';
     const isPwValid = pwValue.trim() !== '';
     const isSignInValid = isIdValid && isPwValid;
 
-    setIsFormValid(isSignInValid);
+    setSignInCk(isSignInValid);
   }, [idValue, pwValue]);
 
+  // 수동으로 유효성 검사
   const handleInputChange = async (fieldName, value) => {
-    // 값 업데이트
     setValue(fieldName, value);
-
-    // 유효성 검사 실행
     await trigger(fieldName);
   };
-
-  // TODO : 중복 확인(아이디, 닉네임) 다 되어야 회원가입 버튼 abled
-  // 회원가입 validate를 따로 해줘야 하나?
-  // 차라리 signup, signin 컴포넌트를 따로 만드는 게 나을지도 but slide..
 
   const onSubmit = async (data) => {
     // 회원가입 시
     if (isSignUp) {
-      const { pwCk, ...signUpData } = data;
-      try {
-        const response = await axios({
-          url: 'http://localhost:8000/member/signup',
-          method: 'POST',
-          data: signUpData,
-        });
+      // 중복 체크 통과
+      if (signUpCk.id && signUpCk.nickname) {
+        const { pwCk, ...signUpData } = data;
+        try {
+          const response = await axios({
+            url: 'http://localhost:8000/member/signup',
+            method: 'POST',
+            data: signUpData,
+          });
 
-        if (response.data.result) {
-          setIsSignUp(false);
+          if (response.data.result) {
+            setIsSignUp(false);
+          }
+        } catch (err) {
+          console.error('signup err: ', err.message);
         }
-      } catch (err) {
-        console.error('signup err: ', err.message);
+        // 중복 체크 미통과
+      } else {
+        setMsg((prev) => ({
+          ...prev,
+          valid: '아이디와 닉네임 중복 확인해 주세요.',
+        }));
       }
-    } else {
       // 로그인 시
+    } else if (!isSignUp && signInCk) {
+      console.log('aaa');
       try {
         const response = await axios({
           url: 'http://localhost:8000/member/signin',
@@ -74,9 +83,14 @@ export default function SignForm({ type }) {
           data: data,
         });
 
+        // DB에 존재 -> 로그인 이동
         if (response.data.result) navigate('/');
+        // DB에 없음
         else {
-          setMsg('아이디와 비밀번호가 일치하지 않습니다.');
+          setMsg((prev) => ({
+            ...prev,
+            valid: '아이디와 비밀번호가 일치하지 않습니다.',
+          }));
         }
       } catch (err) {
         console.error('signin err: ', err.message);
@@ -87,29 +101,37 @@ export default function SignForm({ type }) {
   const pw = useRef();
   pw.current = watch('pw');
 
-  const handleCheck = async (type, value) => {
-    const data = { [type]: value };
-    const response = await axios.post(
-      'http://localhost:8000/member/checkDuplicate',
-      data
-    );
+  // TEMP : 중복 체크 확인용 콘솔
+  // useEffect(() => {
+  //   console.log('signUpCk updated:', signUpCk);
+  //   console.log('msg updated:', msg);
+  // }, [signUpCk, msg]);
 
-    if (response.data.result) {
-      // type에 id nickname이 담김
-      // TODO : check? ✅
-      if (type === 'id') {
-        setSignUpCk((prev) => ({ ...prev, id: true }));
-        console.log('ck', signUpCk);
+  // 중복 체크
+  const handleCheck = async (type, value) => {
+    try {
+      // TODO : 영문자 or 숫자만 서버에 전송 / '올바른 아이디 형식을 입력해 주세요.'
+      const data = { [type]: value };
+      const response = await axios.post(
+        'http://localhost:8000/member/checkDuplicate',
+        data
+      );
+
+      if (response.data.result) {
+        setSignUpCk((prev) => ({ ...prev, [type]: true }));
+        setMsg((prev) => ({
+          ...prev,
+          [`${type}Duplicate`]: `OK`,
+        }));
       } else {
-        setSignUpCk((prev) => ({ ...prev, nickname: true }));
-        console.log('ck', signUpCk);
+        setSignUpCk((prev) => ({ ...prev, [type]: false }));
+        setMsg((prev) => ({
+          ...prev,
+          [`${type}Duplicate`]: `❌`,
+        }));
       }
-    } else {
-      // 처음에 중복 -> null / 중복에서 통과로 -> true
-      // TODO : 중복 메시지 표시
-      // 기존 msg는 폼 validate, 중복 msg는 또 새로운 state?
-      console.log(`${response.data.type} 중복입니다.`);
-      console.log('ck', signUpCk);
+    } catch (err) {
+      console.error('중복 체크 에러: ', err);
     }
   };
 
@@ -134,12 +156,7 @@ export default function SignForm({ type }) {
                     })}
                     onChange={(e) => handleInputChange('id', e.target.value)}
                   />
-                  {/* id가 null이면 없고, false일 때만 중복처리 */}
-                  <span>
-                    {signUpCk.id === false && '중복입니다.'}
-                    {signUpCk.id === true && '✅'}
-                  </span>
-
+                  <span role="alert">{msg.idDuplicate}</span>
                   <button
                     type="button"
                     onClick={() => handleCheck('id', idValue)}
@@ -202,6 +219,8 @@ export default function SignForm({ type }) {
                         handleInputChange('nickname', e.target.value)
                       }
                     />
+                    <span role="alert">{msg.nicknameDuplicate}</span>
+
                     <button
                       type="button"
                       onClick={() => handleCheck('nickname', nicknameValue)}
@@ -231,6 +250,7 @@ export default function SignForm({ type }) {
                     {errors.email && (
                       <small role="alert">{errors.email.message}</small>
                     )}
+                    <div className="signInMsg">{msg.valid}</div>
                   </div>
                   {/* TODO : 결제 정보(은행, 계좌번호) 컴포넌트 */}
                   <button
@@ -251,14 +271,14 @@ export default function SignForm({ type }) {
                 <div className="signInput">
                   <label htmlFor="pw">비밀번호</label>
                   <input type="password" id="pw" ref={pw} {...register('pw')} />
-                  <div className="signInMsg">{msg}</div>
+                  <div className="signInMsg">{msg.valid}</div>
                 </div>
                 <div className="signIn">
                   <div className="signInButtonBox">
                     <button
                       type="submit"
                       className="signButton"
-                      disabled={!isFormValid}
+                      disabled={!signInCk}
                     >
                       로그인
                     </button>
