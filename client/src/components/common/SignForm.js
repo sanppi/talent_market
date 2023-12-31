@@ -7,7 +7,7 @@ import '../../styles/signform.scss';
 export default function SignForm({ type }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [signInCk, setSignInCk] = useState(false);
-  const [signUpCk, setSignUpCk] = useState({ id: null, nickname: null });
+  const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
   const [msg, setMsg] = useState({
     valid: '',
     idDuplicate: '',
@@ -72,6 +72,7 @@ export default function SignForm({ type }) {
           ...prev,
           valid: '아이디와 닉네임 중복 확인해 주세요.',
         }));
+        // TODO : 아이디나 닉네임 값이 변경되면 다시 setMsg valid 빈값으로
       }
       // 로그인 시
     } else if (!isSignUp && signInCk) {
@@ -110,28 +111,41 @@ export default function SignForm({ type }) {
   // 중복 체크
   const handleCheck = async (type, value) => {
     try {
-      // TODO : 영문자 or 숫자만 서버에 전송 / '올바른 아이디 형식을 입력해 주세요.'
-      const data = { [type]: value };
-      const response = await axios.post(
-        'http://localhost:8000/member/checkDuplicate',
-        data
-      );
-
-      if (response.data.result) {
-        setSignUpCk((prev) => ({ ...prev, [type]: true }));
+      if (errors.id) {
         setMsg((prev) => ({
           ...prev,
-          [`${type}Duplicate`]: `OK`,
+          [`${type}Duplicate`]: '❌',
         }));
       } else {
-        setSignUpCk((prev) => ({ ...prev, [type]: false }));
-        setMsg((prev) => ({
-          ...prev,
-          [`${type}Duplicate`]: `❌`,
-        }));
+        const data = { [type]: value };
+        const response = await axios.post(
+          'http://localhost:8000/member/checkDuplicate',
+          data
+        );
+
+        if (response.data.result) {
+          setSignUpCk((prev) => ({ ...prev, [type]: true }));
+          setMsg((prev) => ({
+            ...prev,
+            [`${type}Duplicate`]: 'OK',
+          }));
+        } else {
+          setSignUpCk((prev) => ({ ...prev, [type]: false }));
+          setMsg((prev) => ({
+            ...prev,
+            [`${type}Duplicate`]: '❌',
+          }));
+        }
       }
     } catch (err) {
       console.error('중복 체크 에러: ', err);
+    }
+  };
+
+  // 엔터키 동작
+  const handleEnter = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit(onSubmit)();
     }
   };
 
@@ -151,7 +165,8 @@ export default function SignForm({ type }) {
                       required: '아이디는 필수값입니다.',
                       pattern: {
                         value: /^[a-zA-Z0-9]{2,20}$/,
-                        message: '아이디는 영문자 2자리 이상 입력하세요.',
+                        message:
+                          '아이디는 영문자나 숫자 2자리 이상 입력하세요.',
                       },
                     })}
                     onChange={(e) => handleInputChange('id', e.target.value)}
@@ -250,16 +265,21 @@ export default function SignForm({ type }) {
                     {errors.email && (
                       <small role="alert">{errors.email.message}</small>
                     )}
-                    <div className="signInMsg">{msg.valid}</div>
+                    <div className="signMsg">
+                      {!signUpCk.id || !signUpCk.nickname ? msg.valid : ''}
+                    </div>
                   </div>
                   {/* TODO : 결제 정보(은행, 계좌번호) 컴포넌트 */}
-                  <button
-                    type="submit"
-                    className="signButton"
-                    disabled={!isValid}
-                  >
-                    회원가입
-                  </button>
+                  <div className="signButtonBox">
+                    <button
+                      type="submit"
+                      className="signButton"
+                      disabled={!isValid}
+                      onKeyDown={(e) => handleEnter(e)}
+                    >
+                      회원가입
+                    </button>
+                  </div>
                 </div>
               </>
             ) : (
@@ -271,14 +291,15 @@ export default function SignForm({ type }) {
                 <div className="signInput">
                   <label htmlFor="pw">비밀번호</label>
                   <input type="password" id="pw" ref={pw} {...register('pw')} />
-                  <div className="signInMsg">{msg.valid}</div>
+                  <div className="signMsg">{msg.valid}</div>
                 </div>
                 <div className="signIn">
-                  <div className="signInButtonBox">
+                  <div className="signButtonBox">
                     <button
                       type="submit"
                       className="signButton"
                       disabled={!signInCk}
+                      onKeyDown={(e) => handleEnter(e)}
                     >
                       로그인
                     </button>

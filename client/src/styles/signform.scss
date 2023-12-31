@@ -79,17 +79,35 @@ $transition-duration: 0.5s;
         @include smallText(11px, tomato, 10px);
       }
 
-      .signInMsg {
-        @include smallText(12px, tomato, 10px);
+      .signMsg {
+        @include smallText(12px, tomato, 15px);
+        text-align: center;
         height: 30px;
       }
     }
 
-    .signInButtonBox {
+    .signButtonBox {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+
+      .signButton {
+        @include button(20px, 10px);
+        margin: 0 20px;
+        width: 100%;
+        background-color: var(--main-blue);
+        color: white;
+
+        &:hover {
+          background-color: var(--main-blue);
+        }
+
+        &:disabled {
+          background-color: transparent;
+          color: rgba(0, 0, 0, 0.5);
+        }
+      }
 
       div:last-child {
         margin-top: 20px;
@@ -106,23 +124,6 @@ $transition-duration: 0.5s;
           opacity: 1;
         }
       }
-    }
-  }
-
-  .signButton {
-    @include button(20px, 10px);
-
-    width: 100%;
-    background-color: var(--main-blue);
-    color: white;
-
-    &:hover {
-      background-color: var(--main-blue);
-    }
-
-    &:disabled {
-      background-color: transparent;
-      color: rgba(0, 0, 0, 0.5);
     }
   }
 }
