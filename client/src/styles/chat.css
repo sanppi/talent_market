@@ -3,7 +3,6 @@
 }
 
 .chat-container {
-  width: 320px;
   min-height: 500px;
   background-color: rgb(203, 191, 255);
   padding: 10px 15px 0;
@@ -40,7 +39,6 @@
 }
 
 .input-container {
-  width: 320px;
   display: flex;
   justify-content: space-between;
 }
