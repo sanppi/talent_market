@@ -96,11 +96,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    if (res.dm === "all") io.emit("chat", { userId: res.userId, msg: res.msg })
-    else {
-      io.to(res.dm).emit("chat", { userId: res.userId, msg: res.msg, dm: true })
-      socket.emit("chat", { userId: res.userId, msg: res.msg, dm: true })
-    }
+    io.emit("chat", { userId: res.userId, msg: res.msg })
   });
 });
 
