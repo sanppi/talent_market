@@ -24,6 +24,12 @@ $transition-duration: 0.5s;
       animation: slide $transition-duration ease-in-out;
     }
 
+    .signMsg {
+      @include smallText(12px, tomato, 15px);
+      text-align: center;
+      height: 30px;
+    }
+
     .signInput {
       margin: 20px 0;
       max-width: 600px;
@@ -77,52 +83,6 @@ $transition-duration: 0.5s;
       small {
         display: block;
         @include smallText(11px, tomato, 10px);
-      }
-
-      .signMsg {
-        @include smallText(12px, tomato, 15px);
-        text-align: center;
-        height: 30px;
-      }
-    }
-
-    .signButtonBox {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      .signButton {
-        @include button(20px, 10px);
-        margin: 0 20px;
-        width: 100%;
-        background-color: var(--main-blue);
-        color: white;
-
-        &:hover {
-          background-color: var(--main-blue);
-        }
-
-        &:disabled {
-          background-color: transparent;
-          color: rgba(0, 0, 0, 0.5);
-        }
-      }
-
-      div:last-child {
-        margin-top: 20px;
-      }
-
-      a {
-        font-size: 13px;
-        opacity: 0.6;
-        text-decoration: none;
-        color: var(--main-blue);
-        transition: opacity 0.3s ease;
-
-        &:hover {
-          opacity: 1;
-        }
       }
     }
   }
