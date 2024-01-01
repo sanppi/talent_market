@@ -11,33 +11,44 @@ const socket = io.connect("http://localhost:8000", { autoConnect: false });
 export default function ChatRoom() {
   const { id } = useParams();
 
+  // 세션 기능 확인 후, 수정 예정 코드
+  const [memberId, setMemberId] = useState("")
+
   const [boardInfo, setBoardInfo] = useState({});
-  const [userId, setUserId] = useState("null");
+  const [userId, setUserId] = useState("");
+  const [userDo, setUserDo] = useState("");
+  
 
   const [msgInput, setMsgInput] = useState("");
-  const [userIdInput, setUserIdInput] = useState("");
   const [chatList, setChatList] = useState([]);
 
-  const [userList, setUserList] = useState({});
-  const [dmTo, setDmTo] = useState('all');
-
-  useEffect(() => {
-    console.log("id", id);
-  }, []);
 
   const initSocketConnect = () => {
     console.log("connected", socket.connected);
     if (!socket.connected) socket.connect();
   };
 
-  useEffect( async () => {
+  const getBoardInfo = async() => {
     try {
       const response = await axios.get(
         `http://localhost:8000/chatRoom/:id/getBoardInfo?roomId=${id}`,
-      );  
+      );
+
+      if (memberId == response.data.sellerMemberId) {
+        setUserDo("판매");
+        console.log("판매자입니다.")
+      } else if (memberId == response.data.buyerMemberId) {
+        setUserDo("구매");
+        console.log("구매자입니다.")
+      } else {
+        // console.log("잘못된 접근입니다.");
+        // return;
+      }
+
       setBoardInfo({
+        sellerMemberId: response.data.sellerMemberId,
+        buyerMemberId: response.data.buyerMemberId,
         image: response.data.image,
-        nickname : response.data.nickname,
         price: response.data.price,
         starAvg: response.data.starAvg,
         title: response.data.title,
@@ -45,14 +56,47 @@ export default function ChatRoom() {
     } catch (error) {
       console.error('Error:', error);
     }
-  }, []);
+  };
+
+  const entryChat = () => {
+    initSocketConnect();
+    socket.emit("entry", { userId: memberId });
+  };
+
+  const sendMsg = () => {
+    // initSocketConnect();
+    if (msgInput !== "") {
+      socket.emit("sendMsg", { userId: userId, msg: msgInput });
+      setMsgInput("");
+    }
+  };
+
+  const addChatList = useCallback(
+    (res) => {
+      const nickname = "nickname";
+      const type = res.userId === userId ? "my" : "other";
+      const content = `${res.msg}`
+      const newChatList = [
+        ...chatList,
+        { nickname: nickname, type: type, content: content },
+      ];
+      setChatList(newChatList);
+    },
+    [userId, chatList]
+  );
+
+
+  // useEffect(() => {
+  //   console.log("boardInfo", boardInfo);
+  // }, [boardInfo]);
 
   useEffect(() => {
-    console.log("boardInfo", boardInfo);
-  }, [boardInfo]);
-
+    getBoardInfo();
+  }, [userDo])
 
   useEffect(() => {
+    getBoardInfo();
+
     socket.on("error", (res) => {
       alert(res.msg);
     });
@@ -60,41 +104,12 @@ export default function ChatRoom() {
     socket.on("entrySuccess", (res) => {
       setUserId(res.userId);
     });
-
-    socket.on("userList", (res) => {
-      setUserList(res);
-    })
   }, []);
-
-  const userListOptions = useMemo(() => {
-    const options = [];
-    for(const key in userList) {
-      if (userList[key] === userId) continue;
-      options.push(<option key={key} value={key}>{userList[key]}</option>)
-    }
-    return options
-  }, [userList])
-
-  const addChatList = useCallback(
-    (res) => {
-      const type = res.userId === userId ? "my" : "other";
-      const content = `${res.msg}`
-      const newChatList = [
-        ...chatList,
-        { type: type, content: content },
-      ];
-      setChatList(newChatList);
-    },
-    [userId, chatList]
-  );
 
   useEffect(() => {
     socket.on("chat", addChatList);
     return () => socket.off("chat", addChatList);
   }, [addChatList])
-  
-
-
 
   useEffect(() => {
     const notice = (res) => {
@@ -106,21 +121,16 @@ export default function ChatRoom() {
     return () => socket.off("notice", notice);
   }, [chatList]);
 
-  const sendMsg = () => {
-    // initSocketConnect();
-    if (msgInput !== "") {
-      socket.emit("sendMsg", { userId: userId, msg: msgInput, dm: dmTo });
-      setMsgInput("");
-    }
-  };
-
-  const entryChat = () => {
-    initSocketConnect();
-    socket.emit("entry", { userId: userIdInput });
-  };
-
   return (
     <>
+      <div className="input-container">
+        <input
+          type="text"
+          value={memberId}
+          onChange={(e) => setMemberId(e.target.value)}
+        />
+        <button onClick={entryChat}>입장</button>
+      </div>
       <div class="container text-center" style={{ backgroundColor: 'lightyellow', marginBottom: '10px' }}>
         <div class="row">
           <div class="col">
@@ -142,6 +152,10 @@ export default function ChatRoom() {
             if (chat.type === "notice") return <Notice key={i} chat={chat} />;
             else return <Chat key={i} chat={chat} />;
           })}
+
+          <button>{userDo} 확정</button>
+          <button>{userDo} 취소</button>
+          {/* 리더님 이거 왜 바로 적용이 안될까요? */}
         </div>
         <div className="input-container">
           <input
@@ -151,14 +165,6 @@ export default function ChatRoom() {
           />
           <button onClick={sendMsg}>전송</button>
         </div>
-        <div className="input-container">
-            <input
-              type="text"
-              value={userIdInput}
-              onChange={(e) => setUserIdInput(e.target.value)}
-            />
-            <button onClick={entryChat}>입장</button>
-          </div>
       </div>
     </>
   );

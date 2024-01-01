@@ -9,10 +9,12 @@ export default function Chatting() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
+  // 세션 기능 확인 후, 수정 예정 코드
   const [memberId, setMemberId] = useState("1")
-  const [id, setId] = useState("seobon")
-  const [nickname, setNickname] = useState("")
+
+  const [nickname, setNickname] = useState(null)
   const [chattingRoomList, setChattingRoomList] = useState([]);
+
 
   useEffect(() => {
     // 서버로부터 로그인 세션 정보를 가져오는 요청을 보냅니다.
@@ -27,7 +29,7 @@ export default function Chatting() {
   }, []);
 
 
-  useEffect( async () => {
+  const userCheck = async() => {
     if (memberId === '') {
       alert('로그인이 필요한 서비스입니다.');
       return;
@@ -42,10 +44,9 @@ export default function Chatting() {
     } catch (error) {
       console.error('Error:', error);
     }
-  }, []);
+  };
 
-
-  useEffect( async () => {
+  const getRoomList = async() => {
     try {
       const response = await axios.get(
         `http://localhost:8000/chatting/getRoomList?memberId=${memberId}`,
@@ -61,15 +62,16 @@ export default function Chatting() {
     } catch (error) {
       console.error('Get Room List Error:', error);
     }
-  }, []);
-  
+  };
+
   useEffect(() => {
-    console.log(chattingRoomList[0]);
-  }, [chattingRoomList]);
+    userCheck();
+    getRoomList()
+  },[])
 
   return (
     <>
-      { id ? (
+      { nickname ? (
         <>
           <div> {nickname}님의 채팅방</div>
           <div>
@@ -78,6 +80,9 @@ export default function Chatting() {
                 <ChattingRoomList key={i} chattingRoom={chattingRoom}/>
               ))}
             </div>
+            <button>채팅방 생성</button>
+            <button>채팅방 삭제</button>
+            <button>채팅방 업데이트</button>
           </div>
         </>
       ) : (<></>) }
