@@ -6,10 +6,7 @@ const Cboard = require("../controller/Cboard");
 router.post("/create", Cboard.boardCreate);
 
 // 게시글 페이지 조회
-// router.get("/:boardId", Cboard.boardDetailPage);
-router.get("/:boardId", function(req, res){
-    Cboard.boardDetailPage
-});
+router.get("/:boardId", Cboard.boardDetail);
 
 // 게시글 수정
 // router.patch("/update/:boardId", Cboard.updateBoard);
