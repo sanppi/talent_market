@@ -4,12 +4,14 @@ import { useParams } from "react-router-dom";
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
-  const { id } = useParams();
+  const { boardId } = useParams();
 
   useEffect(() => {
     async function getProductDetail() {
       try {
-        const response = await axios.get(`http://localhost:8000/${id}`);
+        console.log(`Requested boardId: ${boardId}`);
+        const response = await axios.get(`http://localhost:8000/product/${boardId}`);
+
         setProduct(response.data.product);
         console.log(response.data);
         console.log(response.data.product);
@@ -18,7 +20,7 @@ export default function ProductDetailPage() {
       }
     }
     getProductDetail();
-  }, [id]);
+  }, [boardId]);
 
   return (
     <div>

@@ -28,30 +28,37 @@ const boardCreateHandler = async (req, res) => {
     }
 };
 
-module.exports = {
-    boardCreate: [upload.single("image"), boardCreateHandler],
-};
-
 // 게시글 페이지 조회
-exports.boardDetailPage = async (req, res) => {
-    try{
+const boardDetailPage = async (req, res) => {
+    try {
         const boardId = req.params.boardId;
-        const board = await Board.findOne({
+        console.log(`Received boardId: ${boardId}`);
+        
+        const product = await Board.findOne({
             where: { boardId: boardId }
-            // include 추가 예정
         })
 
-        res.json({ board: board }) // 이 코드는 수정 가능성이 있습니다.
-        console.log("update product details by boardId");
-    }
-    catch (error) {
-        console.log("에러 코드 ", error);
+        console.log(`Found product: ${JSON.stringify(product)}`);
+
+        if (product) {
+            res.json({ product: product })
+        } else {
+            res.status(404).send("상품 정보를 조회할 수 없습니다.")
+        }
+    } catch (error) {
+        console.error("에러 발생: ", error);
         res.status(500).send("상세 페이지에 접근할 수 없습니다.")
     }
 }
 
+
+module.exports = {
+    boardCreate: [upload.single("image"), boardCreateHandler],
+    boardDetail: boardDetailPage,
+};
+
 // 게시글 수정 페이지
-exports.updateBoardPage = async (req, res) => {
+const boardUpdatePage = async (req, res) => {
     // 로그인 확인 추가 예정
 
     // 사용자 추가 예정
@@ -72,7 +79,7 @@ exports.updateBoardPage = async (req, res) => {
 }
 
 // 게시글 수정
-exports.updateBoard = async (req, res, next) => {
+const boardUpdateProcess = async (req, res, next) => {
     try{
         const { title, price, category, content } = req.body;
 
@@ -91,7 +98,7 @@ exports.updateBoard = async (req, res, next) => {
 }
 
 // 게시글 삭제
-exports.deleteBoard = (req, res) => {
+const boardDelete = (req, res) => {
     Board.destroy({
         where: { boardId: req.params.boardId }
     }).then((result) => {
@@ -104,6 +111,6 @@ exports.deleteBoard = (req, res) => {
 }
 
 // 게시글 추천(좋아요) 기능
-exports.boardLike = (req, res) => {
+const boardLike = (req, res) => {
     
 }

@@ -8,6 +8,7 @@ import Chatting from './components/pages/Chatting';
 import ChatRoom from './components/pages/ChatRoom';
 import MyPage from './components/pages/MyPage';
 import MyPageUpdate from './components/pages/MyPageUpdate';
+import ProductDetailPage from './components/pages/ProductDetailPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/chatting" element={<Chatting />} />
         <Route path="/chatRoom/:id" element={<ChatRoom />} />
         <Route path="/member/mypage" element={<MyPage />} />
+        <Route path="/product/:boardId" element={<ProductDetailPage />} />
         <Route
           path="/member/mypage/update:memberId"
           element={<MyPageUpdate />}
