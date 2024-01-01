@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/signform.scss';
-import SignUpInput from '../SignUpInput';
-import SignButton from '../SignButton';
-import SignInInput from '../SignInInput';
+import SignUpInput from './SignUpInput';
+import SignButton from './SignButton';
+import SignInInput from './SignInInput';
 
 export default function SignForm({ type }) {
   const [isSignUp, setIsSignUp] = useState(false);
