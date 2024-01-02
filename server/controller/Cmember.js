@@ -55,10 +55,9 @@ exports.signIn = (req, res) => {
   Member.findOne({
     where: { id: req.body.id, pw: req.body.pw },
   }).then((result) => {
-    console.log('User findOne:', result);
+    // console.log('User findOne:', result);
     if (result) {
       req.session.user = result.memberId;
-      console.log('req.session.user', req.session.user);
       res.send({ result: true, memberId: result.memberId });
     } else res.send({ result: false });
   });

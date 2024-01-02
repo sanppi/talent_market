@@ -7,8 +7,6 @@ exports.index = async(req, res) => {
     const boards = await Board.findAll();
     console.log(boards);
     res.json({ products: boards })
-
-    console.log("server controller index", req.session)
   }
   catch(error){
     console.log("에러 코드 ", error);

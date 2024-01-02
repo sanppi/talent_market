@@ -8,12 +8,7 @@ exports.getBoardInfo = (req, res) => {
       roomId: req.query.roomId,
     },
     include: [
-      { model: Board, attributes: ["image"] },
-      { model: Board, attributes: ["title"] },
-      { model: Board, attributes: ["price"] },
-      { model: Board, attributes: ["starAvg"] },
-      // 리더님 FK를 Member에서 두 개(sellerMemberId, buyerMemberId) 걸어서
-      // include로 가져올 때 어떻게 해야 할 지 모르겠습니다.
+      { model: Board, attributes: ["image","title","price","starAvg"] },
     ],
   })
   .then((result) => {
@@ -36,3 +31,39 @@ exports.getBoardInfo = (req, res) => {
     res.status(500).send("Get Board Info Error");
   });
 };
+
+exports.postChat = (req, res) => {
+  console.log("?????????????????", req.body)
+  const data = {
+    roomId: req.body.roomId,
+    type: req.body.type,
+    nickname: req.body.nickname,
+    chatText: req.body.chatText
+  };
+
+  // SB: data를 DB에 업로드합니다.
+  Map_Database.create(data).then(() => {
+    // SB: 업데이트에 성공하면 업데이트 한 내용을 찾아 사용자 정보인 닉네임과 이미지를 포함하여 응답으로 전송합니다.
+    Map_Database.findOne({
+      where: {
+        id: req.body.id,
+        storeID: req.body.storeID,
+        reviewComment: req.body.reviewComment,
+        rating: req.body.rating,
+      },
+      include: [
+        { model: User, attributes: ["nickname"] },
+        { model: User, attributes: ["image"] },
+      ],
+    })
+      .then((results) => {
+        res.send(results.dataValues);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+      });
+  });
+};
+
+

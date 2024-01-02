@@ -110,6 +110,10 @@ export default function SignForm({ type }) {
           url: 'http://localhost:8000/member/signin',
           method: 'POST',
           data: data,
+          // headers: {
+          //   "Access-"
+          // }, 
+          withCredentials: true
         });
 
         // DB에 존재 -> 로그인 이동
