@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import "../../styles/navbar.scss";
 
-export default function NavBar({ setSearchTerm }) {
-  console.log(typeof setSearchTerm);
+export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [searchTermLocal, setSearchTermLocal] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const isProductDetailPage = location.pathname.includes("productDetail");
 
   const handleHamburgerClick = () => {
     setIsCategoryOpen(!isCategoryOpen);
@@ -18,25 +18,31 @@ export default function NavBar({ setSearchTerm }) {
     setSearchTermLocal(event.target.value);
   };
 
-  const handleSearchButtonClick = () => {
-    setSearchTerm(searchTermLocal);
-    navigate(`/?search=${searchTermLocal}`);
-    setSearchTermLocal("");
+  const handleSearchButtonClick = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/?search=${searchTermLocal}`
+        // 이게 주소가 이게 맞나... 모르겠네요
+      );
+      setSearchResults(response.data);
+      navigate(`/?search=${searchTermLocal}`);
+      setSearchTermLocal("");
+    } catch (error) {
+      console.error("Search failed", error);
+    }
   };
 
   const handleOnKeyPress = (e) => {
     if (e.key === "Enter") {
-      handleSearchButtonClick(); // Enter 입력이 되면 클릭 이벤트 실행
+      handleSearchButtonClick();
     }
   };
 
   useEffect(() => {
     if (!location.search) {
-      if (typeof setSearchTerm === "function") {
-        setSearchTerm("");
-      }
+      setSearchResults([]);
     }
-  }, [location.search, setSearchTerm]);
+  }, [location.search]);
 
   return (
     <>
@@ -48,8 +54,6 @@ export default function NavBar({ setSearchTerm }) {
         <button className="hamburgerButton" onClick={handleHamburgerClick}>
           ☰
         </button>
-
-        {/* <Link to="/">HOME</Link> */}
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
@@ -83,6 +87,21 @@ export default function NavBar({ setSearchTerm }) {
             검색
           </button>
         </div>
+
+        {/* 검색 결과 보여주기 */}
+        {searchResults.map((product) => (
+          <div key={product.boardId}>
+            <div className="imgContainer">
+              <img
+                src={`http://localhost:8000/static/userImg/${product.image}`}
+                alt={product.title}
+              />
+            </div>
+            <h4>{product.title}</h4>
+            <p>{product.price}원</p>
+            <p>{product.rating}</p>
+          </div>
+        ))}
 
         {/* 로그인 버튼 */}
         <button className="loginButton">
