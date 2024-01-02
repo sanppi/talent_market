@@ -1,12 +1,10 @@
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import '../../styles/mypage.scss';
 
 function MyPage({ user }) {
-  // user 정보를 이용한 작업 수행
-  const nickname = user ? `${user.nickname} (id)` : '게스트';
-  const user1 = useSelector((state) => state.auth.user);
-  console.log('auth user', user1);
+  const { memberId, nickname, id, redCard } = user;
+  const showNickname = user ? `${nickname} (${id})` : '게스트';
 
   return (
     <>
@@ -16,13 +14,13 @@ function MyPage({ user }) {
             <div className="myProfileImg">
               <img src="" alt="" />
             </div>
-            <Link to="/member/mypage/update">
+            <Link to={`/member/mypage/update/${memberId}`}>
               <button className="myProfileUpdate">회원정보 수정</button>
             </Link>
           </div>
           <div className="myProfileBox2">
-            <div className="myProfileNickname">{nickname}</div>
-            <div className="myProfileContent">받은 신고 수</div>
+            <div className="myProfileNickname">{showNickname}</div>
+            <div className="myProfileContent">받은 신고 수 : {redCard}</div>
           </div>
         </div>
 
@@ -39,12 +37,12 @@ function MyPage({ user }) {
   );
 }
 
-// mapStateToProps 함수 - state에서 필요한 데이터를 props로 매핑
+// mapStateToProps 함수 : state에서 필요한 데이터를 props로 매핑
 const mapStateToProps = (state) => ({
-  user: state.auth.user,
+  user: state.auth,
 });
 
-// connect 함수를 사용하여 Redux 스토어와 연결된 컴포넌트 생성
+// connect 함수를 사용하여 redux 스토어와 연결된 컴포넌트 생성
 const ConnectedMyPage = connect(mapStateToProps)(MyPage);
 
 export default ConnectedMyPage;

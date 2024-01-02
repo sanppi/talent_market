@@ -4,22 +4,29 @@ import { persistReducer } from 'redux-persist';
 const initialState = {
   isLoggedIn: false,
   memberId: null,
+  id: '',
+  nickname: '',
+  redCard: 0,
+  //  bankName: '',
+  //  accountNum: null
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'LOGIN_SUCCESS':
+      const { memberId, id, nickname, redCard } = action.payload;
       return {
         ...state,
         isLoggedIn: true,
-        memberId: action.payload,
+        memberId,
+        id,
+        nickname,
+        redCard,
+        //  bankName: '',
+        //  accountNum: null
       };
     case 'LOGOUT':
-      return {
-        ...state,
-        isLoggedIn: false,
-        memberId: null,
-      };
+      return initialState;
     default:
       return state;
   }

@@ -4,9 +4,10 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import '../../styles/signform.scss';
 import SignButton from '../sign/SignButton';
+import { connect } from 'react-redux';
 
-export default function MyPageUpdate() {
-  const [isSignUp, setIsSignUp] = useState(false);
+function MyPageUpdate({ user }) {
+  const { memberId, nickname, email } = user;
   const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
   const [msg, setMsg] = useState({
     validIn: '',
@@ -28,13 +29,13 @@ export default function MyPageUpdate() {
 
   // 중복 체크 미통과 시 메시지 초기화
   useEffect(() => {
-    if (isSignUp && (!signUpCk.id || !signUpCk.nickname)) {
+    if (!signUpCk.id || !signUpCk.nickname) {
       setMsg((prev) => ({
         ...prev,
         validUp: '',
       }));
     }
-  }, [signUpCk.id, signUpCk.nickname, isSignUp]);
+  }, [signUpCk.id, signUpCk.nickname]);
 
   // 사용자가 폼 필드 값을 변경할 때 메시지 초기화
   useEffect(() => {
@@ -53,19 +54,25 @@ export default function MyPageUpdate() {
     [setValue, trigger]
   );
 
+  // TODO : 유효성 검사 마친 후, 서버에 요청 잘 갔으면 해당 값으로 redux도 업데이트
+  // 초기화
+  // useEffect(() => {
+  //   setValue('nickname', user.nickname);
+  //   setValue('email', user.email);
+  // }, [user]);
+
   const onSubmit = async (data) => {
     // 중복 체크 통과
-    if (signUpCk.id && signUpCk.nickname) {
-      const { pwCk, ...signUpData } = data;
+    if (signUpCk.nickname) {
       try {
         const response = await axios({
-          url: `${process.env.REACT_APP_DB_HOST}member/signup`,
+          url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
           method: 'POST',
-          data: signUpData,
+          data: data,
         });
 
         if (response.data.result) {
-          setIsSignUp(false);
+          // TODO : action이랑 reducer 만들기 : dispatch(updateUser(data));
         }
       } catch (err) {
         console.error('signup err: ', err.message);
@@ -74,7 +81,7 @@ export default function MyPageUpdate() {
     } else {
       setMsg((prev) => ({
         ...prev,
-        validUp: '아이디와 닉네임 중복 확인해 주세요.',
+        validUp: '닉네임 중복 확인해 주세요.',
       }));
     }
   };
@@ -122,16 +129,6 @@ export default function MyPageUpdate() {
       handleSubmit(onSubmit);
     }
   };
-
-  // 수정할 때 필요한 state - 객체로 해야 할듯..?
-  //   const [editing, setEditing] = useState('');
-  //   const [editNickname, setEditNickname] = useState('');
-  //   const [editText, setEditText] = useState('');
-
-  // 1. 유저가 입력한 DB 불러오기
-  // 2. 수정하고서 버튼 클릭시 update : axios patch
-  // 3. 성공 응답 받으면 alert(모달) 수정되었습니다 -> 마이페이지로 useNavigate
-  // 4. 실패 응답 받으면 정보 수정에 실패했습니다? 비밀번호가 일치하지 않습니다?
 
   return (
     <>
@@ -182,6 +179,7 @@ export default function MyPageUpdate() {
                 id="nickname"
                 register={register}
                 onChange={handleInputChange}
+                // TODO : 유효성 검사 통과한 값을 일괄 입력해서 서버 전송 + redux에도 업데이트
                 value={watchObj?.nickname || ''}
                 error={errors.nickname}
                 validation={{
@@ -222,3 +220,11 @@ export default function MyPageUpdate() {
     </>
   );
 }
+
+const mapStateToProps = (state) => ({
+  user: state.auth,
+});
+
+const ConnectedMyPageUpdate = connect(mapStateToProps)(MyPageUpdate);
+
+export default ConnectedMyPageUpdate;
