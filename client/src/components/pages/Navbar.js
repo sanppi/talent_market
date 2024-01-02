@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../../styles/navbar.scss";
+import "../../styles/main.scss";
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -21,10 +22,15 @@ export default function NavBar() {
   const handleSearchButtonClick = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/?search=${searchTermLocal}`
-        // 이게 주소가 이게 맞나... 모르겠네요
+        `http://localhost:8000/search?search=${searchTermLocal}`
       );
-      setSearchResults(response.data);
+      // response.data가 배열인지 확인
+      if (Array.isArray(response.data)) {
+        setSearchResults(response.data);
+      } else {
+        // 배열이 아니면 빈 배열로 설정
+        setSearchResults([]);
+      }
       navigate(`/?search=${searchTermLocal}`);
       setSearchTermLocal("");
     } catch (error) {
