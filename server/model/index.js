@@ -20,6 +20,7 @@ db.ChattingtText = require("./ChattingtText")(sequelize, Sequelize);
 db.Comment = require("./comment")(sequelize, Sequelize);
 db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
 db.Member = require("./Member")(sequelize, Sequelize);
+db.Stars = require("./Stars")(sequelize, Sequelize);
 
 // Member와 Board 연결 (1대 다)
 db.Member.hasMany(db.Board, { foreignKey: 'memberId' });
@@ -42,6 +43,9 @@ db.LikeBoardTable.belongsTo(db.Member, { foreignKey: 'memberId' });
 db.Board.hasMany(db.LikeBoardTable, { foreignKey: 'boardId' });
 db.LikeBoardTable.belongsTo(db.Board, { foreignKey: 'boardId' });
 
+// Board와 Stars 연결 (1대 1)
+db.Stars.hasMany(db.Board, {foreignKey: 'starAvg'});
+db.Board.belongsTo(db.Stars, {foreignKey: 'starAvg'});
 
 db.Member.hasMany(db.ChattingRoom, { foreignKey: 'sellerMemberId', sourceKey: 'memberId' });
 db.ChattingRoom.belongsTo(db.Member, { foreignKey: 'sellerMemberId', targetKey: 'memberId' });
