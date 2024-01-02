@@ -58,7 +58,16 @@ exports.signIn = (req, res) => {
     // console.log('User findOne:', result);
     if (result) {
       req.session.user = result.memberId;
-      res.send({ result: true, memberId: req.session.user });
+
+      const userData = {
+        memberId: result.memberId,
+        id: result.id,
+        nickname: result.nickname,
+        redCard: result.redCard,
+        // bankName: result.bankName,
+        // accountNum: result.accountNum
+      };
+      res.send({ result: true, userData });
     } else res.send({ result: false });
   });
 };

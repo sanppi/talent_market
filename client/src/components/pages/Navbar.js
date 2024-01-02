@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import "../../styles/navbar.scss";
-import "../../styles/main.scss";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import '../../styles/navbar.scss';
+import '../../styles/main.scss';
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [searchTermLocal, setSearchTermLocal] = useState("");
+  const [searchTermLocal, setSearchTermLocal] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,14 +32,14 @@ export default function NavBar() {
         setSearchResults([]);
       }
       navigate(`/search?search=${searchTermLocal}`); // 이 부분을 수정
-      setSearchTermLocal("");
+      setSearchTermLocal('');
     } catch (error) {
-      console.error("Search failed", error);
+      console.error('Search failed', error);
     }
   };
 
   const handleOnKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSearchButtonClick();
     }
   };
@@ -63,7 +63,7 @@ export default function NavBar() {
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
-          <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
+          <div className={`categoryWindow ${isCategoryOpen ? 'open' : ''}`}>
             <div>성대모사</div>
             <div>코디</div>
             <div>그림</div>
@@ -93,6 +93,10 @@ export default function NavBar() {
             검색
           </button>
         </div>
+
+        <Link to="/member/mypage">
+          <button>마이페이지</button>
+        </Link>
 
         {/* 검색 결과 보여주기 */}
         {/* {searchResults.map((product) => (

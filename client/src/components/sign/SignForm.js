@@ -6,12 +6,11 @@ import '../../styles/signform.scss';
 import SignUpInput from './SignUpInput';
 import SignButton from './SignButton';
 import SignInInput from './SignInInput';
-import { useSelector } from 'react-redux';
 
 import { connect } from 'react-redux';
 import { loginSuccess, logout } from '../../module/action/authActions';
 
-export function SignForm({ type, loginSuccess, logout }) {
+export function SignForm({ type, loginSuccess }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [signInCk, setSignInCk] = useState(false);
   const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
@@ -119,10 +118,8 @@ export function SignForm({ type, loginSuccess, logout }) {
         // DB에 존재 -> 로그인 이동
         if (response.data.result) {
           // loginSuccess 함수를 호출할 때 액션 생성자 함수로 호출
-          loginSuccess(response.data.memberId);
-          navigate('/', {
-            state: { isLogIn: true, user: response.data.memberId },
-          });
+          loginSuccess(response.data.userData);
+          navigate('/');
         }
         // DB에 없음
         else {
