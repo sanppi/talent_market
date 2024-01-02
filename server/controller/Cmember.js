@@ -58,7 +58,7 @@ exports.signIn = (req, res) => {
     // console.log('User findOne:', result);
     if (result) {
       req.session.user = result.memberId;
-      res.send({ result: true, memberId: result.memberId });
+      res.send({ result: true, memberId: req.session.user });
     } else res.send({ result: false });
   });
 };
