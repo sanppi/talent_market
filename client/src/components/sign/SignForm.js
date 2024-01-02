@@ -84,7 +84,7 @@ export default function SignForm({ type }) {
         const { pwCk, ...signUpData } = data;
         try {
           const response = await axios({
-            url: 'http://localhost:8000/member/signup',
+            url: `${process.env.REACT_APP_DB_HOST}member/signup`,
             method: 'POST',
             data: signUpData,
           });
@@ -107,7 +107,7 @@ export default function SignForm({ type }) {
     } else if (!isSignUp && signInCk) {
       try {
         const response = await axios({
-          url: 'http://localhost:8000/member/signin',
+          url: `${process.env.REACT_APP_DB_HOST}member/signin`,
           method: 'POST',
           data: data,
         });
@@ -139,7 +139,7 @@ export default function SignForm({ type }) {
         } else {
           const data = { [type]: value };
           const response = await axios.post(
-            'http://localhost:8000/member/checkDuplicate',
+            `${process.env.REACT_APP_DB_HOST}member/checkDuplicate`,
             data
           );
 
