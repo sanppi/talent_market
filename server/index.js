@@ -13,7 +13,7 @@ const { Comment } = require("./model");
 
 const cors = require("cors");
 // const { emit } = require("process");
-app.use(cors());
+app.use(cors({origin: true, credentials: true}));
 
 const io = require("socket.io")(server, {
   cors: {
@@ -27,10 +27,13 @@ app.use(
     secret: "secretKey",
     resave: false,
     saveUninitialized: true,
-    // cookie: {
-    //   httpOnly: true,
-    //   secure: false,
-    // },
+  // cookie: {
+  //   domain: 'localhost',
+  //   path: '/',
+  //   sameSite: 'none',
+  //   httpOnly: true,
+  //   secure: true,
+  // },
   })
 );
 

@@ -50,10 +50,6 @@ function Board(sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      starAvg: {
-        type: DataTypes.FLOAT,
-        allowNull: true,
-      },
     },
     {
       tableName: "Board",

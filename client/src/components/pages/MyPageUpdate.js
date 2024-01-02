@@ -1,4 +1,3 @@
-import SignForm from '../sign/SignForm';
 import SignUpInput from '../sign/SignUpInput';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -124,10 +123,15 @@ export default function MyPageUpdate() {
     }
   };
 
-  // 수정할 때 필요한 state
+  // 수정할 때 필요한 state - 객체로 해야 할듯..?
   //   const [editing, setEditing] = useState('');
   //   const [editNickname, setEditNickname] = useState('');
   //   const [editText, setEditText] = useState('');
+
+  // 1. 유저가 입력한 DB 불러오기
+  // 2. 수정하고서 버튼 클릭시 update : axios patch
+  // 3. 성공 응답 받으면 alert(모달) 수정되었습니다 -> 마이페이지로 useNavigate
+  // 4. 실패 응답 받으면 정보 수정에 실패했습니다? 비밀번호가 일치하지 않습니다?
 
   return (
     <>

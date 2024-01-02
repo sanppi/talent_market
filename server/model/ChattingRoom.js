@@ -7,11 +7,7 @@ function ChattingRoom(sequelize, DataTypes){
                 primaryKey: true,
                 autoIncrement: true
               },
-              sellerMemberId: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-              },
-              buyerMemberId: {
+              memberId: {
                 type: DataTypes.INTEGER,
                 allowNull: false
               },
