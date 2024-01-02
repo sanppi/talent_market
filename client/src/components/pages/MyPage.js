@@ -11,15 +11,12 @@ export default function MyPage() {
               <img src="" alt="" />
             </div>
             <Link to="/member/mypage/update">
-              <button>회원정보 수정</button>
+              <button className="myProfileUpdate">회원정보 수정</button>
             </Link>
           </div>
           <div className="myProfileBox2">
-            <div className="myProfileNickname">닉네임</div>
-            <div className="myProfileContent">
-              소개글
-              <button>수정</button>
-            </div>
+            <div className="myProfileNickname">닉네임(id)</div>
+            <div className="myProfileContent">받은 신고 수</div>
           </div>
         </div>
 
