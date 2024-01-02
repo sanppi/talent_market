@@ -41,7 +41,7 @@ function Main() {
   useEffect(() => {
     async function getProduct() {
       try {
-        const response = await axios.get("http://localhost:8000/"); // 수정된 부분
+        const response = await axios.get("http://localhost:8000/", { withCredentials : true }); // 수정된 부분
         setProducts(response.data.products);
         console.log(response.data);
         console.log(response.data.products);

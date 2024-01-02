@@ -110,6 +110,10 @@ export default function SignForm({ type }) {
           url: `${process.env.REACT_APP_DB_HOST}member/signin`,
           method: 'POST',
           data: data,
+          // headers: {
+          //   "Access-"
+          // }, 
+          withCredentials: true
         });
 
         // DB에 존재 -> 로그인 이동
