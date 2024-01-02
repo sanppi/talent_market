@@ -4,12 +4,7 @@ const { ChattingRoom } = require("../model");
 const { Board } = require("../model");
 
 exports.getSessionInfo = (req, res) => {
-  console.log("req.session", req.session.id)
-  console.log("req.session", req.session.user)
   const user = req.session.user;
-  console.log("user", user)
-  // 클라이언트로 세션 정보를 응답합니다.
-  // res.json({ isAuthenticated, user });
   res.json(user);
 };
 
@@ -38,23 +33,23 @@ exports.userCheck = (req, res) => {
 exports.getRoomList = (req, res) => {
   ChattingRoom.findAll({
     where: {
-      [Op.or]: [
-        { sellerMemberId: req.query.memberId },
-        { buyerMemberId: req.query.memberId }
-      ]
+      memberId: req.query.memberId,
     },
+    // 리더님 검색 기능 질문있습니다
     include: [
-      { model: Board, attributes: ["title"] },
+      { model: Member, attributes: ["nickname"] },
+      { model: Board, attributes: ["title", "memberId"] },
     ],
   })
   .then((results) => {
     if (results.length > 0) {
       const data = results.map((result) => ({
         roomId: result.dataValues.roomId,
-        sellerMemberId: result.dataValues.sellerMemberId,
-        buyerMemberId: result.dataValues.buyerMemberId,
+        memberId: result.dataValues.memberId,
         roomName: result.dataValues.roomName,
+        nickname: result.dataValues.Member.nickname,
         title: result.dataValues.Board.title,
+        sellerMemberId: result.dataValues.Board.memberId,
       }));
       res.send(data);
     } else {
@@ -64,5 +59,25 @@ exports.getRoomList = (req, res) => {
   .catch((error) => {
     console.log("Get Room List Error", error);
     res.status(500).send("Get Room List Error");
+  });
+};
+
+exports.deleteRoom = (req, res) => {
+  console.log("req.data.roomId!!!!!!!!!!!!!!!!!!", req.body.roomId);
+  ChattingRoom.destroy({
+    where: {
+      roomId: req.body.roomId,
+    },
+  })
+  .then((result) => {
+    if (result == 1) {
+      res.send("채팅방이 삭제되었습니다.");
+    } else {
+      res.send("이미 삭제된 채팅방입니다.");
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).send("Delete Room Error");
   });
 };
