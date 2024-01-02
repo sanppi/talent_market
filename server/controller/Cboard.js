@@ -1,5 +1,5 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
-const { Board } = require("../model");
+const { Member, Board } = require("../model");
 
 // 클라이언트 product, 서버 board
 
@@ -32,13 +32,13 @@ const boardCreateHandler = async (req, res) => {
 const boardDetailPage = async (req, res) => {
     try {
         const boardId = req.params.boardId;
-        console.log(`Received boardId: ${boardId}`);
+        // console.log(`Received boardId: ${boardId}`);
         
         const product = await Board.findOne({
             where: { boardId: boardId }
         })
 
-        console.log(`Found product: ${JSON.stringify(product)}`);
+        // console.log(`Found product: ${JSON.stringify(product)}`);
 
         if (product) {
             res.json({ product: product })
