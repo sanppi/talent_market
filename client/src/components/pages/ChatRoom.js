@@ -24,14 +24,14 @@ export default function ChatRoom() {
 
 
   const initSocketConnect = () => {
-    console.log("connected", socket.connected);
+    // console.log("connected", socket.connected);
     if (!socket.connected) socket.connect();
   };
 
   const getBoardInfo = async() => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/chatRoom/:id/getBoardInfo?roomId=${id}`,
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getBoardInfo?roomId=${id}`,
       );
 
       // console.log("여기여기", response.data)
@@ -92,10 +92,10 @@ export default function ChatRoom() {
       };
 
       const postChat = async() => {
-        console.log(chatData);
+        // console.log(chatData);
         try {
           const response = await axios.post(
-            `http://localhost:8000/chatRoom/:id/postChat`,
+            `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
           chatData,
             {
               headers: {
@@ -104,7 +104,7 @@ export default function ChatRoom() {
             }
           )
     
-            console.log(response.data);
+            // console.log(response.data);
         } catch (error) {
           console.error('Error:', error);
         }
