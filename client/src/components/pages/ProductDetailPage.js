@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import "../../styles/productdetail.scss";
+import { useSelector } from "react-redux";
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -9,6 +10,12 @@ export default function ProductDetailPage() {
   const [review, setReview] = useState("");
   const { boardId } = useParams();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  }, []);
 
   useEffect(() => {
     async function getProductDetail() {
@@ -28,12 +35,15 @@ export default function ProductDetailPage() {
     getProductDetail();
   }, [boardId]);
 
+  const { user } = useSelector((state) => state.auth);
+
   const handleHeartClick = async () => {
-    setHeart(!heart);
-    if (!isLoggedIn) {
+    if (!user) {
       alert("로그인이 필요한 기능입니다.");
       return;
     }
+
+    setHeart(!heart);
 
     try {
       const response = await axios.post(
