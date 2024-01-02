@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import "../../styles/productdetail.scss";
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -25,16 +26,28 @@ export default function ProductDetailPage() {
   }, [boardId]);
 
   return (
-    <div>
-      <h2>{product.title}</h2>
-      <img
-        src={`http://localhost:8000/static/userImg/${product.image}`}
-        alt={product.title}
-      />
-      <p>{product.price}원</p>
-      {/* <p>{product.rating}</p> */}
-      <p>{product.content}</p>
-      <button>구매하기</button>
+    <div className="productDetail">
+      <div className="productInfo">
+        <div>
+          <img
+            className="productImage"
+            src={`http://localhost:8000/static/userImg/${product.image}`}
+            alt={product.title}
+          />
+        </div>
+        <div className="productDescription">
+          <div className="productTitle">{product.title}</div>
+          <div className="productPrice">
+            <p>{product.price}원</p>
+          </div>
+          <div>(판매자 정보,...?넣기)</div>
+          <button>연락하기</button>
+        </div>
+      </div>
+      <hr />
+      <div className="productContent">
+        <p>{product.content}</p>
+      </div>
     </div>
   );
 }

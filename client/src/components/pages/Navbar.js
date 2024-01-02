@@ -8,6 +8,7 @@ export default function NavBar({ setSearchTerm }) {
   const [searchTermLocal, setSearchTermLocal] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const isProductDetailPage = location.pathname.includes("productDetail");
 
   const handleHamburgerClick = () => {
     setIsCategoryOpen(!isCategoryOpen);
