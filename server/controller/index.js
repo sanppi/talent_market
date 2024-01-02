@@ -25,14 +25,10 @@ exports.search = async (req, res, next) => {
       where: {
         [Op.or]: [
           {
-            title: {
-              [Op.like]: '%' + words + '%'
-            }
+            title: { [Op.like]: '%' + words + '%' }
           },
           {
-            content: {
-              [Op.like]: '%' + words + '%'
-            }
+            content: { [Op.like]: '%' + words + '%' }
           }
         ]
       }
