@@ -49,6 +49,6 @@ exports.search = async (req, res, next) => {
 
 exports.getSession = async (req, res) => {
   const user = req.session.user;
-  console.log('user', user);
+  console.log('user', req.session);
   res.send({ result: true, user: user });
 };

@@ -12,20 +12,34 @@ import ProductDetailPage from './components/pages/ProductDetailPage';
 import SearchResults from './components/pages/SearchResult';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from './module/action/authActions';
 
 function App() {
   // mount시 유저 세션 정보(로그인 여부, memberId) 가져와서 user에 넣어두기
+  // const dispatch = useDispatch();
+  // // const location = useLocation(); // 현재 경로 정보
+
+  // // mount 시 유저 세션 정보(로그인 여부, memberId) 가져와서 Redux에 저장
   // async function getSession() {
-  //   const res = await axios.post('http://localhost:8000/getSession');
-  //   if (res.data.result) {
-  //     const data = res.data.user;
-  //     console.log('data', data);
+  //   try {
+  //     const response = await axios.post('http://localhost:8000/getSession');
+
+  //     if (response.data.result) {
+  //       const userData = response.data.user;
+  //       console.log('userData', userData);
+  //       // 여기서 dispatch를 사용하여 Redux 상태를 업데이트
+  //       dispatch(loginSuccess(userData));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching session:', error.message);
   //   }
   // }
 
-  // getSession();
+  // useEffect(() => {
+  //   getSession();
+  // }, []);
 
-  // useEffect()
   return (
     <Router>
       <Navbar />

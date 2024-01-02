@@ -9,7 +9,7 @@ import SignInInput from './SignInInput';
 import { useSelector } from 'react-redux';
 
 import { connect } from 'react-redux';
-import { loginSuccess, logout } from '../../action/authActions';
+import { loginSuccess, logout } from '../../module/action/authActions';
 
 export function SignForm({ type, loginSuccess, logout }) {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -113,18 +113,16 @@ export function SignForm({ type, loginSuccess, logout }) {
           url: `${process.env.REACT_APP_DB_HOST}member/signin`,
           method: 'POST',
           data: data,
-          // headers: {
-          //   "Access-"
-          // },
           withCredentials: true,
         });
 
         // DB에 존재 -> 로그인 이동
         if (response.data.result) {
-          // console.log('log result', response.data.memberId);
-          const userData = response.data.memberId;
-          loginSuccess(userData);
-          navigate('/', { state: { user: userData } });
+          // loginSuccess 함수를 호출할 때 액션 생성자 함수로 호출
+          loginSuccess(response.data.memberId);
+          navigate('/', {
+            state: { isLogIn: true, user: response.data.memberId },
+          });
         }
         // DB에 없음
         else {
