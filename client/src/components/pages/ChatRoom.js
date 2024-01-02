@@ -34,6 +34,7 @@ export default function ChatRoom() {
         `http://localhost:8000/chatRoom/:id/getBoardInfo?roomId=${id}`,
       );
 
+      // console.log("여기여기", response.data)
       if (memberId == response.data.sellerMemberId) {
         setUserDo("판매");
         console.log("판매자입니다.")
@@ -41,8 +42,8 @@ export default function ChatRoom() {
         setUserDo("구매");
         console.log("구매자입니다.")
       } else {
-        // console.log("잘못된 접근입니다.");
-        // return;
+        console.log("잘못된 접근입니다.");
+        return;
       }
 
       setBoardInfo({
@@ -61,6 +62,7 @@ export default function ChatRoom() {
   const entryChat = () => {
     initSocketConnect();
     socket.emit("entry", { userId: memberId });
+    getBoardInfo()
   };
 
   const sendMsg = () => {
@@ -81,21 +83,45 @@ export default function ChatRoom() {
         { nickname: nickname, type: type, content: content },
       ];
       setChatList(newChatList);
+
+      const chatData = {
+        roomId: id,
+        type: type,
+        nickname: nickname,
+        chatText: content,
+      };
+
+      const postChat = async() => {
+        console.log(chatData);
+        try {
+          const response = await axios.post(
+            `http://localhost:8000/chatRoom/:id/postChat`,
+          chatData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+    
+            console.log(response.data);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      postChat();
     },
     [userId, chatList]
   );
 
+  
 
   // useEffect(() => {
-  //   console.log("boardInfo", boardInfo);
-  // }, [boardInfo]);
+  //   getBoardInfo();
+  // }, [userDo])
 
   useEffect(() => {
-    getBoardInfo();
-  }, [userDo])
-
-  useEffect(() => {
-    getBoardInfo();
+    // getBoardInfo();
 
     socket.on("error", (res) => {
       alert(res.msg);
@@ -155,7 +181,6 @@ export default function ChatRoom() {
 
           <button>{userDo} 확정</button>
           <button>{userDo} 취소</button>
-          {/* 리더님 이거 왜 바로 적용이 안될까요? */}
         </div>
         <div className="input-container">
           <input
