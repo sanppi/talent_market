@@ -51,7 +51,7 @@ function Board(sequelize, DataTypes) {
         allowNull: true,
       },
       starAvg: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.FLOAT,
         allowNull: true,
       },
     },
