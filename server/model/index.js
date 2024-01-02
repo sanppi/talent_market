@@ -47,12 +47,9 @@ db.LikeBoardTable.belongsTo(db.Board, { foreignKey: 'boardId' });
 db.Stars.hasMany(db.Board, {foreignKey: 'starAvg'});
 db.Board.belongsTo(db.Stars, {foreignKey: 'starAvg'});
 
-db.Member.hasMany(db.ChattingRoom, { foreignKey: 'sellerMemberId', sourceKey: 'memberId' });
-db.ChattingRoom.belongsTo(db.Member, { foreignKey: 'sellerMemberId', targetKey: 'memberId' });
 
-db.Member.hasMany(db.ChattingRoom, { foreignKey: 'buyerMemberId', sourceKey: 'memberId' });
-db.ChattingRoom.belongsTo(db.Member, { foreignKey: 'buyerMemberId', targetKey: 'memberId' });
-
+db.Member.hasMany(db.ChattingRoom, { foreignKey: 'memberId' });
+db.ChattingRoom.belongsTo(db.Member, { foreignKey: 'memberId' });
 
 db.Board.hasMany(db.ChattingRoom, { foreignKey: 'boardId' });
 db.ChattingRoom.belongsTo(db.Board, { foreignKey: 'boardId' });
