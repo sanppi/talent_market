@@ -17,25 +17,31 @@ exports.index = async(req, res) => {
 
 exports.search = async (req, res, next) => {
   const words = req.query.search;
-
+  const category = req.query.category; // 카테고리를 query에서 받아옵니다.
+  
   try {
+    let conditions = [
+      {
+        title: { [Op.like]: '%' + words + '%' }
+      },
+      {
+        content: { [Op.like]: '%' + words + '%' }
+      }
+    ];
+  
+    // 만약 카테고리가 존재한다면, conditions에 카테고리 조건을 추가합니다.
+    if(category) {
+      conditions.push({
+        category: { [Op.eq]: category }
+      });
+    }
+  
     const results = await Board.findAll({
       where: {
-        [Op.or]: [
-          {
-            title: {
-              [Op.like]: '%' + words + '%'
-            }
-          },
-          {
-            content: {
-              [Op.like]: '%' + words + '%'
-            }
-          }
-        ]
+        [Op.or]: conditions
       }
     });
-
+  
     res.json(results);
   } catch (err) {
     next(err);
