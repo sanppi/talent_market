@@ -6,8 +6,12 @@ import '../../styles/signform.scss';
 import SignUpInput from './SignUpInput';
 import SignButton from './SignButton';
 import SignInInput from './SignInInput';
+import { useSelector } from 'react-redux';
 
-export default function SignForm({ type }) {
+import { connect } from 'react-redux';
+import { loginSuccess, logout } from '../../action/authActions';
+
+export function SignForm({ type, loginSuccess, logout }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [signInCk, setSignInCk] = useState(false);
   const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
@@ -101,7 +105,6 @@ export default function SignForm({ type }) {
           ...prev,
           validUp: '아이디와 닉네임 중복 확인해 주세요.',
         }));
-        // TODO : 아이디나 닉네임 값이 변경되면 다시 setMsg valid 빈값으로
       }
       // 로그인 시
     } else if (!isSignUp && signInCk) {
@@ -112,12 +115,17 @@ export default function SignForm({ type }) {
           data: data,
           // headers: {
           //   "Access-"
-          // }, 
-          withCredentials: true
+          // },
+          withCredentials: true,
         });
 
         // DB에 존재 -> 로그인 이동
-        if (response.data.result) navigate('/');
+        if (response.data.result) {
+          // console.log('log result', response.data.memberId);
+          const userData = response.data.memberId;
+          loginSuccess(userData);
+          navigate('/', { state: { user: userData } });
+        }
         // DB에 없음
         else {
           setMsg((prev) => ({
@@ -174,6 +182,12 @@ export default function SignForm({ type }) {
       handleSubmit(onSubmit);
     }
   };
+
+  // redux 꺼내오기
+  // const user1 = useSelector((state) => state.auth.user);
+  // useEffect(() => {
+  //   console.log('auth user', user1);
+  // }, [user1]);
 
   return (
     <>
@@ -318,3 +332,18 @@ export default function SignForm({ type }) {
     </>
   );
 }
+
+// 위에서 정의한 SignForm 컴포넌트에 connect 적용
+const ConnectedSignForm = connect(
+  // mapStateToProps 함수 - state에서 필요한 데이터를 props로 매핑
+  (state) => ({
+    user: state.auth.user,
+  }),
+  // mapDispatchToProps 객체 - 액션 생성자 함수를 props로 매핑
+  {
+    loginSuccess,
+    logout,
+  }
+)(SignForm);
+
+export default ConnectedSignForm;

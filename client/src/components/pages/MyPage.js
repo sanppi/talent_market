@@ -1,7 +1,13 @@
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import '../../styles/mypage.scss';
 
-export default function MyPage() {
+function MyPage({ user }) {
+  // user 정보를 이용한 작업 수행
+  const nickname = user ? `${user.nickname} (id)` : '게스트';
+  const user1 = useSelector((state) => state.auth.user);
+  console.log('auth user', user1);
+
   return (
     <>
       <div className="myPage">
@@ -15,7 +21,7 @@ export default function MyPage() {
             </Link>
           </div>
           <div className="myProfileBox2">
-            <div className="myProfileNickname">닉네임(id)</div>
+            <div className="myProfileNickname">{nickname}</div>
             <div className="myProfileContent">받은 신고 수</div>
           </div>
         </div>
@@ -32,3 +38,13 @@ export default function MyPage() {
     </>
   );
 }
+
+// mapStateToProps 함수 - state에서 필요한 데이터를 props로 매핑
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
+});
+
+// connect 함수를 사용하여 Redux 스토어와 연결된 컴포넌트 생성
+const ConnectedMyPage = connect(mapStateToProps)(MyPage);
+
+export default ConnectedMyPage;
