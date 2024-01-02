@@ -31,7 +31,7 @@ export default function NavBar() {
         // 배열이 아니면 빈 배열로 설정
         setSearchResults([]);
       }
-      navigate(`/?search=${searchTermLocal}`);
+      navigate(`/search?search=${searchTermLocal}`); // 이 부분을 수정
       setSearchTermLocal("");
     } catch (error) {
       console.error("Search failed", error);
@@ -95,7 +95,7 @@ export default function NavBar() {
         </div>
 
         {/* 검색 결과 보여주기 */}
-        {searchResults.map((product) => (
+        {/* {searchResults.map((product) => (
           <div key={product.boardId}>
             <div className="imgContainer">
               <img
@@ -107,7 +107,7 @@ export default function NavBar() {
             <p>{product.price}원</p>
             <p>{product.rating}</p>
           </div>
-        ))}
+        ))} */}
 
         {/* 로그인 버튼 */}
         <button className="loginButton">
