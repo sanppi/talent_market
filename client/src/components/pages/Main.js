@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -29,6 +29,10 @@ function Main() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // 상품 검색 함수
   const searchProducts = (products, searchTerm) => {
     return products.filter(
@@ -41,7 +45,9 @@ function Main() {
   useEffect(() => {
     async function getProduct() {
       try {
-        const response = await axios.get("http://localhost:8000/", { withCredentials : true }); // 수정된 부분
+        const response = await axios.get("http://localhost:8000/", {
+          withCredentials: true,
+        }); // 수정된 부분
         setProducts(response.data.products);
         console.log(response.data);
         console.log(response.data.products);
@@ -51,6 +57,13 @@ function Main() {
     }
 
     getProduct();
+
+    const writeButton = document.querySelector(".writeButton");
+    writeButton.addEventListener("click", scrollToTop);
+
+    return () => {
+      writeButton.removeEventListener("click", scrollToTop);
+    };
   }, []);
 
   return (
