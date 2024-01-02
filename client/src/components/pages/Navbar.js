@@ -52,7 +52,7 @@ export default function NavBar({ setSearchTerm }) {
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
-          <div className="categoryWindow">
+          <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
             <div>성대모사</div>
             <div>코디</div>
             <div>그림</div>

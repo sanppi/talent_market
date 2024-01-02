@@ -10,7 +10,9 @@ export default function ProductDetailPage() {
     async function getProductDetail() {
       try {
         console.log(`Requested boardId: ${boardId}`);
-        const response = await axios.get(`http://localhost:8000/product/${boardId}`);
+        const response = await axios.get(
+          `http://localhost:8000/product/${boardId}`
+        );
 
         setProduct(response.data.product);
         console.log(response.data);
@@ -32,6 +34,7 @@ export default function ProductDetailPage() {
       <p>{product.price}원</p>
       {/* <p>{product.rating}</p> */}
       <p>{product.content}</p>
+      <button>구매하기</button>
     </div>
   );
 }
