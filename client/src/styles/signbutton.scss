@@ -15,6 +15,8 @@
     width: 100%;
     background-color: var(--main-blue);
     color: white;
+    box-shadow: 0px 3px 3px 2px #7b7b7c;
+    transition: cubic-bezier(0.6, -0.28, 0.735, 0.045);
 
     &:hover {
       background-color: var(--main-blue);
@@ -23,6 +25,7 @@
     &:disabled {
       background-color: transparent;
       color: rgba(0, 0, 0, 0.5);
+      box-shadow: none;
     }
   }
 

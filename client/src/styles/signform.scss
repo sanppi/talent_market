@@ -78,6 +78,12 @@ $transition-duration: 0.5s;
         background-color: var(--bright-blue);
         color: white;
         animation: slide $transition-duration ease-in-out;
+        box-shadow: 2px 2px 1px 1px #5b5b5b;
+        transition-duration: 0.2s;
+
+        &:active {
+          box-shadow: none;
+        }
       }
 
       small {
