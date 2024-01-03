@@ -1,13 +1,11 @@
 import '../../styles/chat.css';
 import { useEffect, useState } from 'react';
 import ChattingRoomList from './ChattingRoomList';
-import io from 'socket.io-client';
 import axios from 'axios';
 
-const socket = io.connect('http://localhost:8000', { autoConnect: false });
 export default function Chatting() {
-  const [memberId, setMemberId] = useState(null)
-  const [nickname, setNickname] = useState(null)
+  const [memberId, setMemberId] = useState(null);
+  const [nickname, setNickname] = useState(null);
   const [chattingRoomList, setChattingRoomList] = useState([]);
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function Chatting() {
         // `${process.env.REACT_APP_DB_HOST}chatting/userCheck?memberId=1`,
       );
 
-      console.log("response.data.nickname", response.data.nickname)
+      // console.log("response.data.nickname", response.data.nickname)
       setNickname(response.data.nickname)
     } catch (error) {
       console.error('Error:', error);
@@ -44,13 +42,13 @@ export default function Chatting() {
       );
 
       if (response.data) {
-              console.log("response.data", response.data)
-      setChattingRoomList(prevList => [
-        ...prevList,
-        ...response.data
-      ]);
+        // console.log("response.data", response.data)
+        setChattingRoomList(prevList => [
+          ...prevList,
+          ...response.data
+        ]);
       } else {
-        console.error('Get Room List Server Error:');
+        console.error('Get Room List Server Error');
         alert("현재 사용하는 채팅방이 없습니다.");
       }
 
@@ -75,7 +73,9 @@ export default function Chatting() {
           <div>
             <div>
               {chattingRoomList.map((chattingRoom, i) => (
-                <ChattingRoomList key={i} chattingRoom={chattingRoom}/>
+                <div>
+                  <ChattingRoomList key={i} chattingRoom={chattingRoom}/>
+                </div>
               ))}
             </div>
           </div>
