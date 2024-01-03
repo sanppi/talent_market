@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "../../styles/salepost.scss";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function SalePost() {
   const [title, setTitle] = useState("");
@@ -11,6 +12,15 @@ export default function SalePost() {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 이 부분 추가
+    if (!isLoggedIn) {
+      navigate("/member/signin"); // 변경된 부분
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleImageUpload = (e) => {
     setImage(e.target.files[0]);
@@ -45,9 +55,11 @@ export default function SalePost() {
         }
       );
 
-      console.log(response.data);
+      if (response.status === 200) {
+        navigate(`/product/${response.data.productId}`);
+      }
     } catch (error) {
-      console.error("Error:", error);
+      alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
     }
   };
 
