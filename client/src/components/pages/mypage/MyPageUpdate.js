@@ -1,10 +1,13 @@
-import SignUpInput from '../sign/SignUpInput';
+import SignUpInput from '../../sign/SignUpInput';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import '../../styles/signform.scss';
-import SignButton from '../sign/SignButton';
+import '../../../styles/signform.scss';
+import '../../../styles/mypageupdate.scss';
+import SignButton from '../../sign/SignButton';
 import { connect } from 'react-redux';
+import ModalBasic from '../../ModalBasic';
+import useToggle from '../../hook/UseToggle';
 
 function MyPageUpdate({ user }) {
   const { memberId, nickname, email } = user;
@@ -15,6 +18,7 @@ function MyPageUpdate({ user }) {
     idDuplicate: '',
     nicknameDuplicate: '',
   });
+  const [toggle, onToggle] = useToggle(false);
 
   const {
     register,
@@ -132,9 +136,42 @@ function MyPageUpdate({ user }) {
 
   return (
     <>
+      <ModalBasic />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="signForm">
           <div className="signInputForm">
+            <SignUpInput
+              label="닉네임"
+              type="text"
+              id="nickname"
+              register={register}
+              onChange={handleInputChange}
+              // TODO : 유효성 검사 통과한 값을 일괄 입력해서 서버 전송 + redux에도 업데이트
+              value={watchObj?.nickname || ''}
+              error={errors.nickname}
+              validation={{
+                required: '닉네임은 필수값입니다.',
+              }}
+              hasButton={true}
+              onButtonClick={(type) => handleCheck(type, watchObj.nickname)}
+              msg={msg}
+            />
+            <SignUpInput
+              label="이메일"
+              type="email"
+              id="email"
+              register={register}
+              onChange={handleInputChange}
+              value={watchObj?.email || ''}
+              validation={{
+                pattern: {
+                  value: /^[a-zA-Z0-9]+@[a-z]+.[a-z]+$/,
+                  message: '올바른 이메일 형식을 입력하세요.',
+                },
+              }}
+              error={errors.email}
+            />
+            {/* TODO : 비밀번호는 기존 / 새 / 새 확인 - 모달? */}
             <SignUpInput
               label="비밀번호"
               type="password"
@@ -151,7 +188,6 @@ function MyPageUpdate({ user }) {
                 },
               }}
               error={errors.pw}
-              hasButton={false}
             />
             <div className="signUp">
               <SignUpInput
@@ -171,48 +207,19 @@ function MyPageUpdate({ user }) {
                   },
                 }}
                 error={errors.pwCk}
-                hasButton={false}
               />
-              <SignUpInput
-                label="닉네임"
-                type="text"
-                id="nickname"
-                register={register}
-                onChange={handleInputChange}
-                // TODO : 유효성 검사 통과한 값을 일괄 입력해서 서버 전송 + redux에도 업데이트
-                value={watchObj?.nickname || ''}
-                error={errors.nickname}
-                validation={{
-                  required: '닉네임은 필수값입니다.',
-                }}
-                hasButton={true}
-                onButtonClick={(type) => handleCheck(type, watchObj.nickname)}
-                msg={msg}
-              />
-              <SignUpInput
-                label="이메일"
-                type="email"
-                id="email"
-                register={register}
-                onChange={handleInputChange}
-                value={watchObj?.email || ''}
-                validation={{
-                  pattern: {
-                    value: /^[a-zA-Z0-9]+@[a-z]+.[a-z]+$/,
-                    message: '올바른 이메일 형식을 입력하세요.',
-                  },
-                }}
-                error={errors.email}
-                hasButton={false}
-              />
-              <div className="signMsg">{msg.validUp}</div>
               {/* TODO : 결제 정보(은행, 계좌번호) 컴포넌트 */}
+              <div className="myAccount" onClick={onToggle}>
+                결제정보 입력
+              </div>
+              {toggle && <ModalBasic />}
+              <div className="signMsg">{msg.validUp}</div>
               <SignButton
                 disabled={!isValid}
                 onKeyDown={(e) => handleEnter(e)}
                 type="회원정보 수정"
-                isMsg={false}
               />
+              <div className="userDelete">회원 탈퇴</div>
             </div>
           </div>
         </div>

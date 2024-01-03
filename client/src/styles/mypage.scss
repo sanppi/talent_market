@@ -63,6 +63,10 @@
       .myProfileContent {
         flex-grow: 1;
         position: relative;
+
+        span {
+          color: var(--bright-blue);
+        }
       }
     }
   }
@@ -84,6 +88,10 @@
         margin: 0;
         padding: 0 7px;
         cursor: pointer;
+
+        &:active {
+          color: var(--bright-blue);
+        }
 
         &:after {
           display: block;
