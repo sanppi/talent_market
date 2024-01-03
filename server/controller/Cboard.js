@@ -9,7 +9,7 @@ const { Member, Board, LikeBoardTable } = require("../model");
 const boardCreateHandler = async (req, res) => {
     try{
         // 클라이언트에서 전송한 데이터 확인
-        const { title, price, category, content } = req.body;
+        const { title, price, category, content, memberId } = req.body;
         const image = req.file ? req.file.filename : null;
 
         await Board.create({
@@ -17,6 +17,7 @@ const boardCreateHandler = async (req, res) => {
             price,
             category,
             content,
+            memberId,
             image: image || null
         })
     
