@@ -1,5 +1,5 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
-const { Member, Board } = require("../model");
+const { Member, Board, LikeBoardTable } = require("../model");
 
 // 클라이언트 product, 서버 board
 
@@ -51,10 +51,45 @@ const boardDetailPage = async (req, res) => {
     }
 }
 
+// 게시글 찜하기 (좋아요) 기능
+const toggleLike = async (req, res) => {
+    try {
+        const boardId = req.params.boardId;
+        const memberId = req.params.memberId;
+
+        // 해당 상품 게시글에 대한 찜 정보 확인
+        const like = await LikeBoardTable.findOne({
+            where: { boardId: boardId, memberId: memberId }
+        });
+
+        if(like){
+            // 이미 찜한 상품이 있다면 찜하기 취소
+            await like.destroy();
+        }
+        else{
+            // 찜하지 않았다면 찜하기
+            await LikeBoardTable.create({
+                boardId: boardId, memberId: memberId
+            })
+        }
+
+        // 클라이언트에 보이지 않을 순 있지만 일단 작성하였습니다.
+        // 이슈가 발생하거나 불필요한 기능이라면 주석 또는 삭제처리하면 됩니다.
+        const likeCount = await LikeBoardTable.count({ where: {boardId: boardId} });
+        await LikeBoardTable.update({ likeNum: likeCount }, { where: {boardId: boardId} });
+
+        res.json({ success: true, likeNum: likeCount })
+
+    } catch (error) {
+        console.log('찜하기 에러:', error);
+        res.status(500).send('상품을 찜할 수 없습니다.');
+    }
+}
 
 module.exports = {
     boardCreate: [upload.single("image"), boardCreateHandler],
     boardDetail: boardDetailPage,
+    boardLike: toggleLike,
 };
 
 // 게시글 수정 페이지
@@ -108,9 +143,4 @@ const boardDelete = (req, res) => {
         console.log("에러 메시지 ", error);
         res.status(400).send;
     })
-}
-
-// 게시글 추천(좋아요) 기능
-const boardLike = (req, res) => {
-    
 }
