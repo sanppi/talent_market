@@ -6,8 +6,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignIn from './components/pages/SignIn';
 import Chatting from './components/pages/Chatting';
 import ChatRoom from './components/pages/ChatRoom';
-import MyPage from './components/pages/MyPage';
-import MyPageUpdate from './components/pages/MyPageUpdate';
+import MyPage from './components/pages/mypage/MyPage';
+import MyPageUpdate from './components/pages/mypage/MyPageUpdate';
 import ProductDetailPage from './components/pages/ProductDetailPage';
 import SearchResults from './components/pages/SearchResult';
 
