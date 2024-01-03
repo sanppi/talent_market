@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 
 export default function ChattingRoomList({ chattingRoom }) {
-  const [roomId, setRoomId] = useState(null)
+  const [roomId, setRoomId] = useState(null);
 
   const handleSetRoomId = () => {
     setRoomId(chattingRoom.roomId);
@@ -18,7 +18,6 @@ export default function ChattingRoomList({ chattingRoom }) {
   const deleteRoom = async () => {
     try {
       const data = { roomId: roomId }
-      console.log("dataaaaaaaaaaaaaaaaaaa", data);
       const response = await axios.delete(
         `${process.env.REACT_APP_DB_HOST}chatting/deleteRoom`,
         {
@@ -28,8 +27,8 @@ export default function ChattingRoomList({ chattingRoom }) {
           },
         }
       )
-
-      console.log(response);
+      window.location.reload();
+      // 리더님 이거 새로고침말고 더 나은 방법 있을까요?
     } catch (error) {
       console.error('Error:', error);
     }
@@ -39,7 +38,7 @@ export default function ChattingRoomList({ chattingRoom }) {
     <div style={{ backgroundColor: 'pink', marginBottom: '10px' }}>
       <Link to={`/chatRoom/${chattingRoom.roomId}`}>{chattingRoom.roomName}/{chattingRoom.title}</Link>
       <button onClick={handleSetRoomId}>채팅방 나가기</button>
-      <button>신고하기</button>
+      {/* <button onClick={handleSetRoomId}>신고하기</button> */}
     </div>
   );
 }

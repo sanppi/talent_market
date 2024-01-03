@@ -67,8 +67,6 @@ app.get("*", function (req, res) {
 
 
 
-
-
 const userIdArr = {};
 
 const updateUserList = () => {
@@ -77,18 +75,10 @@ const updateUserList = () => {
 
 io.on("connection", (socket) => {
   updateUserList();
-  // console.log("socket id", socket.id);
   socket.on("entry", (res) => {
-    if (Object.values(userIdArr).includes(res.userId)) {
-      socket.emit("error", {
-        msg: "중복된 아이디가 존재하여 입장이 불가합니다.",
-      });
-    } else {
-      io.emit("notice", { msg: `${res.userId}님이 입장하셨습니다.` });
-      socket.emit("entrySuccess", { userId: res.userId });
-      userIdArr[socket.id] = res.userId;
-    }
-    // console.log(userIdArr);
+    io.emit("notice", { memberId: res.memberId});
+    // socket.emit("entrySuccess", { memberId: res.memberId });
+    userIdArr[socket.id] = res.memberId;
   });
 
   socket.on("disconnect", () => {
@@ -99,7 +89,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    io.emit("chat", { userId: res.userId, msg: res.msg })
+    io.emit("chat", { memberId: res.memberId, msg: res.msg })
   });
 });
 

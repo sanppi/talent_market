@@ -63,7 +63,6 @@ exports.getRoomList = (req, res) => {
 };
 
 exports.deleteRoom = (req, res) => {
-  console.log("req.data.roomId!!!!!!!!!!!!!!!!!!", req.body.roomId);
   ChattingRoom.destroy({
     where: {
       roomId: req.body.roomId,
