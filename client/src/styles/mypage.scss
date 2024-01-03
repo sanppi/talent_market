@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: var(--header-margin);
 
   .myProfileContainer {
     display: flex;
@@ -15,67 +16,59 @@
     width: 100%;
 
     .myProfileBox1 {
-      padding: 5px;
+      margin: 0 auto;
+      // padding: 5px;
       @include size(200px, 200px);
 
       .myProfileImg {
-        @include size(150px, 150px);
+        @include size(100%, 100%);
         background-color: black;
         margin-bottom: 10px;
-        border-radius: 10px;
+        border-radius: 50px;
       }
 
-      a {
-        display: block;
-        width: 150px;
+      .myProfileUpdate {
+        width: 100%;
+        @include button(20px, 10px);
+        background-color: #26c9fc;
+        color: azure;
+        box-shadow: 0px 2px 1px 1px #c1bfbf;
+        transition-duration: 0.2s;
+        // text-shadow: 0px 2px 0px #3b6e62;
 
-        .myProfileUpdate {
-          width: 100%;
-          @include button(20px, 10px);
-          background-color: #26c9fc;
-          color: azure;
-          box-shadow: 0px 2px 1px 1px #c1bfbf;
-          transition-duration: 0.2s;
-          // text-shadow: 0px 2px 0px #3b6e62;
-
-          &:active {
-            box-shadow: none;
-          }
+        &:active {
+          box-shadow: none;
         }
       }
     }
 
     .myProfileBox2 {
-      @include size(200px, 250px);
+      @include size(200px, 200px);
       padding: 20px 15px;
       display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       flex-direction: column;
 
       .myProfileNickname {
-        height: 40%;
+        height: 100px;
         padding-top: 15px;
+
+        span {
+          margin-top: 4px;
+          font-size: 12px;
+          opacity: 0.7;
+        }
       }
       .myProfileContent {
-        height: 60%;
+        flex-grow: 1;
         position: relative;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .myProfileBox2 {
-        color: blue;
-        height: 150px;
-        flex-direction: row;
-
-        .myProfileContent {
-          height: 20px;
-        }
       }
     }
   }
 
   .myList {
-    margin-top: 40px;
+    margin-top: 80px;
     max-width: 400px;
     width: 100%;
 
@@ -113,3 +106,30 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .myProfileContainer {
+    flex-direction: column;
+
+    .myProfileBox2 {
+      margin-top: 30px;
+      height: 100px !important;
+
+      .myProfileNickname {
+        font-size: 15px;
+        line-height: 100%;
+
+        span {
+          display: inline !important;
+        }
+      }
+
+      .myProfileContent {
+        padding: 0;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+// 300대에서 li 두 줄로
