@@ -32,6 +32,7 @@ code {
 
 * {
   font-family: 'KNUTRUTHTTF';
+  box-sizing: border-box;
 }
 @import './styles/reset.css';
 
