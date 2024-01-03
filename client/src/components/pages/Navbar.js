@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import '../../styles/navbar.scss';
-import '../../styles/main.scss';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import "../../styles/navbar.scss";
+import "../../styles/main.scss";
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [searchTermLocal, setSearchTermLocal] = useState('');
+  const [searchTermLocal, setSearchTermLocal] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+      dispatch({ type: "LOGOUT" });
+    }
+  };
 
   const handleHamburgerClick = () => {
     setIsCategoryOpen(!isCategoryOpen);
@@ -32,14 +42,14 @@ export default function NavBar() {
         setSearchResults([]);
       }
       navigate(`/search?search=${searchTermLocal}`); // 이 부분을 수정
-      setSearchTermLocal('');
+      setSearchTermLocal("");
     } catch (error) {
-      console.error('Search failed', error);
+      console.error("Search failed", error);
     }
   };
 
   const handleOnKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearchButtonClick();
     }
   };
@@ -63,7 +73,7 @@ export default function NavBar() {
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
-          <div className={`categoryWindow ${isCategoryOpen ? 'open' : ''}`}>
+          <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
             <div>성대모사</div>
             <div>코디</div>
             <div>그림</div>
@@ -98,25 +108,16 @@ export default function NavBar() {
           <button>마이페이지</button>
         </Link>
 
-        {/* 검색 결과 보여주기 */}
-        {/* {searchResults.map((product) => (
-          <div key={product.boardId}>
-            <div className="imgContainer">
-              <img
-                src={`http://localhost:8000/static/userImg/${product.image}`}
-                alt={product.title}
-              />
-            </div>
-            <h4>{product.title}</h4>
-            <p>{product.price}원</p>
-            <p>{product.rating}</p>
-          </div>
-        ))} */}
-
         {/* 로그인 버튼 */}
-        <button className="loginButton">
-          <Link to="/member/signin">로그인</Link>
-        </button>
+        {isLoggedIn ? (
+          <button className="logoutButton" onClick={handleLogout}>
+            로그아웃
+          </button>
+        ) : (
+          <button className="loginButton">
+            <Link to="/member/signin">로그인</Link>
+          </button>
+        )}
       </div>
     </>
   );
