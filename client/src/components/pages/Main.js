@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import "../../styles/main.scss";
 import { useSelector } from "react-redux";
@@ -30,7 +30,6 @@ function Main() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const navigate = useNavigate();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -49,7 +48,6 @@ function Main() {
     if (!isLoggedIn) {
       e.preventDefault();
       alert("로그인이 필요한 기능입니다.");
-      navigate("/member/signin");
     }
   };
 
