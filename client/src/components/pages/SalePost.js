@@ -56,7 +56,7 @@ export default function SalePost() {
       );
 
       if (response.status === 200) {
-        navigate(`/product/${response.data.productId}`);
+        navigate(`/product/${response.data.boardId}`);
       }
     } catch (error) {
       alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
