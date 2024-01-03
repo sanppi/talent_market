@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "../../styles/salepost.scss";
+import { useSelector } from "react-redux";
 
 export default function SalePost() {
   const [title, setTitle] = useState("");
@@ -9,6 +10,7 @@ export default function SalePost() {
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const memberId = useSelector((state) => state.auth.memberId);
 
   const handleImageUpload = (e) => {
     setImage(e.target.files[0]);
@@ -29,6 +31,7 @@ export default function SalePost() {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("content", content);
+    formData.append("memberId", memberId);
 
     // 데이터 받으십쇼~~!!
     try {

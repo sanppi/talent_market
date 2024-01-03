@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import "../../styles/main.scss";
+import { useSelector } from "react-redux";
 
 // 상품 카드..?
 function ProductCard({ product }) {
@@ -28,6 +29,8 @@ function ProductCard({ product }) {
 function Main() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -40,6 +43,14 @@ function Main() {
         product.title.includes(searchTerm) ||
         product.content.includes(searchTerm)
     );
+  };
+
+  const handleWriteButtonClick = (e) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      alert("로그인이 필요한 기능입니다.");
+      navigate("/member/signin");
+    }
   };
 
   useEffect(() => {
@@ -71,7 +82,7 @@ function Main() {
       <Navbar setSearchTerm={setSearchTerm} />
       <div className="mainPageWrapper">
         <div className="mainPage" style={{ top: "90px", position: "absolute" }}>
-          <button className="writeButton">
+          <button className="writeButton" onClick={handleWriteButtonClick}>
             <Link to="/write">판매글 작성</Link>
           </button>
           {products &&
