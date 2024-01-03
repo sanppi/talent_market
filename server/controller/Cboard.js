@@ -12,7 +12,7 @@ const boardCreateHandler = async (req, res) => {
         const { title, price, category, content, memberId } = req.body;
         const image = req.file ? req.file.filename : null;
 
-        await Board.create({
+        const newBoard = await Board.create({
             title,
             price,
             category,
@@ -21,7 +21,7 @@ const boardCreateHandler = async (req, res) => {
             image: image || null
         })
     
-        res.send("Success");
+        res.send({ message: "Success", boardId: newBoard.boardId });
         console.log("Success");
     } catch(error) {
         console.error("글 등록 오류 발생:", error);
