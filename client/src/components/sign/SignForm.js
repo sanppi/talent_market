@@ -8,7 +8,7 @@ import SignButton from './SignButton';
 import SignInInput from './SignInInput';
 
 import { connect } from 'react-redux';
-import { loginSuccess, logout } from '../../module/action/authActions';
+import { loginSuccess } from '../../module/action/authActions';
 
 export function SignForm({ type, loginSuccess }) {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -115,7 +115,7 @@ export function SignForm({ type, loginSuccess }) {
           withCredentials: true,
         });
 
-        // DB에 존재 -> 로그인 이동
+        // DB에 존재 -> 메인 이동
         if (response.data.result) {
           // loginSuccess 함수를 호출할 때 액션 생성자 함수로 호출
           loginSuccess(response.data.userData);
@@ -330,14 +330,12 @@ export function SignForm({ type, loginSuccess }) {
 
 // 위에서 정의한 SignForm 컴포넌트에 connect 적용
 const ConnectedSignForm = connect(
-  // mapStateToProps 함수 - state에서 필요한 데이터를 props로 매핑
   (state) => ({
     user: state.auth.user,
   }),
-  // mapDispatchToProps 객체 - 액션 생성자 함수를 props로 매핑
   {
     loginSuccess,
-    logout,
+    // logout,
   }
 )(SignForm);
 
