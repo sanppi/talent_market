@@ -22,7 +22,8 @@ export default function ProductDetailPage() {
       try {
         console.log(`Requested boardId: ${boardId}`);
         const response = await axios.get(
-          `http://localhost:8000/product/${boardId}`
+          `http://localhost:8000/product/${boardId}`,
+          { params: { isDetailView: true } }
         );
 
         setProduct(response.data.product);
