@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import '../styles/modalbasic.scss';
 
-export default function ModalBasic() {
+export default function ModalBasic({ type, content }) {
   const [isOpen, setIsOpen] = useState(true);
   const disableModal = () => {
     setIsOpen(false);
   };
   // TODO : 결제정보, 확인(신고, 탈퇴, 수정)
-  // ERROR : 두번 눌러야 동작
 
   return (
     <>
@@ -16,7 +15,7 @@ export default function ModalBasic() {
           <div className="modalContainer">
             <div className="modalExitWrapper">&times;</div>
             <div className="modalWrapper">
-              <p>내용은 props로 넣어야겠씁니다?</p>
+              <p>{content}</p>
               <button>확인</button>
             </div>
           </div>
