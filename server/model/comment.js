@@ -15,9 +15,17 @@ function Comment(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false
               },
+              title: {
+                type: DataTypes.STRING(100),
+                allowNull: false,
+              },
               review: {
                 type: DataTypes.TEXT,
                 allowNull: false
+              },
+              image: {
+                type: DataTypes.STRING(500),
+                allowNull: true,
               },
               createdAt: {
                 type: DataTypes.DATE,
