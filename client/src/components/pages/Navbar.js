@@ -104,20 +104,22 @@ export default function NavBar() {
           </button>
         </div>
 
-        <Link to="/member/mypage">
-          <button>마이페이지</button>
-        </Link>
-
-        {/* 로그인 버튼 */}
-        {isLoggedIn ? (
-          <button className="logoutButton" onClick={handleLogout}>
-            로그아웃
-          </button>
-        ) : (
-          <button className="loginButton">
-            <Link to="/member/signin">로그인</Link>
-          </button>
-        )}
+        <div className="authButtons">
+          {isLoggedIn ? (
+            <>
+              <Link to="/member/mypage">
+                <button className="mypageButton">마이페이지</button>
+              </Link>
+              <button className="logoutButton" onClick={handleLogout}>
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <button className="loginButton">
+              <Link to="/member/signin">로그인</Link>
+            </button>
+          )}
+        </div>
       </div>
     </>
   );

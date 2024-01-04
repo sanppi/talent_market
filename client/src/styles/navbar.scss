@@ -42,7 +42,7 @@
   }
 
   .pageTitle {
-    margin: 0 0 0 -60%;
+    margin: 0 0 0 -50%;
     z-index: 999;
     font-size: 35px;
   }
@@ -92,6 +92,27 @@
     font-size: 17px;
     border: none;
     border-radius: 5px;
+  }
+
+  .mypageButton {
+    width: 90px;
+    height: 40px;
+    font-size: 17px;
+    margin-left: auto;
+    cursor: pointer;
+    background-color: #ffffff;
+    display: block;
+    font-size: 17px;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .authButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 200px;
+    margin-left: auto;
   }
 }
 
