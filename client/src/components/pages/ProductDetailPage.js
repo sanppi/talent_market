@@ -9,7 +9,7 @@ export default function ProductDetailPage() {
   const [heart, setHeart] = useState(false);
   const [review, setReview] = useState("");
   const { boardId } = useParams();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
     setTimeout(() => {
@@ -35,10 +35,10 @@ export default function ProductDetailPage() {
     getProductDetail();
   }, [boardId]);
 
-  const { user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.auth);
 
   const handleHeartClick = async () => {
-    if (!user) {
+    if (!isLoggedIn) {
       alert("로그인이 필요한 기능입니다.");
       return;
     }
