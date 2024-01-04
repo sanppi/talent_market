@@ -11,19 +11,20 @@ export default function Review({ boardId }) {
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const memberId = useSelector((state) => state.auth.memberId);
+  const [selectedReview, setSelectedReview] = useState(null);
+
+  const getReviews = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/review/create`);
+      if (response.data.reviews) {
+        setReviews(response.data.reviews);
+      }
+    } catch (error) {
+      console.error("리뷰를 불러오는데 실패하였습니다: ", error);
+    }
+  };
 
   useEffect(() => {
-    async function getReviews() {
-      try {
-        const response = await axios.get(`http://localhost:8000/review/create`);
-        console.log(response.data);
-        if (response.data.reviews) {
-          setReviews(response.data.reviews);
-        }
-      } catch (error) {
-        console.error("리뷰를 불러오는데 실패하였습니다: ", error);
-      }
-    }
     getReviews();
   }, [boardId]);
 
@@ -66,7 +67,7 @@ export default function Review({ boardId }) {
       setReviewContent("");
       setReviewRating(5);
 
-      window.location.reload();
+      setTimeout(getReviews, 2000);
     } catch (error) {
       console.error("리뷰를 보내는데 실패하였습니다: ", error);
 
@@ -78,16 +79,29 @@ export default function Review({ boardId }) {
     setIsReviewFormVisible(!isReviewFormVisible);
   };
 
+  console.log("review: ", reviews);
+
   return (
     <>
       <div className="reviewSection">
         <div>리뷰 목록</div>
         <br />
-        {/* 리뷰가 없는 경우 메시지를 표시하고, 리뷰가 있는 경우 각 리뷰를 표시합니다. */}
         {reviews.length === 0 ? (
           <p>아직 작성된 리뷰가 없습니다.</p>
         ) : (
-          reviews.map((review) => <p key={review.id}>{review.content}</p>)
+          reviews.map((review, index) => (
+            <div key={review.id}>
+              <p
+                onClick={() =>
+                  setSelectedReview(selectedReview !== index ? index : null)
+                }
+              >
+                {index + 1}. {review.title} - {review.author} (
+                {new Date(review.date).toLocaleDateString()})
+              </p>
+              {selectedReview === index && <p>{review.content}</p>}
+            </div>
+          ))
         )}
         <button onClick={handleReviewButtonClick}>리뷰 작성하기</button>
         {isReviewFormVisible && (
