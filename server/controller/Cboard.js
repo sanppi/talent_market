@@ -1,5 +1,5 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
-const { Board, LikeBoardTable } = require("../model");
+const { Board, LikeBoardTable, Comment, Member } = require("../model");
 
 // 클라이언트 product, 서버 board
 
@@ -37,10 +37,15 @@ const boardDetailPage = async (req, res) => {
             where: { boardId: boardId }
         })
 
+        const reviews = await Comment.findAll({
+            where: { boardId: boardId },
+            include: [{ model: Member, attributes: ["nickname"] }]
+        })
+
         if (product) {
             product.views += 1;
             await product.save();
-            res.json({ product: product })
+            res.json({ product: product, reviews: reviews })
         } else {
             res.status(404).send("상품 정보를 조회할 수 없습니다.")
         }
