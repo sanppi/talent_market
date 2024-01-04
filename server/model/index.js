@@ -26,8 +26,8 @@ db.Member.hasMany(db.Board, { foreignKey: 'memberId' });
 db.Board.belongsTo(db.Member, { foreignKey: 'memberId' });
 
 // Member와 Comment 연결 (1대 다)
-db.Member.hasMany(db.Comment, { foreignKey: 'writtenBy', sourceKey: 'memberId' });
-db.Comment.belongsTo(db.Member, { foreignKey: 'writtenBy', targetKey: 'memberId' });
+db.Member.hasMany(db.Comment, { foreignKey: 'memberId' });
+db.Comment.belongsTo(db.Member, { foreignKey: 'memberId' });
 
 // Board와 Comment 연결 (1대 다)
 db.Board.hasMany(db.Comment, { foreignKey: 'boardId' });

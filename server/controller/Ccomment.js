@@ -5,14 +5,17 @@ const { Comment } = require("../model");
 // 후기 작성
 exports.writeComment = async (req, res) => {
     try{
-        const { review, stars, memberId, boardId } = req.body;
+        const { review, stars, title, memberId, boardId } = req.body;
+
+        console.log(req.body);
+
         await Comment.create({
-            review, stars, memberId, boardId
+            review, stars, title, memberId, boardId
         })
         res.send("create review success");
     }
-    catch{
-        console.error("글 등록 오류 발생:", error);
+    catch(error){
+        console.log("글 등록 오류 발생:", error);
         res.status(500).send("상품 후기를 작성할 수 없습니다.");
     }
 }
