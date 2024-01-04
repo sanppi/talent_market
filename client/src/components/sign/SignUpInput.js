@@ -11,6 +11,7 @@ export default function SignUpInput({
   onButtonClick,
   validation,
   isUpdate,
+  placeholder,
 }) {
   return (
     <div className="signInput">
@@ -21,12 +22,17 @@ export default function SignUpInput({
         {...register(id, validation)}
         onChange={(e) => onChange(id, e.target.value)}
         value={value}
+        placeholder={placeholder}
       />
       {hasButton ? (
         <>
           {isUpdate ? (
             <>
-              <button type="button" onClick={() => onButtonClick(id)}>
+              <button
+                className="updateButton"
+                type="button"
+                onClick={() => onButtonClick(id)}
+              >
                 {label} 변경
               </button>
             </>

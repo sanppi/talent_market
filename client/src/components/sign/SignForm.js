@@ -186,7 +186,7 @@ export function SignForm({ type, loginSuccess }) {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form name="allSignForm" onSubmit={handleSubmit(onSubmit)}>
         <div className="signForm">
           <div className="signInputForm">
             {isSignUp ? (
