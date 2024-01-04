@@ -16,16 +16,12 @@ function Comment(sequelize, DataTypes){
                 allowNull: false
               },
               title: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(15),
                 allowNull: false,
               },
               review: {
-                type: DataTypes.TEXT,
+                type: DataTypes.STRING(50),
                 allowNull: false
-              },
-              image: {
-                type: DataTypes.STRING(500),
-                allowNull: true,
               },
               createdAt: {
                 type: DataTypes.DATE,

@@ -1,5 +1,5 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
-const { Member, Board, LikeBoardTable } = require("../model");
+const { Board, LikeBoardTable } = require("../model");
 
 // 클라이언트 product, 서버 board
 

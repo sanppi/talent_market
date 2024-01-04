@@ -10,7 +10,7 @@ function Board(sequelize, DataTypes) {
       },
       memberId: {
         type: DataTypes.INTEGER,
-        // allowNull: false,
+        allowNull: false,
       },
       image: {
         type: DataTypes.STRING(500),
@@ -47,6 +47,10 @@ function Board(sequelize, DataTypes) {
         allowNull: false,
       },
       likeNum: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      views: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
