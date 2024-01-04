@@ -1,4 +1,10 @@
-const { Member, Comment, Board, LikeBoardTable } = require("../model");
+const {
+  Member,
+  Comment,
+  Board,
+  LikeBoardTable,
+  sequelize,
+} = require("../model");
 
 exports.signUp = async (req, res) => {
   try {
@@ -51,13 +57,15 @@ exports.checkDuplicate = async (req, res) => {
   }
 };
 
-exports.signIn = (req, res) => {
-  Member.findOne({
-    where: { id: req.body.id, pw: req.body.pw },
-  }).then((result) => {
-    // console.log('User findOne:', result);
+exports.signIn = async (req, res) => {
+  try {
+    const result = await Member.findOne({
+      where: { id: req.body.id, pw: req.body.pw },
+    });
+
     if (result) {
       req.session.user = result.memberId;
+      console.log(req.session);
 
       const userData = {
         memberId: result.memberId,
@@ -68,9 +76,13 @@ exports.signIn = (req, res) => {
         // accountNum: result.accountNum
       };
       res.send({ result: true, userData });
-      // console.log("Logged in user ID:", req.session.user);
-    } else res.send({ result: false });
-  });
+    } else {
+      res.send({ result: false });
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // 로그아웃
@@ -85,10 +97,171 @@ exports.signOut = (req, res) => {
   });
 };
 
-// 마이페이지 조회 -> 수정 더 필요
+async function checkUser(targetMemberId) {
+  if (!targetMemberId) return false;
 
+  try {
+    const member = await Member.findOne({
+      where: { memberId: targetMemberId },
+    });
+
+    if (!member) return false;
+    return true;
+  } catch (err) {
+    console.log("err", err);
+    return false;
+  }
+}
+
+// 마이페이지 조회 > 찜목록
+exports.getFavorites = async (req, res) => {
+  console.log(req.session);
+  const targetMemberId = req.session.user;
+
+  // const targetMemberId = 8;
+  const check = checkUser(targetMemberId);
+
+  if (!check)
+    return res
+      .status(404)
+      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+
+  try {
+    const favorites = await LikeBoardTable.findAll({
+      where: { memberId: targetMemberId },
+
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
+        [sequelize.fn("COUNT", sequelize.col("commentId")), "reviewCount"],
+      ],
+      // 집계합수 쓰기 위해 그룹화
+      // LikeBoardTable 테이블을 boardId와 likeId 컬럼을 기준으로 그룹화하는 것
+      group: ["boardId", sequelize.col("LikeBoardTable.likeId")],
+
+      // LikeBoardTable와 Board 모델 간의 관계를 설정
+      include: [
+        {
+          model: Board,
+          attributes: ["image", "title", "price"],
+          include: [
+            {
+              model: Comment,
+              attributes: [],
+            },
+          ],
+        },
+      ],
+
+      group: [
+        "LikeBoardTable.likeId",
+        "Board.boardId",
+        "Board.image",
+        "Board.title",
+        "Board.price",
+        "Board->Comments.commentId",
+      ],
+    });
+
+    console.log("favorites", favorites);
+
+    const formattedFavorites = favorites.map((favorite) => {
+      const formattedFavorite = {
+        image: favorite.Board.image,
+        title: favorite.Board.title,
+        price: favorite.Board.price,
+        averageStars:
+          parseFloat(favorite.dataValues.averageStars).toFixed(1) || 0,
+        reviewCount: parseInt(favorite.dataValues.reviewCount) || 0,
+      };
+
+      if (favorite.Comments && favorite.Comments.length > 0) {
+        formattedFavorite.averageStars =
+          parseFloat(favorite.Comments[0].dataValues.averageStars).toFixed(1) ||
+          0;
+        formattedFavorite.reviewCount =
+          favorite.Comments[0].dataValues.reviewCount || 0;
+      }
+
+      return formattedFavorite;
+    });
+
+    res.send({ result: true, userData: formattedFavorites });
+  } catch (error) {
+    console.error("Error fetching favorites", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// 마이페이지 조회 > 내 판매상품
+exports.getSellingProducts = async (req, res) => {
+  const targetMemberId = req.session.user;
+  const check = checkUser(targetMemberId);
+
+  if (!check)
+    return res
+      .status(404)
+      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+
+  try {
+    // Board와 Comment 테이블을 조인
+    const sellingProducts = await Board.findAll({
+      where: { memberId: targetMemberId },
+      attributes: [
+        "image",
+        "title",
+        "price",
+        [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
+        [sequelize.fn("COUNT", sequelize.col("commentId")), "reviewCount"],
+      ],
+      include: [
+        {
+          model: Comment,
+          attributes: [],
+        },
+      ],
+      group: ["boardId", "commentId"], // 그룹화 설정
+    });
+
+    const formattedSellingProducts = sellingProducts.map((product) => ({
+      image: product.image,
+      title: product.title,
+      price: product.price,
+      averageStars: parseFloat(product.dataValues.averageStars).toFixed(1) || 0,
+      reviewCount: parseInt(product.dataValues.reviewCount) || 0,
+    }));
+
+    res.send({ result: true, userData: formattedSellingProducts });
+  } catch (error) {
+    console.error("Error fetching sellingProducts", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// 마이페이지 조회 > 내 리뷰
+exports.getMyReviews = async (req, res) => {
+  const targetMemberId = req.session.user;
+  const check = checkUser(targetMemberId);
+
+  if (!check)
+    return res
+      .status(404)
+      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+};
+
+// 마이페이지 조회 > 채팅
+exports.getMyChattings = async (req, res) => {
+  const targetMemberId = req.session.user;
+  const check = checkUser(targetMemberId);
+
+  if (!check)
+    return res
+      .status(404)
+      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+};
+
+// 마이페이지 조회
 exports.userInfo = async (req, res) => {
-  const targetMemberId = req.session.memberId;
+  const targetMemberId = req.session.user;
 
   try {
     const member = await Member.findOne({
@@ -98,104 +271,9 @@ exports.userInfo = async (req, res) => {
     if (!member) {
       return res
         .status(404)
-        .send({ success: false, message: "회원을 찾을 수 없습니다." });
+        .send({ result: false, message: "회원을 찾을 수 없습니다." });
     }
-
-    const listItem = req.query.listItem; // 클라이언트에서 전달한 리스트 항목
-
-    if (listItem === "favorites") {
-      try {
-        const favorites = await LikeBoardTable.findAll({
-          where: { memberId: targetMemberId },
-          include: [
-            {
-              model: Board,
-              attributes: ["image", "title", "price"],
-            },
-            {
-              model: Comment,
-              attributes: [
-                [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
-                [
-                  sequelize.fn("COUNT", sequelize.col("commentId")),
-                  "reviewCount",
-                ],
-              ],
-              where: { boardId: sequelize.col("LikeBoardTable.boardId") },
-              required: false, // LEFT JOIN
-            },
-          ],
-        });
-
-        const formattedFavorites = favorites.map((favorite) => ({
-          image: favorite.Board.image,
-          title: favorite.Board.title,
-          price: favorite.Board.price,
-          averageStars: favorite.Comments[0]?.dataValues.averageStars || 0, // 별점 평균
-          reviewCount: favorite.Comments[0]?.dataValues.reviewCount || 0, // 후기 개수
-        }));
-
-        res.send({ success: true, favorites: formattedFavorites });
-      } catch (error) {
-        console.error("Error fetching favorites", error);
-        res.status(500).send("Internal Server Error");
-      }
-    } else if (listItem === "reviews") {
-      try {
-        const reviews = await Comment.findAll({
-          where: { memberId: targetMemberId },
-          include: [
-            {
-              model: Board,
-              attributes: ["title"],
-            },
-          ],
-        });
-
-        const formattedReviews = reviews.map((review) => ({
-          reviewContent: review.review,
-          productTitle: review.Board.title,
-        }));
-
-        res.send({ success: true, reviews: formattedReviews });
-      } catch (error) {
-        console.error("Error fetching reviews", error);
-        res.status(500).send("Internal Server Error");
-      }
-    } else if (listItem === "sellingProducts") {
-      try {
-        const sellingProducts = await Board.findAll({
-          where: { memberId: targetMemberId },
-          include: [
-            {
-              model: Comment,
-              attributes: [
-                [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
-                [
-                  sequelize.fn("COUNT", sequelize.col("commentId")),
-                  "reviewCount",
-                ],
-              ],
-            },
-          ],
-        });
-
-        const formattedSellingProducts = sellingProducts
-          .filter((product) => product.memberId === targetMemberId) // 판매자 여부 체크
-          .map((product) => ({
-            image: product.image,
-            title: product.title,
-            price: product.price,
-            averageStars: product.Comments[0]?.dataValues.averageStars || 0,
-            reviewCount: product.Comments[0]?.dataValues.reviewCount || 0,
-          }));
-
-        res.send({ success: true, sellingProducts: formattedSellingProducts });
-      } catch (error) {
-        console.error("Error fetching selling products", error);
-        res.status(500).send("Internal Server Error");
-      }
-    }
+    res.send({ result: true, userData: member });
   } catch (error) {
     console.error("Error fetching user info", error);
     res.status(500).send("Internal Server Error");
