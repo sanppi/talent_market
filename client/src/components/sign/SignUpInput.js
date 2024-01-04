@@ -22,21 +22,25 @@ export default function SignUpInput({
         onChange={(e) => onChange(id, e.target.value)}
         value={value}
       />
-      {hasButton && isUpdate ? (
+      {hasButton ? (
         <>
-          {/* <span role="alert">{msg[`${id}Duplicate`]}</span> */}
-          <button type="button" onClick={() => onButtonClick(id)}>
-            {label} 변경
-          </button>
+          {isUpdate ? (
+            <>
+              <button type="button" onClick={() => onButtonClick(id)}>
+                {label} 변경
+              </button>
+            </>
+          ) : (
+            <>
+              <span role="alert">{msg[`${id}Duplicate`]}</span>
+              <button type="button" onClick={() => onButtonClick(id)}>
+                {label} 중복 확인
+              </button>
+            </>
+          )}
         </>
       ) : (
-        <>
-          {/* 되살려야 함.. */}
-          {/* <span role="alert">{msg[`${id}Duplicate`]}</span> */}
-          {/* <button type="button" onClick={() => onButtonClick(id)}>
-            {label} 중복 확인
-          </button> */}
-        </>
+        ''
       )}
       {error && <small role="alert">{error.message}</small>}
     </div>
