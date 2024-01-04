@@ -1,66 +1,119 @@
-const { Op } = require('sequelize');
-const { Member } = require("../model");
-const { ChattingRoom } = require("../model");
-const { Board } = require("../model");
+const { ChattingRoom, ChattingText, Board, Member } = require("../model");
 
-exports.getSessionInfo = (req, res) => {
-  const user = req.session.user;
-  res.json(user);
-};
-
-exports.userCheck = (req, res) => {
-  Member.findOne({
-    where: {
-      memberId: req.query.memberId,
-    },
-  })
-  .then((results) => {
-    if (results != null) {
-      const data = {
-        nickname: results.dataValues.nickname
-      };
-      res.send(data);
-    } else {
-      res.send(false);
-    }
-  })
-  .catch((error) => {
-    console.log("User Check Error", error);
-    res.status(500).send("User Check Error");
-  });
-};
-
-exports.getRoomList = (req, res) => {
+exports.getBuyRoomList = (req, res) => {
   ChattingRoom.findAll({
     where: {
       memberId: req.query.memberId,
     },
-    // 리더님 검색 기능 질문있습니다
     include: [
-      { model: Member, attributes: ["nickname"] },
       { model: Board, attributes: ["title", "memberId"] },
     ],
   })
   .then((results) => {
     if (results.length > 0) {
-      const data = results.map((result) => ({
-        roomId: result.dataValues.roomId,
-        memberId: result.dataValues.memberId,
-        roomName: result.dataValues.roomName,
-        nickname: result.dataValues.Member.nickname,
-        title: result.dataValues.Board.title,
-        sellerMemberId: result.dataValues.Board.memberId,
-      }));
-      res.send(data);
+      const promises = results.map((result) => (
+        ChattingText.findOne({
+          where: {
+            roomId: result.dataValues.roomId,
+          },
+          order: [['createdAt', 'DESC']],
+        })
+        .then((chattingTextResult) => ({
+          roomId: result.dataValues.roomId,
+          roomName: result.dataValues.roomName,
+          title: result.dataValues.Board.title,
+          latestCreatedAt: chattingTextResult.dataValues.createdAt,
+        }))
+      ));
+
+      Promise.all(promises)
+        .then((data) => {
+          res.send(data);
+        })
+        .catch((error) => {
+          console.log("Get Latest Created At Error", error);
+          res.status(500).send("Get Latest Created At Error");
+        });
     } else {
-      res.send(false);
+      console.log("Get Chatting Room Error");
+      res.status(500).send("Get Chatting Room Error");
     }
   })
   .catch((error) => {
-    console.log("Get Room List Error", error);
+    console.log("Get Buy Room List Error", error);
     res.status(500).send("Get Room List Error");
   });
 };
+
+exports.getSellRoomList = async (req, res) => {
+  try {
+    console.log("req.query.memberId!!!!!!!!!!!!!", req.query.memberId);
+    const results = await Board.findAll({
+      where: {
+        memberId: req.query.memberId,
+      },
+    });
+
+    if (results.length > 0) {
+      const promises1 = results.map(async (result) => {
+        const ChattingRoomResults = await ChattingRoom.findAll({
+          where: {
+            boardId: result.dataValues.boardId,
+          },
+        });
+
+        if (ChattingRoomResults.length > 0) {
+          const promises2 = ChattingRoomResults.map(async (ChattingRoomResult) => {
+            const chattingTextResult = await ChattingText.findOne({
+              where: {
+                roomId: ChattingRoomResult.dataValues.roomId,
+              },
+              order: [['createdAt', 'DESC']],
+            });
+
+            const promises3 = await ChattingText.findAll({
+              where: {
+                roomId: ChattingRoomResult.dataValues.roomId,
+              },
+              order: [['createdAt', 'DESC']],
+            });
+
+            return {
+              roomId: ChattingRoomResult.dataValues.roomId,
+              roomName: ChattingRoomResult.dataValues.roomName,
+              title: result.dataValues.title,
+              latestCreatedAt: chattingTextResult.dataValues.createdAt,
+            };
+          });
+
+          const data = await Promise.all(promises2);
+          console.log("data", data)
+          return data;
+        }
+      });
+
+      const finalData = await Promise.all(promises1);
+
+      // 데이터 포맷 변환
+      const formattedData = finalData.flat().filter(Boolean).map(data => ({
+        roomId: data.roomId,
+        roomName: data.roomName,
+        title: data.title,
+        latestCreatedAt: data.latestCreatedAt
+      }));
+
+      res.send(formattedData);
+    } else {
+      console.log("채팅방 조회 오류");
+      res.status(500).send("채팅방 조회 오류");
+    }
+  } catch (error) {
+    console.log("판매방 목록 조회 오류", error);
+    res.status(500).send("판매방 목록 조회 오류");
+  }
+};
+
+
 
 exports.deleteRoom = (req, res) => {
   ChattingRoom.destroy({

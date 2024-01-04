@@ -16,7 +16,7 @@ db.Sequelize = Sequelize;
 db.Board = require("./board")(sequelize, Sequelize);
 db.ChattingList = require("./ChattingList")(sequelize, Sequelize);
 db.ChattingRoom = require("./ChattingRoom")(sequelize, Sequelize);
-db.ChattingtText = require("./ChattingtText")(sequelize, Sequelize);
+db.ChattingText = require("./ChattingText")(sequelize, Sequelize);
 db.Comment = require("./comment")(sequelize, Sequelize);
 db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
 db.Member = require("./Member")(sequelize, Sequelize);
@@ -53,7 +53,7 @@ db.ChattingList.belongsTo(db.Member, { foreignKey: 'memberId' });
 db.ChattingRoom.hasMany(db.ChattingList, { foreignKey: 'roomId' });
 db.ChattingList.belongsTo(db.ChattingRoom, { foreignKey: 'roomId' });
 
-db.ChattingRoom.hasMany(db.ChattingtText, { foreignKey: 'roomId' });
-db.ChattingtText.belongsTo(db.ChattingRoom, { foreignKey: 'roomId' });
+db.ChattingRoom.hasMany(db.ChattingText, { foreignKey: 'roomId' });
+db.ChattingText.belongsTo(db.ChattingRoom, { foreignKey: 'roomId' });
 
 module.exports = db;

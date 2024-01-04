@@ -2,65 +2,47 @@ import '../../styles/chat.css';
 import { useEffect, useState } from 'react';
 import ChattingRoomList from './ChattingRoomList';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
-export default function Chatting() {
-  const [memberId, setMemberId] = useState(null);
-  const [nickname, setNickname] = useState(null);
+function Chatting({ user }) {
+  const { memberId, nickname } = user;
+
   const [chattingRoomList, setChattingRoomList] = useState([]);
 
-  useEffect(() => {
-    // 서버로부터 로그인 세션 정보를 가져오는 요청을 보냅니다.
-    axios.get(`${process.env.REACT_APP_DB_HOST}chatting/getSessionInfo`, { 
-      withCredentials: true
-    }).then((response) => {
-      setMemberId(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }, []);
-
-  const userCheck = async() => {
+  const getAllRoomList = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatting/userCheck?memberId=${memberId}`,
-        // `${process.env.REACT_APP_DB_HOST}chatting/userCheck?memberId=1`,
+      const buyResponse = await axios.get(
+        `${process.env.REACT_APP_DB_HOST}chatting/getBuyRoomList?memberId=${memberId}`,
       );
-
-      // console.log("response.data.nickname", response.data.nickname)
-      setNickname(response.data.nickname)
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const getRoomList = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatting/getRoomList?memberId=${memberId}`,
-        // `${process.env.REACT_APP_DB_HOST}chatting/getRoomList?memberId=1`,
+      
+      const sellResponse = await axios.get(
+        `${process.env.REACT_APP_DB_HOST}chatting/getSellRoomList?memberId=${memberId}`,
       );
-
-      if (response.data) {
-        // console.log("response.data", response.data)
-        setChattingRoomList(prevList => [
-          ...prevList,
-          ...response.data
-        ]);
+  
+      if (buyResponse.data && sellResponse.data) {
+        const allData = [...buyResponse.data, ...sellResponse.data];
+  
+        const sortedData = allData.sort((a, b) => {
+          const dateA = new Date(a.latestCreatedAt);
+          const dateB = new Date(b.latestCreatedAt);
+          return dateB - dateA;
+        });
+  
+        setChattingRoomList(sortedData);
       } else {
         console.error('Get Room List Server Error');
         alert("현재 사용하는 채팅방이 없습니다.");
       }
-
+  
     } catch (error) {
       console.error('Get Room List Error:', error);
     }
   };
+  
 
   useEffect(() => {
     if (memberId !== null) {
-      userCheck();
-      getRoomList();
+      getAllRoomList();
     }
   }, [memberId]);
 
@@ -74,7 +56,7 @@ export default function Chatting() {
             <div>
               {chattingRoomList.map((chattingRoom, i) => (
                 <div>
-                  <ChattingRoomList key={i} chattingRoom={chattingRoom}/>
+                  <ChattingRoomList key={i} chattingRoom={chattingRoom} setChattingRoomList= {setChattingRoomList}/>
                 </div>
               ))}
             </div>
@@ -84,4 +66,11 @@ export default function Chatting() {
     </>
   );
 }
-  
+
+const mapStateToProps = (state) => ({
+  user: state.auth,
+});
+
+const ConnectedChatting = connect(mapStateToProps)(Chatting);
+
+export default ConnectedChatting;

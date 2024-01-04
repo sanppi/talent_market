@@ -1,90 +1,63 @@
 const { Member } = require("../model");
 const { Board } = require("../model");
 const { ChattingRoom } = require("../model");
-const { ChattingtText } = require("../model");
+const { ChattingText } = require("../model");
 
-exports.getBoardInfo = (req, res) => {
-  ChattingRoom.findOne({
+exports.getBoardInfo = async (req, res) => {
+  const chattingroom = await ChattingRoom.findOne({
     where: {
       roomId: req.query.roomId,
-    },
+    }, 
     include: [
-      { model: Board, attributes: ["memberId", "image", "title", "price"] },
+      { model: Member, attributes: ["nickname"] },
+      { model: Board, attributes: ["memberId", "image", "title", "price"], include: [
+        { model: Member, attributes: ["nickname"] },
+      ]},
     ],
-  })
-    .then((result) => {
-      if (result != null) {
-        const buyerMemberId = result.dataValues.memberId;
-        const sellerMemberId = result.dataValues.Board.memberId;
-
-        Member.findOne({
-          where: {
-            memberId: buyerMemberId, // buyerMemberId로 검색합니다.
-          },
-        })
-          .then((buyerResult) => {
-            if (buyerResult != null) {
-              // 리더님 이 코드 약간 비효율적이어 보이는데 최선일까요?
-              Member.findOne({
-                where: {
-                  memberId: sellerMemberId,
-                },
-              })
-                .then((sellerResult) => {
-                  if (sellerResult != null) {
-                    const data = {
-                      buyerMemberId: buyerMemberId,
-                      sellerMemberId: sellerMemberId,
-                      image: result.dataValues.Board.image,
-                      title: result.dataValues.Board.title,
-                      price: result.dataValues.Board.price,
-                      sellerNickname: sellerResult.dataValues.nickname,
-                      buyerNickname: buyerResult.dataValues.nickname, // buyerNickname을 추가합니다.
-                    };
-                    res.send(data);
-                  } else {
-                    res.send(false);
-                  }
-                })
-                .catch((error) => {
-                  console.log("Seller Member findOne Error", error);
-                  res.status(500).send("Seller Member findOne Server Error");
-                });
-            } else {
-              res.send(false);
-            }
-          })
-          .catch((error) => {
-            console.log("Buyer Member findOne Error", error);
-            res.status(500).send("Buyer Member findOne Server Error");
-          });
-      } else {
-        res.send(false);
-      }
-    })
-    .catch((error) => {
-      console.log("Get Board Info Error", error);
-      res.status(500).send("Get Board Info Server Error");
-    });
+    raw: true
+  }).catch((error) => {
+    console.log("Get Board Info Error", error);
+    res.status(500).send("Get Board Info Server Error");
+  });
+  const data = {
+    buyerMemberId: chattingroom.memberId,
+    sellerMemberId: chattingroom['Board.memberId'],
+    image: chattingroom['Board.image'],
+    title: chattingroom['Board.title'],
+    price: chattingroom['Board.price'],
+    sellerNickname: chattingroom['Board.Member.nickname'],
+    buyerNickname: chattingroom['Member.nickname'],
+  };
+  res.send(data)
 };
 
 exports.getChatText = (req, res) => {
-  // 리더님 이거 같은 검색조건인데 위 함수와 합치는게 나을까요 나눠두는게 나을까요?
   console.log("req.query!!!!!!!!!!!!!!!!!!!", req.query.roomId)
-  // ChattingtText.findAll({
-  //   where: {
-  //     roomId: req.query.roomId,
-  //   },
-  //   include: [
-  //     { model: Board, attributes: ["memberId", "image", "title", "price"] },
-  //   ],
-  // })
-  //   .then((result) => {})
-
-  //   .catch((error) => {
-  //     console.log("Get Board Info Error", error);
-  //     res.status(500).send("Get Board Info Server Error");
-  //   });
+  ChattingText.findAll({
+    where: {
+      roomId: req.query.roomId,
+    },
+  })
+  .then((results) => {
+    console.log(results)
+    if (results.length > 0) {
+      const data = results.map((result) => ({
+        roomId: result.dataValues.roomId,
+        chatId: result.dataValues.chatId,
+        type: result.dataValues.type,
+        nickname: result.dataValues.nickname,
+        chatText: result.dataValues.chatText,
+        createdAt: result.dataValues.createdAt,
+      }));
+      res.send(data);
+    } else {
+      res.send(false);
+    }
+  })
+  .catch((error) => {
+    console.log("Get Room List Error", error);
+    res.status(500).send("Get Room List Error");
+  });
 };
 
 
@@ -96,7 +69,7 @@ exports.postChat = (req, res) => {
     chatText: req.body.chatText
   };
   // SB: data를 DB에 업로드합니다.
-  ChattingtText.create(data).then(() => {
+  ChattingText.create(data).then(() => {
     console.log("Post Chat Success")
     res.send(true);
   }).catch((error) => {
