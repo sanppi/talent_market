@@ -48,6 +48,9 @@ app.use("/", router);
 const boardRouter = require("./routes/board");
 app.use("/product", boardRouter);
 
+const commentRouter = require("./routes/comment");
+app.use("/review", commentRouter);
+
 const chattingRouter = require("./routes/chatting");
 app.use("/chatting", chattingRouter);
 
