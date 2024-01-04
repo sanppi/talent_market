@@ -1,13 +1,24 @@
 @import './utilies';
 
 .userDelete {
+  text-align: right;
   font-size: 12px;
   opacity: 0.5;
   margin-top: 20px;
   text-decoration: underline;
+  cursor: pointer;
 }
 
-// .myAccount,
-// .myPw {
-//   @include modal;
-// }
+.myPw,
+.myAccount {
+  @include modal;
+  margin: 30px 0;
+
+  &.slideIn {
+    @include slideIn(0.3s);
+  }
+
+  &.slideOut {
+    @include slideOut(0.3s);
+  }
+}

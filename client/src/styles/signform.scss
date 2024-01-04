@@ -17,10 +17,6 @@ $transition-duration: 0.5s;
       animation: slide $transition-duration ease-in-out;
     }
 
-    .signIn {
-      animation: slide $transition-duration ease-in-out;
-    }
-
     .signMsg {
       @include smallText(12px, tomato, 15px);
       text-align: center;
@@ -80,6 +76,10 @@ $transition-duration: 0.5s;
 
         &:active {
           box-shadow: none;
+        }
+
+        &:disabled {
+          opacity: 0.3;
         }
       }
 
