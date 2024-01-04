@@ -1,16 +1,43 @@
-import { connect } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import '../../../styles/mypage.scss';
 import { useEffect, useState } from 'react';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { ProductCard } from '../Main';
+import '../../../styles/mypage.scss';
+import axios from 'axios';
 function MyPage({ user }) {
-  const { memberId, nickname, id, redCard, email } = user;
+  const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
-  const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅'];
+  const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅 목록'];
+  const endpointMapping = {
+    '찜 목록': 'favorite',
+    '판매 상품': 'selling',
+    '내 리뷰': 'review',
+    '채팅 목록': 'chat',
+  };
+  const [selectedData, setSelectedData] = useState(null);
 
   useEffect(() => {
     if (!memberId) navigate('/member/signin');
   }, [memberId]);
+
+  const handleData = async (endpoint) => {
+    try {
+      const response = await axios({
+        url: `${process.env.REACT_APP_DB_HOST}member/mypage/${endpointMapping[endpoint]}`,
+        method: 'get',
+        withCredentials: true,
+      });
+
+      if (response.data.result) {
+        const resData = response.data.userData;
+        setSelectedData(resData);
+      } else {
+        console.error('result error:', response.data.message);
+      }
+    } catch (err) {
+      console.error('req error:', err);
+    }
+  };
 
   return (
     <>
@@ -38,10 +65,21 @@ function MyPage({ user }) {
           <div className="myList">
             <ul className="myListTitle">
               {myDataList.map((myData, i) => (
-                <li key={i}>{myData}</li>
+                <li key={i} onClick={() => handleData(myData)}>
+                  {myData}
+                </li>
               ))}
             </ul>
-            <div className="myListContent">각 카테고리에 맞는 내용</div>
+            <div className="myListContent">
+              <div className="pageWrapper">
+                {selectedData !== null &&
+                  // TODO : boardId 넘겨야 함
+                  // 기본으로 찜 목록, 해당 리스트 color 주기
+                  selectedData.map((data, i) => (
+                    <ProductCard key={i} product={data} />
+                  ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

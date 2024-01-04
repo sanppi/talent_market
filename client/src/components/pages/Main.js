@@ -6,7 +6,7 @@ import "../../styles/main.scss";
 import { useSelector } from "react-redux";
 
 // 상품 카드..?
-function ProductCard({ product }) {
+export function ProductCard({ product }) {
   return (
     // 상품 목록을 map 돌려서 이미지, 제목, 가격, 별점 받아오도록 했습니다.
     // UI는 db에 저장된 데이터가 생기면 추후 확인하며 수정해야 할 것 같아서 pass ~!
