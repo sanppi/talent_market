@@ -34,7 +34,12 @@ function Comment(sequelize, DataTypes){
               stars: {
                 type: DataTypes.INTEGER,
                 allowNull: false
-              }
+              },
+              isAnonyous: {
+                type: DataTypes.ENUM("true", "false"),
+                allowNull: false,
+                defaultValue: "false",
+              },
             }, {
               tableName: 'Comment',
             freezeTableName: true,
