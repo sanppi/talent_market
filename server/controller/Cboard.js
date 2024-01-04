@@ -32,16 +32,14 @@ const boardCreateHandler = async (req, res) => {
 // 게시글 페이지 조회
 const boardDetailPage = async (req, res) => {
     try {
-        const boardId = req.params.boardId;
-        // console.log(`Received boardId: ${boardId}`);
-        
+        const boardId = req.params.boardId;        
         const product = await Board.findOne({
             where: { boardId: boardId }
         })
 
-        // console.log(`Found product: ${JSON.stringify(product)}`);
-
         if (product) {
+            product.views += 1;
+            await product.save();
             res.json({ product: product })
         } else {
             res.status(404).send("상품 정보를 조회할 수 없습니다.")
