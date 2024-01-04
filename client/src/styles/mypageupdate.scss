@@ -1,3 +1,5 @@
+@import './utilies';
+
 .userDelete {
   font-size: 12px;
   opacity: 0.5;
@@ -5,10 +7,7 @@
   text-decoration: underline;
 }
 
-.myAccount {
-  cursor: pointer;
-
-  &:hover {
-    color: var(--bright-blue);
-  }
-}
+// .myAccount,
+// .myPw {
+//   @include modal;
+// }
