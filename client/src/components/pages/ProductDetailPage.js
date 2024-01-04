@@ -76,6 +76,7 @@ export default function ProductDetailPage() {
             <p>{product.price}원</p>
           </div>
           <div>(판매자 정보,...?넣기)</div>
+          <div>조회수: {product.views}</div>
           <div className="buttonsContainer">
             <button
               className={`commonBtn ${heart ? "heartClicked" : ""}`}
