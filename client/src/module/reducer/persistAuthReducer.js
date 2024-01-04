@@ -1,4 +1,5 @@
 import storage from 'redux-persist/lib/storage';
+import { LOGIN_SUCCESS, LOGOUT, DELETE_SUCCESS } from '../action/authActions';
 import { persistReducer } from 'redux-persist';
 
 const initialState = {
@@ -12,8 +13,9 @@ const initialState = {
 };
 
 const authReducer = (state = initialState, action) => {
+  console.log('reducer action', action);
   switch (action.type) {
-    case 'LOGIN_SUCCESS':
+    case LOGIN_SUCCESS:
       const { memberId, id, nickname, redCard } = action.payload;
       return {
         ...state,
@@ -25,7 +27,9 @@ const authReducer = (state = initialState, action) => {
         //  bankName: '',
         //  accountNum: null
       };
-    case 'LOGOUT':
+    case LOGOUT:
+      return initialState;
+    case DELETE_SUCCESS:
       return initialState;
     default:
       return state;
