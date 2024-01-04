@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import '../styles/modalbasic.scss';
 
-export default function ModalBasic({ type, content, onButtonClick }) {
-  const [isOpen, setIsOpen] = useState(true);
+export default function ModalBasic({
+  type,
+  content,
+  onButtonClick,
+  toggleState,
+  setToggleState,
+}) {
   const disableModal = () => {
-    setIsOpen(false);
+    setToggleState();
   };
+
   // TODO : 결제정보, 확인(신고, 탈퇴, 수정)
 
   return (
     <>
-      {isOpen && (
+      {toggleState && (
         <>
           <div className="modalContainer">
             <div className="modalExitWrapper" onClick={disableModal}>
