@@ -99,7 +99,8 @@ export default function Review({ boardId }) {
               >
                 {index + 1}. {review.title} -{" "}
                 {review.isAnonymous ? "익명" : review.Member.nickname} (
-                {new Date(review.createdAt).toLocaleDateString()})
+                {new Date(review.createdAt).toLocaleDateString()}){" "}
+                {"★".repeat(review.stars)}
               </p>
               {selectedReview === index && <p>{review.review}</p>}
             </div>
