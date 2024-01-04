@@ -14,7 +14,12 @@ function LikeBoardTable(sequelize, DataTypes){
               boardId: {
                 type: DataTypes.INTEGER,
                 allowNull: false
-              }
+              },
+              isLike: {
+                type: DataTypes.ENUM("true", "false"),
+                allowNull: false,
+                defaultValue: "false",
+              },
             }, {
               tableName: 'LikeBoardTable',
             freezeTableName: true,
