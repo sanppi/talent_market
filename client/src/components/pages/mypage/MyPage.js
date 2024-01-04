@@ -1,31 +1,12 @@
 import { connect } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../../styles/mypage.scss';
-import { useEffect } from 'react';
-// import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 function MyPage({ user }) {
-  const { memberId, nickname, id, redCard } = user;
+  const { memberId, nickname, id, redCard, email } = user;
   const navigate = useNavigate();
   const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅'];
-  //
-
-  // --- 마이페이지에서 회원정보 수정 페이지 이동 로직 ---
-  // 1. FE) {type: 'nickname', 'email', 'pw'
-  // ㄴtype이 pw(비밀번호 변경)이라면 data도 보냄(data: 'oldPw': ~~, 'newPw': ~~)
-  // 2. BE)
-  // -> if(type==='~~') 유저 찾기 findOne
-  // -> 결과 전달({result, userData} 통일)
-  // 3. FE) 받아온 정보를 라우터 이동하며 같이 전달해서 Update 화면에서 뿌리기
-  //   const handleUserUpdate = async() => {
-  //     try {
-  //       const response = await axios.post('', {memberId: memberId})
-  //       navigate(`http://localhost:8000/member/mypage/update/${memberId}`, response.data)
-  //     }
-  //     catch (err) {
-  //       console.error('Mypage Err: ', err);
-  //     }
-  // }
 
   useEffect(() => {
     if (!memberId) navigate('/member/signin');

@@ -11,6 +11,15 @@ import axios from 'axios';
 import UpdateBasicInput from '../../sign/UpdateBasicInput';
 import UpdatePwInput from '../../sign/UpdatePwInput';
 
+// --- 회원정보 수정 변경 로직 ---
+// 이메일 정보 서버에서 보내주기
+// 1. FE) {type: 'nickname', 'email', 'pw'
+// ㄴtype이 pw(비밀번호 변경)이라면 data도 보냄(data: 'oldPw': ~~, 'newPw': ~~)
+// 2. BE)
+// -> if(type==='~~') 유저 찾기 findOne
+// -> 결과 전달({result, userData} 통일)
+// 3. FE) 받아온 정보를 라우터 이동하며 같이 전달해서 Update 화면에서 뿌리기
+
 export function MyPageUpdate({ user, deleteSuccess }) {
   const { memberId, nickname, email } = user;
   const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
@@ -70,8 +79,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
   );
 
   const onSubmit = async (data) => {
-    // TODO : 중복 체크 -> 데이터 찾기를 BE에서 하기
-
     if (signUpCk.nickname) {
       try {
         const response = await axios({
@@ -79,8 +86,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
           method: 'POST',
           data: data,
         });
-        // TODO : 성공하면..
         if (response.data.result) {
+          // TODO : 성공하면..
         }
       } catch (err) {
         console.error('signup err: ', err.message);
@@ -131,7 +138,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     [setSignUpCk, setMsg, errors.id]
   );
 
-  // // 엔터키 동작
+  // 엔터키 동작
   const handleEnter = (e) => {
     if (e.key === 'Enter') {
       handleSubmit(onSubmit);
