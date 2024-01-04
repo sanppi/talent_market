@@ -5,9 +5,9 @@ const { Comment } = require("../model");
 // 후기 작성
 exports.writeComment = async (req, res) => {
     try{
-        const { review, stars } = req.body;
+        const { review, stars, memberId, boardId } = req.body;
         await Comment.create({
-            review, stars
+            review, stars, memberId, boardId
         })
         res.send("create review success");
     }
@@ -22,7 +22,7 @@ exports.updateComment = async (req, res) => {
     try{
         const { review, stars } = req.body;
         await Comment.update(
-            { review, stars},
+            { review, stars },
             { where: { commentId: req.params.commentId } }    
         )
         res.send("update review success");
