@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../styles/modalbasic.scss';
 
-export default function ModalBasic({ type, content }) {
+export default function ModalBasic({ type, content, onButtonClick }) {
   const [isOpen, setIsOpen] = useState(true);
   const disableModal = () => {
     setIsOpen(false);
@@ -13,10 +13,12 @@ export default function ModalBasic({ type, content }) {
       {isOpen && (
         <>
           <div className="modalContainer">
-            <div className="modalExitWrapper">&times;</div>
+            <div className="modalExitWrapper" onClick={disableModal}>
+              &times;
+            </div>
             <div className="modalWrapper">
               <p>{content}</p>
-              <button>확인</button>
+              <button onClick={onButtonClick}>확인</button>
             </div>
           </div>
           <div className="modalCanvas" onClick={disableModal}></div>
