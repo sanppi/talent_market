@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../styles/productdetail.scss";
 import { useSelector } from "react-redux";
+import "../../styles/review.scss";
 
 export default function Review({ boardId }) {
   const [reviews, setReviews] = useState([]);
@@ -15,7 +16,9 @@ export default function Review({ boardId }) {
 
   const getReviews = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/product/${boardId}`);
+      const response = await axios.get(
+        `http://localhost:8000/product/${boardId}`
+      );
       if (response.data.reviews) {
         setReviews(response.data.reviews);
       }
@@ -45,7 +48,7 @@ export default function Review({ boardId }) {
   };
 
   const handleReviewSubmit = async (event) => {
-    event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    event.preventDefault();
 
     const reviewData = {
       title: reviewTitle,
@@ -53,6 +56,7 @@ export default function Review({ boardId }) {
       review: reviewContent,
       stars: reviewRating,
       boardId: boardId,
+      isAnonymous: isAnonymous,
     };
 
     try {
@@ -61,16 +65,13 @@ export default function Review({ boardId }) {
         reviewData
       );
 
-      console.log(response.data);
-
       setReviewTitle("");
       setReviewContent("");
       setReviewRating(5);
 
-      setTimeout(getReviews, 2000);
+      getReviews();
+      alert("리뷰 작성이 완료되었습니다.");
     } catch (error) {
-      console.error("리뷰를 보내는데 실패하였습니다: ", error);
-
       alert("리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
@@ -87,7 +88,7 @@ export default function Review({ boardId }) {
         <div>리뷰 목록</div>
         <br />
         {reviews.length === 0 ? (
-          <p>아직 작성된 리뷰가 없습니다.</p>
+          <div className="noReviewNotice">아직 작성된 리뷰가 없습니다.</div>
         ) : (
           reviews.map((review, index) => (
             <div key={review.commentId}>
@@ -96,14 +97,17 @@ export default function Review({ boardId }) {
                   setSelectedReview(selectedReview !== index ? index : null)
                 }
               >
-                {index + 1}. {review.title} - {review.Member.nickname} (
+                {index + 1}. {review.title} -{" "}
+                {review.isAnonymous ? "익명" : review.Member.nickname} (
                 {new Date(review.createdAt).toLocaleDateString()})
               </p>
               {selectedReview === index && <p>{review.review}</p>}
             </div>
           ))
         )}
-        <button onClick={handleReviewButtonClick}>리뷰 작성하기</button>
+        <button onClick={handleReviewButtonClick} className="reviewButton">
+          리뷰 작성하기
+        </button>
         {isReviewFormVisible && (
           <form onSubmit={handleReviewSubmit}>
             <input
@@ -143,7 +147,9 @@ export default function Review({ boardId }) {
               maxLength="50"
               required
             />
-            <button type="submit">작성하기</button>
+            <button type="submit" className="reviewSumbitButton">
+              작성하기
+            </button>
           </form>
         )}
       </div>
