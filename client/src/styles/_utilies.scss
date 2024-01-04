@@ -15,3 +15,11 @@
   width: $width;
   height: $height;
 }
+
+@mixin modal {
+  cursor: pointer;
+  &:hover {
+    color: var(--bright-blue);
+  }
+  @content;
+}
