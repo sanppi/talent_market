@@ -7,15 +7,39 @@ import { useSelector } from "react-redux";
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
   const [heart, setHeart] = useState(false);
-  const [review, setReview] = useState("");
   const { boardId } = useParams();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [reviews, setReviews] = useState([]);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewImage, setReviewImage] = useState(null);
+  const [isReviewFormVisible, setIsReviewFormVisible] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const memberId = useSelector((state) => state.auth.memberId);
 
   useEffect(() => {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
   }, []);
+
+  useEffect(() => {
+    async function getReviews() {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/review/create/${boardId}`
+        );
+        console.log(response.data);
+        if (response.data.reviews) {
+          setReviews(response.data.reviews);
+        }
+      } catch (error) {
+        console.error("리뷰를 불러오는데 실패하였습니다: ", error);
+      }
+    }
+    getReviews();
+  }, [boardId]);
 
   useEffect(() => {
     async function getProductDetail() {
@@ -34,8 +58,6 @@ export default function ProductDetailPage() {
     }
     getProductDetail();
   }, [boardId]);
-
-  // const { user } = useSelector((state) => state.auth);
 
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
@@ -59,25 +81,58 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleReviewChange = (event) => {
-    setReview(event.target.value);
+  const handleReviewTitleChange = (event) => {
+    setReviewTitle(event.target.value);
   };
 
-  const handleReviewSubmit = async () => {
+  const handleReviewMemberIdChange = (event) => {
+    setIsAnonymous(event.target.checked);
+  };
+
+  const handleReviewContentChange = (event) => {
+    setReviewContent(event.target.value);
+  };
+
+  const handleReviewRatingChange = (event) => {
+    setReviewRating(Number(event.target.value));
+  };
+
+  const handleReviewSubmit = async (event) => {
+    event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+
+    const formData = new FormData();
+
+    formData.append("title", reviewTitle);
+    formData.append("memberId", memberId);
+    formData.append("content", reviewContent);
+    formData.append("rating", reviewRating);
+    if (reviewImage) {
+      formData.append("image", reviewImage);
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:8000/product/review/${boardId}`,
-        {
-          review: review, // 작성한 리뷰를 전송합니다.
-        }
+        formData
       );
 
       console.log(response.data);
+
+      setReviewTitle("");
+      setReviewContent("");
+      setReviewRating(5);
+      setReviewImage(null);
+
+      window.location.reload();
     } catch (error) {
       console.error("리뷰를 보내는데 실패하였습니다: ", error);
-    }
 
-    setReview(""); // 리뷰를 전송한 후, 리뷰 작성란을 초기화합니다.
+      alert("리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
+
+  const handleReviewButtonClick = () => {
+    setIsReviewFormVisible(!isReviewFormVisible);
   };
 
   return (
@@ -116,12 +171,57 @@ export default function ProductDetailPage() {
       </div>
       <hr />
       <div className="reviewSection">
-        <h4>리뷰 작성하기</h4>
+        <div>리뷰 목록</div>
         <br />
-        <textarea value={review} onChange={handleReviewChange} />
-        <button className="reviewBtn" onClick={handleReviewSubmit}>
-          리뷰 작성하기
-        </button>
+        {/* 리뷰가 없는 경우 메시지를 표시하고, 리뷰가 있는 경우 각 리뷰를 표시합니다. */}
+        {reviews.length === 0 ? (
+          <p>아직 작성된 리뷰가 없습니다.</p>
+        ) : (
+          reviews.map((review) => <p key={review.id}>{review.content}</p>)
+        )}
+        <button onClick={handleReviewButtonClick}>리뷰 작성하기</button>
+        {isReviewFormVisible && (
+          <form onSubmit={handleReviewSubmit}>
+            <input
+              type="text"
+              placeholder="제목"
+              value={reviewTitle}
+              onChange={handleReviewTitleChange}
+              maxLength="15"
+              required
+            />
+            <label>
+              <input
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={handleReviewMemberIdChange}
+              />
+              익명
+            </label>
+            <div>
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <label key={rating}>
+                  <input
+                    type="radio"
+                    value={rating}
+                    checked={reviewRating === rating}
+                    onChange={handleReviewRatingChange}
+                    required
+                  />
+                  {"★".repeat(rating)} {/* 별 모양으로 표시합니다. */}
+                </label>
+              ))}
+            </div>
+            <textarea
+              placeholder="내용"
+              value={reviewContent}
+              onChange={handleReviewContentChange}
+              maxLength="50"
+              required
+            />
+            <button type="submit">작성하기</button>
+          </form>
+        )}
       </div>
     </div>
   );
