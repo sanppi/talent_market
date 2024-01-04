@@ -15,7 +15,7 @@ export default function Review({ boardId }) {
 
   const getReviews = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/review/create`);
+      const response = await axios.get(`http://localhost:8000/product/${boardId}`);
       if (response.data.reviews) {
         setReviews(response.data.reviews);
       }
@@ -90,16 +90,16 @@ export default function Review({ boardId }) {
           <p>아직 작성된 리뷰가 없습니다.</p>
         ) : (
           reviews.map((review, index) => (
-            <div key={review.id}>
+            <div key={review.commentId}>
               <p
                 onClick={() =>
                   setSelectedReview(selectedReview !== index ? index : null)
                 }
               >
-                {index + 1}. {review.title} - {review.author} (
-                {new Date(review.date).toLocaleDateString()})
+                {index + 1}. {review.title} - {review.Member.nickname} (
+                {new Date(review.createdAt).toLocaleDateString()})
               </p>
-              {selectedReview === index && <p>{review.content}</p>}
+              {selectedReview === index && <p>{review.review}</p>}
             </div>
           ))
         )}
