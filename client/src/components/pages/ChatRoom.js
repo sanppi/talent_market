@@ -1,6 +1,7 @@
 import "../../styles/chat.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from 'react-router-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import Chat from "./Chat";
 import Notice from "./Notice";
@@ -8,10 +9,12 @@ import io from "socket.io-client";
 
 const socket = io.connect("http://localhost:8000", { autoConnect: false });
 
-export default function ChatRoom() {
+function ChatRoom({ user }) {
+  const { memberId, nickname, redCard } = user;
+
   const { id } = useParams();
   // id -> roomId
-  const [memberId, setMemberId] = useState(null);
+  // const [memberId, setMemberId] = useState(null);
   const [myNickname, setMyNickname] = useState(null);
   const [otherNickname, setOtherNickname] = useState(null);
   const [boardInfo, setBoardInfo] = useState({});
@@ -27,13 +30,14 @@ export default function ChatRoom() {
       axios.get(`${process.env.REACT_APP_DB_HOST}chatting/getSessionInfo`, { 
         withCredentials: true
       }).then((response) => {
-        setMemberId(response.data);
+        // setMemberId(response.data);
       })
       .catch((error) => {
         console.log("Chat Room Get Session Info", error);
       });
     } else {
       getBoardInfo();
+      getChatText();
     }
   }, [memberId]);
 
@@ -42,6 +46,7 @@ export default function ChatRoom() {
       const response = await axios.get(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getBoardInfo?roomId=${id}`,
       );
+      console.log(response)
 
       setBoardInfo({
         sellerMemberId: response.data.sellerMemberId,
@@ -54,7 +59,6 @@ export default function ChatRoom() {
       })
 
       initSocketConnect();
-      // 리더님 이거 연결이 됐다가 안됐다가...
 
       if (memberId == response.data.sellerMemberId) {
         const Do = "판매";
@@ -78,9 +82,9 @@ export default function ChatRoom() {
   };
 
   const initSocketConnect = () => {
-    console.log("connected", socket.connected);
     if (!socket.connected) {
       socket.connect();
+      console.log("connected", socket.connected);
       socket.emit("entry", { memberId: memberId });
     }
   };
@@ -103,17 +107,7 @@ export default function ChatRoom() {
     }
   };
 
-  useEffect(() => {
-    // 리더님 아래 코드가 필요없는데
-    // 왜 이 코드를 주석처리하면 notice가 안뜰까요?
-    socket.on("entrySuccess", (res) => {
-      setUserId(res.memberId);
-    });
 
-    // socket.on("error", (res) => {
-    //   alert(res.msg);
-    // });
-  }, []);
 
   const getChatText = async() => {
     try {
@@ -156,7 +150,6 @@ export default function ChatRoom() {
       };
 
       const postChat = async() => {
-        // console.log(chatData);
         try {
           const response = await axios.post(
             `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
@@ -183,9 +176,11 @@ export default function ChatRoom() {
     return () => socket.off("chat", addChatList);
   }, [addChatList])
 
-  // const entryChat = () => {
-  //   socket.emit("entry", { userId: memberId });
-  // };
+  useEffect(() => {
+    // socket.on("error", (res) => {
+    //   alert(res.msg);
+    // });
+  }, []);
 
   return (
     <>
@@ -225,3 +220,11 @@ export default function ChatRoom() {
     </>
   );
 }
+
+const mapStateToProps = (state) => ({
+  user: state.auth,
+});
+
+const ConnectedChatRoom = connect(mapStateToProps)(ChatRoom);
+
+export default ConnectedChatRoom;

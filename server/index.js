@@ -7,12 +7,7 @@ const multer = require("multer");
 const path = require("path");
 const session = require("express-session");
 
-const { Member } = require("./model");
-const { Board } = require("./model");
-const { Comment } = require("./model");
-
 const cors = require("cors");
-// const { emit } = require("process");
 app.use(cors({origin: true, credentials: true}));
 
 const io = require("socket.io")(server, {
@@ -27,13 +22,6 @@ app.use(
     secret: "secretKey",
     resave: false,
     saveUninitialized: true,
-  // cookie: {
-  //   domain: 'localhost',
-  //   path: '/',
-  //   sameSite: 'none',
-  //   httpOnly: true,
-  //   secure: true,
-  // },
   })
 );
 

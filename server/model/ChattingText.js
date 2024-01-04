@@ -1,6 +1,6 @@
-function ChattingtText(sequelize, DataTypes){
+function ChattingText(sequelize, DataTypes){
     return sequelize.define(
-        'ChattingtText', {
+        'ChattingText', {
           chatId: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -11,12 +11,8 @@ function ChattingtText(sequelize, DataTypes){
             type: DataTypes.INTEGER,
             allowNull: false
           },
-          type: {
-            type: DataTypes.STRING(10),
-            allowNull: false
-          },
-          nickname: {
-            type: DataTypes.STRING(20),
+          memberId: {
+            type: DataTypes.INTEGER,
             allowNull: false
           },
           chatText: {
@@ -33,11 +29,11 @@ function ChattingtText(sequelize, DataTypes){
               onUpdate: 'CURRENT_TIMESTAMP'
           }
         }, {
-          tableName: 'ChattingtText',
+          tableName: 'ChattingText',
           freezeTableName: true,
           timestamps: true,
         }
     )
 }
 
-module.exports = ChattingtText;
+module.exports = ChattingText;
