@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import '../styles/modalbasic.scss';
 
 export default function ModalBasic({
@@ -23,11 +22,15 @@ export default function ModalBasic({
               &times;
             </div>
             <div className="modalWrapper">
-              <p>{content}</p>
+              {type === 'confirm' ? (
+                <p>{content}되었습니다.</p>
+              ) : (
+                <p>정말 {content} 하시겠습니까?</p>
+              )}
               <button onClick={onButtonClick}>확인</button>
             </div>
           </div>
-          <div className="modalCanvas" onClick={disableModal}></div>
+          {/* <div className="modalCanvas" onClick={disableModal}></div> */}
         </>
       )}
     </>
