@@ -256,18 +256,26 @@ exports.getMyReviews = async (req, res) => {
   try {
     const reviews = await Comment.findAll({
       where: { memberId: targetMemberId },
-      attributes: ["review"],
+      attributes: ["review", "title", "isAnonymous", "stars"],
       include: [
         {
           model: Board,
-          attributes: ["title"],
+          attributes: ["boardId"],
+        },
+        {
+          model: Member,
+          attributes: ["memberId"],
         },
       ],
     });
 
     const formattedReviews = reviews.map((review) => ({
       review: review.review,
-      title: review.Board.title,
+      title: review.title,
+      isAnonymous: review.isAnonymous,
+      stars: review.stars,
+      boardId: review.Board.boardId,
+      memberId: review.Member.memberId,
     }));
 
     res.send({ result: true, userData: formattedReviews });
