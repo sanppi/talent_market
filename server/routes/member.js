@@ -24,4 +24,7 @@ router.get("/mypage/favorite", member.getFavorites);
 router.get("/mypage/selling", member.getSellingProducts);
 router.get("/mypage/review", member.getMyReviews);
 
+// 회원정보 결제정보 등록
+router.post("/mypage/update/payRegister/:memberId", member.payRegister);
+
 module.exports = router;

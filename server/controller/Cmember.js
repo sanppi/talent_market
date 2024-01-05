@@ -6,6 +6,7 @@ const {
   sequelize,
 } = require("../model");
 
+// 회원가입
 exports.signUp = async (req, res) => {
   try {
     // console.log(req.body);
@@ -18,6 +19,7 @@ exports.signUp = async (req, res) => {
   }
 };
 
+// 회원가입 id,nickname 중복체크
 exports.checkDuplicate = async (req, res) => {
   try {
     const { id, nickname } = req.body;
@@ -57,6 +59,7 @@ exports.checkDuplicate = async (req, res) => {
   }
 };
 
+// 로그인
 exports.signIn = async (req, res) => {
   try {
     const result = await Member.findOne({
@@ -307,35 +310,104 @@ exports.userInfo = async (req, res) => {
   }
 };
 
-// 회원 정보 수정
+// 회원정보 수정
 exports.updateUserInfo = async (req, res) => {
   try {
+    const targetMemberId = req.session.user;
+    const { nickname, email, currentPw, newPw } = req.body;
+
+    const member = await Member.findOne({
+      where: { memberId: targetMemberId },
+    });
+
+    if (!member) {
+      return res
+        .status(404)
+        .send({ result: false, message: "회원을 찾을 수 없습니다." });
+    }
+
+    // 이메일 변경
+    if (email) {
+      // 이메일 중복 확인
+      const existingEmailUser = await Member.findOne({
+        where: { email: email },
+      });
+
+      if (existingEmailUser) {
+        console.log({ error: "중복된 이메일입니다." });
+        return res.send({ result: false, type: "이메일" });
+      } else {
+        member.email = email;
+        await member.save();
+        return res.send({ result: true, type: "이메일" });
+      }
+    }
+
+    // 닉네임 변경
+    if (nickname) {
+      // 닉네임 중복 확인
+      const existingNicknameUser = await Member.findOne({
+        where: { nickname: nickname },
+      });
+
+      if (existingNicknameUser) {
+        console.log({ error: "중복된 닉네임입니다." });
+        return res.send({ result: false, type: "닉네임" });
+      } else {
+        member.nickname = nickname;
+        await member.save();
+        return res.send({ result: true, type: "닉네임" });
+      }
+    }
+    // 비밀번호 변경
+
+    if (currentPw === member.pw && newPw !== undefined) {
+      member.pw = newPw;
+    } else {
+      return res.send({
+        result: false,
+        message:
+          currentPw !== member.pw
+            ? "기존 비밀번호가 올바르지 않습니다."
+            : "비밀번호를 입력해주세요.",
+      });
+    }
+
+    await member.save();
+
+    return res.send({
+      result: true,
+      message: "회원 정보가 성공적으로 업데이트되었습니다.",
+    });
+  } catch (error) {
+    console.error("Error updating user info", error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
+
+// 결제 정보 등록 기능
+exports.payRegister = async (req, res) => {
+  try {
     const targetMemberId = req.params.memberId;
+    const { bankName, accountNum } = req.body;
 
-    // 클라이언트로부터 전달받은 수정된 정보
-    const { nickname, email, pw } = req.body;
-
-    // 해당 멤버 찾기
     const member = await Member.findOne({
       where: { memberId: targetMemberId },
     });
 
     if (member) {
-      // 수정된 정보로 회원 업데이트
-      member.nickname = nickname;
-      member.email = email;
-      member.pw = pw;
+      // 회원의 결제 정보 업데이트
+      await member.update({
+        bankName: bankName,
+        accountNum: accountNum,
+      });
 
-      await member.save();
-
-      res.send({ success: true, message: "회원 정보가 업데이트되었습니다." });
+      res.send({ result: true, message: "결제정보 등록 완료" });
     } else {
-      res
-        .status(404)
-        .send({ success: false, message: "회원을 찾을 수 없습니다." });
+      res.status(404).send({ result: false, message: "결제정보 등록 불가" });
     }
   } catch (error) {
-    console.error("Error updating member info", error);
+    console.error("Error registering account", error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -344,8 +416,6 @@ exports.updateUserInfo = async (req, res) => {
 exports.deleteUserInfo = async (req, res) => {
   try {
     const targetMemberId = req.params.memberId;
-
-    // 해당 멤버 찾기
     const member = await Member.findOne({
       where: { memberId: targetMemberId },
     });
@@ -357,11 +427,11 @@ exports.deleteUserInfo = async (req, res) => {
       // 세션에서 사용자 정보 삭제
       // req.session.destroy();
 
-      res.send({ success: true, message: "회원 탈퇴가 완료되었습니다." });
+      res.send({ result: true, message: "회원 탈퇴가 완료되었습니다." });
     } else {
       res
         .status(404)
-        .send({ success: false, message: "회원을 찾을 수 없습니다." });
+        .send({ result: false, message: "회원을 찾을 수 없습니다." });
     }
   } catch (error) {
     console.error("Error deleting member", error);
