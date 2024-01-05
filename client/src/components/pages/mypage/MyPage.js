@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
+import ReviewList from '../../ReviewList';
+
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
@@ -29,7 +31,10 @@ function MyPage({ user }) {
       });
 
       if (response.data.result) {
-        const resData = response.data.userData;
+        const resData = response.data.userData.map((data) => ({
+          ...data,
+          type: endpointMapping[endpoint],
+        }));
         setSelectedData(resData);
       } else {
         console.error('result error:', response.data.message);
@@ -73,11 +78,21 @@ function MyPage({ user }) {
             <div className="myListContent">
               <div className="pageWrapper">
                 {selectedData !== null &&
-                  // TODO : boardId 넘겨야 함
-                  // 기본으로 찜 목록, 해당 리스트 color 주기
-                  selectedData.map((data, i) => (
-                    <ProductCard key={i} product={data} />
-                  ))}
+                  // TODO : 기본으로 찜 목록, 해당 리스트 color 주기
+                  selectedData.map((data, i) => {
+                    switch (data.type) {
+                      case 'favorite':
+                      case 'selling':
+                        return (
+                          <ProductCard key={data.boardId} product={data} />
+                        );
+                      case 'review':
+                        // TODO : 데이터바인딩
+                        return <ReviewList key={data.boardId} reviews={data} />;
+                      default:
+                        return null;
+                    }
+                  })}
               </div>
             </div>
           </div>
