@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #5585a7;
+  background-color: #2095b9;
   padding: 20px;
   box-sizing: border-box;
   z-index: 8900;
@@ -29,15 +29,41 @@
     left: 0;
     background-color: #ffffff;
     opacity: 1;
-    width: 20%;
-    height: 500px;
+    width: 15%;
+    height: 340px;
     z-index: 850;
 
-    div {
+    div:not(.categoryInfo) {
       font-size: 25px;
       text-align: center;
       margin: 10px;
       cursor: pointer;
+
+      &:active {
+        color: var(--bright-blue);
+      }
+
+      &:after {
+        display: block;
+        content: "";
+        padding-bottom: 5px;
+        border-bottom: solid 3px var(--light-blue);
+        transform: scaleX(0);
+        transition: transform 250ms ease-in-out;
+        transform-origin: 0% 50%;
+      }
+
+      &:hover:after {
+        transform: scaleX(1);
+      }
+    }
+
+    .categoryInfo {
+      font-size: 25px;
+      text-align: center;
+      margin: 10px;
+      margin-top: 20px;
+      font-weight: bold;
     }
   }
 

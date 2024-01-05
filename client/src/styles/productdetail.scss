@@ -1,7 +1,7 @@
 .commonBtn {
   display: block;
   margin: 10px auto;
-  background-color: #3c7db6;
+  background-color: #2095b9;
   width: 150px;
   height: 37px;
   font-size: 20px;
@@ -21,7 +21,7 @@
   top: 90px;
   left: 50%;
   transform: translateX(-50%);
-  width: 50%;
+  width: 800px;
   margin: auto;
   padding: 20px;
   position: absolute;
@@ -64,6 +64,7 @@
         align-items: center;
         button {
           &.commonBtn {
+            background-color: var(--bright-blue);
             &:first-of-type {
               background-color: #808080;
               margin-right: 10px;
@@ -77,29 +78,34 @@
       .productTitle {
         text-align: left;
         margin-bottom: 10px;
+        margin-top: 15px;
         font-size: 30px;
       }
       .productPrice {
         text-align: left;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         font-size: 40px;
+      }
+      hr {
+        width: 100%;
       }
     }
   }
 
   .productContent {
-    margin: 20px 50px;
+    margin: 50px 25px;
     text-align: left;
-    font-size: 20px;
   }
 }
 
-hr {
+hr:not(.productDescription > hr) {
   border: 2px solid transparent;
   background-image: linear-gradient(#fff, #fff),
     linear-gradient(to right, #00bbea 0%, #e74c3c 100%);
   background-origin: border-box;
   background-clip: content-box, border-box;
+  margin: 0px 25px;
+  margin-bottom: 30px;
 }
 
 label {

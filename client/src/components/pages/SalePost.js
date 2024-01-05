@@ -130,9 +130,12 @@ export default function SalePost() {
               onChange={(e) => setCategory(e.target.value)}
             >
               <option value="">카테고리 선택</option>
-              <option value="category1">정치인 성대모사</option>
-              <option value="category2">그림</option>
-              <option value="category3">코디</option>
+              <option value="언어">언어</option>
+              <option value="음악">음악</option>
+              <option value="예술">예술</option>
+              <option value="취미">취미</option>
+              <option value="상담">상담</option>
+              <option value="기타">기타</option>
             </select>
           </div>
           <hr />

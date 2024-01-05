@@ -74,13 +74,14 @@ export default function NavBar() {
         {/* 카테고리 창 */}
         {isCategoryOpen && (
           <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
-            <div>성대모사</div>
-            <div>코디</div>
-            <div>그림</div>
-            <div>사주 / 타로</div>
-            <div>연애상담</div>
-            <div>악기</div>
-            <div>노래</div>
+            <div className="categoryInfo">전체 카테고리</div>
+            <hr />
+            <div>언어</div>
+            <div>음악</div>
+            <div>예술</div>
+            <div>취미</div>
+            <div>상담</div>
+            <div>기타</div>
           </div>
         )}
 
