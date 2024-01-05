@@ -16,7 +16,7 @@ function LikeBoardTable(sequelize, DataTypes){
                 allowNull: false
               },
               isLike: {
-                type: DataTypes.ENUM("true", "false"),
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: "false",
               },
