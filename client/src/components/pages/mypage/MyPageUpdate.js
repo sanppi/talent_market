@@ -10,6 +10,7 @@ import '../../../styles/mypageupdate.scss';
 import axios from 'axios';
 import UpdateBasicInput from '../../sign/UpdateBasicInput';
 import UpdatePwInput from '../../sign/UpdatePwInput';
+import ModalAccount from '../../ModalAccount';
 
 // --- 회원정보 수정 변경 로직 ---
 // 이메일 정보 서버에서 보내주기
@@ -78,27 +79,26 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     [setValue, trigger]
   );
 
+  // 비밀번호 변경
   const onSubmit = async (data) => {
-    if (signUpCk.nickname) {
-      try {
-        const response = await axios({
-          url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
-          method: 'POST',
-          data: data,
-        });
-        if (response.data.result) {
-          // TODO : 성공하면..
-        }
-      } catch (err) {
-        console.error('signup err: ', err.message);
+    try {
+      const response = await axios({
+        url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+        method: 'POST',
+        data: data,
+        withCredentials: true,
+      });
+      if (response.data.result) {
+        // TODO : 성공하면..
       }
-      // 중복 체크 미통과
-    } else {
-      setMsg((prev) => ({
-        ...prev,
-        validUp: '기존 비밀번호와 일치하지 않습니다.',
-      }));
+    } catch (err) {
+      console.error('비번 수정 err: ', err.message);
     }
+    // 중복 체크 미통과
+    setMsg((prev) => ({
+      ...prev,
+      validUp: '기존 비밀번호와 일치하지 않습니다.',
+    }));
   };
 
   // 중복 체크 안 해도?
@@ -197,18 +197,14 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                 결제정보 등록 >
               </div>
               {accountToggle && (
-                <ModalBasic
-                  content="결제 정보 내용"
-                  toggleState={true}
-                  setToggleState={onAccountToggle}
-                />
+                <ModalAccount setToggleState={onAccountToggle} />
               )}
               <div className="userDelete" onClick={onDeleteToggle}>
                 회원 탈퇴
               </div>
               {deleteToggle && (
                 <ModalBasic
-                  content="정말 탈퇴하시겠습니까?"
+                  content="탈퇴"
                   onButtonClick={deleteUser}
                   toggleState={true}
                   setToggleState={onDeleteToggle}

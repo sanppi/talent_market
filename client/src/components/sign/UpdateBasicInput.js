@@ -18,7 +18,7 @@ export default function UpdateBasicInput({
         id="nickname"
         register={register}
         onChange={handleInputChange}
-        value={watchObj?.nickname || nickname || ''}
+        value={(nickname || watchObj?.nickname) ?? ''}
         error={errors.nickname}
         validation={{
           required: '닉네임은 필수값입니다.',

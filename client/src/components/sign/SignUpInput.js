@@ -1,3 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
+
 export default function SignUpInput({
   label,
   type,
@@ -13,6 +19,22 @@ export default function SignUpInput({
   isUpdate,
   placeholder,
 }) {
+  const [modal, onModal] = useToggle(false);
+  const memberId = useSelector((state) => state.auth.memberId);
+  const navigate = useNavigate();
+  const handleBtnClick = async () => {
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+      data: { type: 'nickname', userData: value },
+      withCredentials: true,
+    });
+    console.log('엥', response.data);
+    if (response.data.result) {
+      console.log('??');
+      onModal();
+    }
+  };
+
   return (
     <div className="signInput">
       <label htmlFor={id}>{label}</label>
@@ -31,10 +53,20 @@ export default function SignUpInput({
               <button
                 className="updateButton"
                 type="button"
-                onClick={() => onButtonClick(id)}
+                // axios 요청
+                onClick={handleBtnClick}
               >
-                {label} 변경
+                변경하기
               </button>
+              {modal && (
+                <ModalBasic
+                  type="confirm"
+                  toggleState={true}
+                  setToggleState={onModal}
+                  content="수정"
+                  onButtonClick={navigate('/member/mypage')}
+                />
+              )}
             </>
           ) : (
             <>
