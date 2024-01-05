@@ -36,7 +36,7 @@ function Comment(sequelize, DataTypes){
                 allowNull: false
               },
               isAnonymous: {
-                type: DataTypes.ENUM("true", "false"),
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: "false",
               },

@@ -5,12 +5,12 @@ const { Comment } = require("../model");
 // 후기 작성
 exports.writeComment = async (req, res) => {
     try{
-        const { review, stars, title, memberId, boardId } = req.body;
+        const { review, stars, title, memberId, boardId, isAnonymous} = req.body;
 
         console.log(req.body);
 
         await Comment.create({
-            review, stars, title, memberId, boardId
+            review, stars, title, memberId, boardId, isAnonymous
         })
         res.send("create review success");
     }
