@@ -1,4 +1,7 @@
 .reviewSection {
+  margin: 0px 25px;
+  text-align: left;
+
   form {
     display: flex;
     flex-direction: column;
@@ -10,12 +13,21 @@
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
-      margin-top: 20px;
+      margin-top: 15px;
+    }
+
+    input[type="text"] {
+      width: 40%;
+      height: 35px;
+    }
+
+    textarea {
+      height: 40px;
     }
 
     input[type="checkbox"],
     input[type="radio"] {
-      margin-top: 20px;
+      margin-top: 15px;
       margin-right: 3px;
     }
 
@@ -26,12 +38,13 @@
     .reviewSumbitButton {
       width: fit-content;
       padding: 10px 20px;
-      background-color: #3c7db6;
+      background-color: #2095b9;
       color: white;
       border: none;
       border-radius: 20px;
       cursor: pointer;
       align-self: flex-end;
+      margin-top: 20px;
     }
   }
 }
@@ -39,7 +52,7 @@
 .reviewButton {
   display: block;
   margin: 10px auto;
-  background-color: #3c7db6;
+  background-color: #2095b9;
   width: 150px;
   height: 37px;
   font-size: 20px;
@@ -51,4 +64,9 @@
 
 .noReviewNotice {
   color: rgb(80, 80, 80);
+}
+
+.reviewForm {
+  padding: 20px;
+  margin-top: 20px;
 }

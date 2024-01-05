@@ -92,7 +92,7 @@ export default function Review({ boardId }) {
         ) : (
           reviews.map((review, index) => (
             <div key={review.commentId}>
-              <p
+              <div
                 onClick={() =>
                   setSelectedReview(selectedReview !== index ? index : null)
                 }
@@ -101,7 +101,7 @@ export default function Review({ boardId }) {
                 {review.isAnonymous ? "익명" : review.Member.nickname} (
                 {new Date(review.createdAt).toLocaleDateString()}){" "}
                 {"★".repeat(review.stars)}
-              </p>
+              </div>
               {selectedReview === index && <p>{review.review}</p>}
             </div>
           ))
@@ -110,10 +110,10 @@ export default function Review({ boardId }) {
           리뷰 작성하기
         </button>
         {isReviewFormVisible && (
-          <form onSubmit={handleReviewSubmit}>
+          <form className="reviewForm" onSubmit={handleReviewSubmit}>
             <input
               type="text"
-              placeholder="제목"
+              placeholder="한 줄 리뷰 제목"
               value={reviewTitle}
               onChange={handleReviewTitleChange}
               maxLength="15"
@@ -142,7 +142,7 @@ export default function Review({ boardId }) {
               ))}
             </div>
             <textarea
-              placeholder="내용"
+              placeholder="한 줄 리뷰 내용"
               value={reviewContent}
               onChange={handleReviewContentChange}
               maxLength="50"

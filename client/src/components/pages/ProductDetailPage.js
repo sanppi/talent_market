@@ -10,6 +10,7 @@ export default function ProductDetailPage() {
   const [heart, setHeart] = useState(false);
   const { boardId } = useParams();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const memberId = useSelector((state) => state.auth.memberId);
 
   useEffect(() => {
     setTimeout(() => {
@@ -49,6 +50,7 @@ export default function ProductDetailPage() {
         `http://localhost:8000/product/like/${boardId}`,
         {
           like: !heart,
+          memberId: memberId,
         }
       );
 
@@ -76,7 +78,9 @@ export default function ProductDetailPage() {
           <div className="productPrice">
             <p>{product.price}원</p>
           </div>
-          <div>(판매자 정보,...?넣기)</div>
+          <hr />
+          {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
+          <div className="sellerInfo">판매자:</div>
           <div>조회수: {product.views}</div>
           <div className="buttonsContainer">
             <button
@@ -89,9 +93,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-      <hr />
       <div className="productContent">
-        <p>상품설명: {product.content}</p>
+        <p>상품설명 : {product.content}</p>
       </div>
       <hr />
       <Review boardId={boardId} />
