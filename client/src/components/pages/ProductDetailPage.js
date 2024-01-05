@@ -37,6 +37,18 @@ export default function ProductDetailPage() {
     getProductDetail();
   }, [boardId]);
 
+  useEffect(() => {
+    async function fetchLikeStatus() {
+      try {
+        const response = await axios.get(`http://localhost:8000/product/like/${boardId}/${memberId}`);
+        setHeart(response.data.isLike);
+      } catch (error) {
+        console.error("찜 정보를 불러오는데 실패하였습니다: ", error);
+      }
+    }
+    fetchLikeStatus();
+  }, [boardId, memberId]);
+
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
       alert("로그인이 필요한 기능입니다.");
@@ -47,10 +59,9 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/product/like/${boardId}`,
+        `http://localhost:8000/product/like/${boardId}/${memberId}`,
         {
-          like: !heart,
-          memberId: memberId,
+          isLike: !heart,
         }
       );
 
@@ -82,6 +93,8 @@ export default function ProductDetailPage() {
           {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
           <div className="sellerInfo">판매자: {product.nickname}</div>
           <div>조회수: {product.views}</div>
+          {/* 찜한 횟수는 바로 볼 수 있도록 클라이언트에 적었습니다. 불필요하시다면 주석 또는 삭제해주세요. */}
+          <div>찜한 횟수: {product.likeNum}</div>
           <div className="buttonsContainer">
             <button
               className={`commonBtn ${heart ? "heartClicked" : ""}`}

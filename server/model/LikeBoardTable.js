@@ -15,11 +15,6 @@ function LikeBoardTable(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false
               },
-              isLike: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: "false",
-              },
             }, {
               tableName: 'LikeBoardTable',
             freezeTableName: true,

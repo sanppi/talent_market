@@ -35,6 +35,7 @@ const boardDetailPage = async (req, res) => {
     const boardId = req.params.boardId;
     const product = await Board.findOne({
       where: { boardId: boardId },
+      include: [{ model: Member, attributes: ["nickname"] }],
     });
 
     const reviews = await Comment.findAll({
@@ -52,6 +53,22 @@ const boardDetailPage = async (req, res) => {
   } catch (error) {
     console.error("에러 발생: ", error);
     res.status(500).send("상세 페이지에 접근할 수 없습니다.");
+  }
+};
+
+const getLikeStatus = async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const memberId = req.params.memberId;
+
+    const like = await LikeBoardTable.findOne({
+      where: { boardId: boardId, memberId: memberId },
+    });
+
+    res.json({ success: true, isLike: !!like });
+  } catch (error) {
+    console.log("찜 상태 확인 에러:", error);
+    res.status(500).send("찜 상태를 확인할 수 없습니다.");
   }
 };
 
@@ -82,7 +99,7 @@ const toggleLike = async (req, res) => {
     const likeCount = await LikeBoardTable.count({
       where: { boardId: boardId },
     });
-    await LikeBoardTable.update(
+    await Board.update(
       { likeNum: likeCount },
       { where: { boardId: boardId } }
     );
@@ -97,6 +114,7 @@ const toggleLike = async (req, res) => {
 module.exports = {
   boardCreate: [upload.single("image"), boardCreateHandler],
   boardDetail: boardDetailPage,
+  getLike: getLikeStatus,
   boardLike: toggleLike,
 };
 
