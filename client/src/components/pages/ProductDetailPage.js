@@ -80,7 +80,7 @@ export default function ProductDetailPage() {
           </div>
           <hr />
           {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
-          <div className="sellerInfo">판매자:</div>
+          <div className="sellerInfo">판매자: {product.nickname}</div>
           <div>조회수: {product.views}</div>
           <div className="buttonsContainer">
             <button

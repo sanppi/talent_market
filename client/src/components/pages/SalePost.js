@@ -12,6 +12,7 @@ export default function SalePost() {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
+  const nickname = useSelector((state) => state.auth.nickname);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
@@ -42,6 +43,7 @@ export default function SalePost() {
     formData.append("category", category);
     formData.append("content", content);
     formData.append("memberId", memberId);
+    formData.append("nickname", nickname);
 
     // 데이터 받으십쇼~~!!
     try {
@@ -111,6 +113,7 @@ export default function SalePost() {
                 placeholder="제목"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                maxLength={20}
               />
               <div className="priceInput">
                 <input
@@ -118,6 +121,7 @@ export default function SalePost() {
                   placeholder="가격"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  maxLength={20}
                 />
                 {/* <div className="fakePlaceHolder">원</div> */}
               </div>
