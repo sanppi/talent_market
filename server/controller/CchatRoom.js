@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const { Member } = require("../model");
 const { Board } = require("../model");
 const { ChattingRoom } = require("../model");
@@ -32,23 +34,24 @@ exports.getBoardInfo = async (req, res) => {
 };
 
 exports.getChatText = (req, res) => {
-  console.log("req.query!!!!!!!!!!!!!!!!!!!", req.query.roomId)
   ChattingText.findAll({
     where: {
       roomId: req.query.roomId,
-    },
+      [Op.or]: [
+        { memberId: req.query.myMemberId },
+        { memberId: req.query.otherMemberId }
+      ]
+    }
   })
   .then((results) => {
-    console.log(results)
     if (results.length > 0) {
-      const data = results.map((result) => ({
-        roomId: result.dataValues.roomId,
-        chatId: result.dataValues.chatId,
-        type: result.dataValues.type,
-        nickname: result.dataValues.nickname,
+      const data = results.map((result) => (
+        {
+        memberId: result.dataValues.memberId,
         chatText: result.dataValues.chatText,
         createdAt: result.dataValues.createdAt,
-      }));
+      }
+      ));
       res.send(data);
     } else {
       res.send(false);
@@ -64,8 +67,7 @@ exports.getChatText = (req, res) => {
 exports.postChat = (req, res) => {
   const data = {
     roomId: req.body.roomId,
-    type: req.body.type,
-    nickname: req.body.nickname,
+    memberId: req.body.memberId,
     chatText: req.body.chatText
   };
   // SB: data를 DB에 업로드합니다.

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
-export default function ChattingRoomList({ chattingRoom, setChattingRoomList }) {
+export default function ChattingRoomList({ chattingRoom, setChattingRoomList, removeChattingRoom }) {
   const [roomId, setRoomId] = useState(null);
 
   const handleSetRoomId = () => {
@@ -27,10 +27,8 @@ export default function ChattingRoomList({ chattingRoom, setChattingRoomList }) 
           },
         }
       )
-      setChattingRoomList()
-      window.location.reload();
+      removeChattingRoom(); // removeChattingRoom 함수 호출
       
-      // 리더님 이거 새로고침말고 더 나은 방법 있을까요?
     } catch (error) {
       console.error('Error:', error);
     }
