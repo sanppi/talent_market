@@ -7,7 +7,7 @@ exports.writeComment = async (req, res) => {
     try{
         const { review, stars, title, memberId, boardId, isAnonymous} = req.body;
 
-        console.log(req.body);
+        // console.log(req.body);
 
         await Comment.create({
             review, stars, title, memberId, boardId, isAnonymous
@@ -23,9 +23,9 @@ exports.writeComment = async (req, res) => {
 // 후기 수정
 exports.updateComment = async (req, res) => {
     try{
-        const { review, stars } = req.body;
+        const { review, stars, isAnonymous } = req.body;
         await Comment.update(
-            { review, stars },
+            { review, stars, isAnonymous },
             { where: { commentId: req.params.commentId } }    
         )
         res.send("update review success");
