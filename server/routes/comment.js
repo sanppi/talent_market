@@ -6,9 +6,9 @@ const comment = require("../controller/Ccomment");
 router.post("/create", comment.writeComment);
 
 // 댓글 수정
-// router.patch("/update/:commentId", comment.updateComment);
+router.patch("/update/:commentId", comment.updateComment);
 
 // 댓글 삭제
-// router.delete("/delete/:commentId", comment.deleteComment);
+router.delete("/delete/:commentId", comment.deleteComment);
 
 module.exports = router;
