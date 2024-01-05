@@ -13,32 +13,20 @@ function ChatRoom({ user }) {
   const { memberId, nickname, redCard } = user;
 
   const { id } = useParams();
-  // id -> roomId
-  // const [memberId, setMemberId] = useState(null);
-  const [myNickname, setMyNickname] = useState(null);
+
   const [otherNickname, setOtherNickname] = useState(null);
+  const [otherMemberId, setOtherMemberId] = useState(null);
   const [boardInfo, setBoardInfo] = useState({});
   const [userDo, setUserDo] = useState("");
 
-  const [userId, setUserId] = useState("");
   
   const [msgInput, setMsgInput] = useState("");
+  const [preChatList, setPreChatList] = useState([]);
   const [chatList, setChatList] = useState([]);
 
   useEffect(() => {
-    if (memberId === null) {
-      axios.get(`${process.env.REACT_APP_DB_HOST}chatting/getSessionInfo`, { 
-        withCredentials: true
-      }).then((response) => {
-        // setMemberId(response.data);
-      })
-      .catch((error) => {
-        console.log("Chat Room Get Session Info", error);
-      });
-    } else {
-      getBoardInfo();
-      getChatText();
-    }
+    getBoardInfo();
+    getChatText();
   }, [memberId]);
 
   const getBoardInfo = async() => {
@@ -46,7 +34,6 @@ function ChatRoom({ user }) {
       const response = await axios.get(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getBoardInfo?roomId=${id}`,
       );
-      console.log(response)
 
       setBoardInfo({
         sellerMemberId: response.data.sellerMemberId,
@@ -64,14 +51,14 @@ function ChatRoom({ user }) {
         const Do = "판매";
         setUserDo(Do);
         noticeFunc(Do);
-        setMyNickname(response.data.sellerNickname);
         setOtherNickname(response.data.buyerNickname);
+        setOtherMemberId(response.data.buyerMemberId);
       } else if (memberId == response.data.buyerMemberId) {
         const Do = "구매";
         setUserDo(Do);
         noticeFunc(Do);
-        setMyNickname(response.data.buyerNickname);
         setOtherNickname(response.data.sellerNickname);
+        setOtherMemberId(response.data.sellerMemberId);
       } else {
         console.log("잘못된 접근입니다.");
         return;
@@ -112,43 +99,52 @@ function ChatRoom({ user }) {
   const getChatText = async() => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getChatText?roomId=${id}`,
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getChatText?roomId=${id}&myMemberId=${memberId}&otherMemberId=${otherMemberId}`,
       );
 
-      console.log(response)
-      // setBoardInfo({
-      //   sellerMemberId: response.data.sellerMemberId,
-      //   sellerNickname: response.data.sellerNickname,
-      //   buyerMemberId: response.data.buyerMemberId,
-      //   buyerNickname: response.data.buyerNickname,
-      //   image: response.data.image,
-      //   title: response.data.title,
-      //   price: response.data.price,
-      // })
+      console.log("response.data!!!!!!!!!!!!!!!!!", response.data[0])
 
+      // for (let i = 0; i < response.data.length; i++) {
+      //   const type = response.data[i].memberId === memberId ? "my" : "other";
+      //   const content = `${response.data[i].chatText}`
+      //   const newChatList = [
+      //     ...chatList,
+      //     { type: type, content: content, createdAt: response.data[i].createdAt },
+      //   ];
+      //   setChatList(newChatList);
+      // }
+      console.log(chatList)
     } catch (error) {
       console.error('Get Chat Text Error:', error);
     }
   };
 
+  useEffect(() => {
+    console.log("chatList", chatList)
+  }, [chatList]);
+
   const addChatList = useCallback(
     (res) => {
-      const nickname = res.memberId === memberId ? myNickname : otherNickname;
       const type = res.memberId === memberId ? "my" : "other";
       const content = `${res.msg}`
       const newChatList = [
         ...chatList,
-        { nickname: nickname, type: type, content: content },
+        { type: type, content: content },
       ];
       setChatList(newChatList);
 
-      const chatData = {
-        roomId: id,
-        type: type,
-        nickname: nickname,
-        chatText: content,
-      };
+      const chatData = {};
 
+      if (type === "my") {
+        chatData.roomId = id;
+        chatData.memberId = memberId;
+        chatData.chatText = content;
+      } else if (type === "other") {
+        chatData.roomId = id;
+        chatData.memberId = otherMemberId;
+        chatData.chatText = content;
+      }
+      
       const postChat = async() => {
         try {
           const response = await axios.post(
@@ -161,14 +157,13 @@ function ChatRoom({ user }) {
             }
           )
     
-            console.log("response!!!!!!!!!!!", response);
         } catch (error) {
           console.error('Post Chat Error:', error);
         }
       };
       postChat();
     },
-    [userId, chatList]
+    [chatList]
   );
 
   useEffect(() => {
@@ -193,6 +188,7 @@ function ChatRoom({ user }) {
             <div>{boardInfo.title}</div>
             <div>{boardInfo.price}</div>
             <div>{boardInfo.starAvg}</div>
+            <div>{otherNickname}</div>
           </div>
           <div className="col">
             <div>{boardInfo.sellerNickname}</div>

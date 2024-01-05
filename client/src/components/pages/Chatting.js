@@ -1,5 +1,4 @@
-import '../../styles/chat.css';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChattingRoomList from './ChattingRoomList';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -18,7 +17,7 @@ function Chatting({ user }) {
       const sellResponse = await axios.get(
         `${process.env.REACT_APP_DB_HOST}chatting/getSellRoomList?memberId=${memberId}`,
       );
-  
+
       if (buyResponse.data && sellResponse.data) {
         const allData = [...buyResponse.data, ...sellResponse.data];
   
@@ -39,6 +38,12 @@ function Chatting({ user }) {
     }
   };
   
+  const removeChattingRoom = (roomIndex) => {
+    // 특정 목록을 제거하는 함수
+    const updatedRoomList = [...chattingRoomList];
+    updatedRoomList.splice(roomIndex, 1);
+    setChattingRoomList(updatedRoomList);
+  };
 
   useEffect(() => {
     if (memberId !== null) {
@@ -56,7 +61,12 @@ function Chatting({ user }) {
             <div>
               {chattingRoomList.map((chattingRoom, i) => (
                 <div>
-                  <ChattingRoomList key={i} chattingRoom={chattingRoom} setChattingRoomList= {setChattingRoomList}/>
+                  <ChattingRoomList
+                    key={i}
+                    chattingRoom={chattingRoom}
+                    setChattingRoomList={setChattingRoomList}
+                    removeChattingRoom={() => removeChattingRoom(i)} // 특정 목록 제거 함수 전달
+                  />
                 </div>
               ))}
             </div>

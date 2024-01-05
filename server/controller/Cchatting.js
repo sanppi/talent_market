@@ -18,12 +18,16 @@ exports.getBuyRoomList = (req, res) => {
           },
           order: [['createdAt', 'DESC']],
         })
-        .then((chattingTextResult) => ({
-          roomId: result.dataValues.roomId,
-          roomName: result.dataValues.roomName,
-          title: result.dataValues.Board.title,
-          latestCreatedAt: chattingTextResult.dataValues.createdAt,
-        }))
+        .then((chattingTextResult) => {
+          const latestCreatedAt = chattingTextResult ? chattingTextResult.createdAt : null;
+        
+          return {
+            roomId: result.dataValues.roomId,
+            roomName: result.dataValues.roomName,
+            title: result.dataValues.Board.title,
+            latestCreatedAt: latestCreatedAt,
+          };
+        })
       ));
 
       Promise.all(promises)
@@ -47,7 +51,6 @@ exports.getBuyRoomList = (req, res) => {
 
 exports.getSellRoomList = async (req, res) => {
   try {
-    console.log("req.query.memberId!!!!!!!!!!!!!", req.query.memberId);
     const results = await Board.findAll({
       where: {
         memberId: req.query.memberId,
@@ -70,24 +73,25 @@ exports.getSellRoomList = async (req, res) => {
               },
               order: [['createdAt', 'DESC']],
             });
-
+            
+            const latestCreatedAt = chattingTextResult ? chattingTextResult.dataValues.createdAt : result.dataValues.createdAt; // 수정된 부분
+            
             const promises3 = await ChattingText.findAll({
               where: {
                 roomId: ChattingRoomResult.dataValues.roomId,
               },
               order: [['createdAt', 'DESC']],
             });
-
+            
             return {
               roomId: ChattingRoomResult.dataValues.roomId,
               roomName: ChattingRoomResult.dataValues.roomName,
               title: result.dataValues.title,
-              latestCreatedAt: chattingTextResult.dataValues.createdAt,
-            };
+              latestCreatedAt: latestCreatedAt, // 수정된 부분
+            };            
           });
 
           const data = await Promise.all(promises2);
-          console.log("data", data)
           return data;
         }
       });
@@ -112,8 +116,6 @@ exports.getSellRoomList = async (req, res) => {
     res.status(500).send("판매방 목록 조회 오류");
   }
 };
-
-
 
 exports.deleteRoom = (req, res) => {
   ChattingRoom.destroy({
