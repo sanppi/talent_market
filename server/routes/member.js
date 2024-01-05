@@ -22,5 +22,6 @@ router.delete("/mypage/delete/:memberId", member.deleteUserInfo);
 // 마이페이지 (찜 목록, 판매상품, 내 리뷰, 채팅)
 router.get("/mypage/favorite", member.getFavorites);
 router.get("/mypage/selling", member.getSellingProducts);
+router.get("/mypage/review", member.getMyReviews);
 
 module.exports = router;
