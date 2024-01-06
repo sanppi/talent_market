@@ -1,0 +1,44 @@
+@import './utilies';
+
+.signButtonBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .signButton {
+    @include button(20px, 10px);
+    margin: 0 20px;
+    width: 100%;
+    background-color: var(--main-blue);
+    color: white;
+    box-shadow: 0px 3px 3px 2px #7b7b7c;
+    transition: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+
+    &:hover {
+      background-color: var(--main-blue);
+    }
+
+    &:disabled {
+      background-color: transparent;
+      color: rgba(0, 0, 0, 0.5);
+      box-shadow: none;
+    }
+  }
+
+  div:last-child {
+    margin-top: 20px;
+  }
+
+  a {
+    font-size: 13px;
+    opacity: 0.6;
+    text-decoration: none;
+    color: var(--main-blue);
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

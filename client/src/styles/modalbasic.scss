@@ -1,0 +1,143 @@
+@import './utilies';
+
+.modalContainer {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 40%;
+  left: 40%;
+  @include size(300px, 200px);
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.4);
+
+  .modalExitWrapper {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    font-size: 32px;
+    @include size(32px, 32px);
+    line-height: 26px;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .modalWrapper {
+    background-color: transparent;
+    text-align: center;
+    height: 100%;
+
+    p {
+      width: 100%;
+      height: 50%;
+      margin: 10px;
+      padding-top: 20px;
+    }
+
+    button {
+      @include button(30px, 15px);
+    }
+
+    .accountBox {
+      flex-direction: column;
+      align-items: center;
+      height: 50%;
+
+      .accountSelect {
+        position: relative;
+
+        .bankSelect {
+          width: 100%;
+          height: 3vh;
+        }
+
+        .accountNumber {
+          display: block;
+          @include size(100%, 25px);
+          margin-top: 10px;
+          border: none;
+          border-bottom: 2px solid var(--light-blue);
+          margin: 2px 0;
+          height: 3vh;
+          font-size: 10px;
+          text-indent: 5px;
+        }
+
+        .accountButton {
+          font-size: 14px;
+          @include size(50px, 20px);
+          line-height: 140%;
+          border-radius: 20px;
+          width: 45px;
+          position: absolute;
+          top: 32px;
+          right: 5px;
+          box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.8);
+          background-color: var(--light-blue);
+          cursor: pointer;
+
+          &:active {
+            box-shadow: none;
+          }
+        }
+
+        small {
+          width: 100%;
+          height: 13px;
+          font-size: 10px;
+          color: tomato;
+          margin: 10px 0;
+        }
+      }
+    }
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      height: 60%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      padding-top: 25px;
+
+      &::-webkit-scrollbar {
+        background-color: white;
+        width: 3px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--light-blue);
+        border-radius: 20px;
+      }
+      &::-webkit-scrollbar-trac {
+        margin-right: 3px;
+      }
+    }
+
+    li {
+      flex: 1 1 calc(50% - 5px);
+      max-width: calc(50% - 5px);
+      text-align: left;
+      margin: 2px 0;
+      cursor: pointer;
+
+      img {
+        @include size(20px, auto);
+      }
+
+      span {
+        margin-left: 4px;
+      }
+    }
+  }
+}
+
+.modalCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  @include size(100vw, 100vh);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 900;
+}

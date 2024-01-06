@@ -1,0 +1,69 @@
+{
+  "logoBasePath": "/static/bankLogo/금융아이콘_SVG_",
+  "banks": [
+    {
+      "name": "국민은행",
+      "logoPath": "Kb.svg"
+    },
+    {
+      "name": "신한은행",
+      "logoPath": "신한.svg"
+    },
+    {
+      "name": "농협은행",
+      "logoPath": "농협.svg"
+    },
+    {
+      "name": "우리은행",
+      "logoPath": "우리.svg"
+    },
+    {
+      "name": "하나은행",
+      "logoPath": "하나.svg"
+    },
+    {
+      "name": "토스뱅크",
+      "logoPath": "토스.svg"
+    },
+    {
+      "name": "카카오뱅크",
+      "logoPath": "카카오뱅크.svg"
+    },
+    {
+      "name": "케이뱅크",
+      "logoPath": "케이뱅크.svg"
+    },
+    {
+      "name": "신협",
+      "logoPath": "신협.svg"
+    },
+    {
+      "name": "새마을금고",
+      "logoPath": "MG새마을금고.svg"
+    },
+    {
+      "name": "IBK",
+      "logoPath": "IBK.svg"
+    },
+    {
+      "name": "수협",
+      "logoPath": "Sh수협.svg"
+    },
+    {
+      "name": "DB증권",
+      "logoPath": "DB.svg"
+    },
+    {
+      "name": "키움증권",
+      "logoPath": "키움.svg"
+    },
+    {
+      "name": "한화증권",
+      "logoPath": "한화.svg"
+    },
+    {
+      "name": "우체국",
+      "logoPath": "우체국.svg"
+    }
+  ]
+}

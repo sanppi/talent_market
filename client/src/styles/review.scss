@@ -1,0 +1,115 @@
+.reviewSection {
+  margin: 0px 25px;
+  text-align: left;
+
+  .reviewList {
+    background-color: #bdc4c7;
+    padding: 2px;
+    border-radius: 5px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+
+    input[type="text"] {
+      width: 40%;
+      height: 35px;
+    }
+
+    textarea {
+      height: 40px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      margin-top: 15px;
+      margin-right: 3px;
+    }
+
+    label {
+      margin-right: 10px;
+    }
+
+    .reviewSumbitButton {
+      width: fit-content;
+      padding: 10px 20px;
+      background-color: #2095b9;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      align-self: flex-end;
+      margin-top: 20px;
+    }
+  }
+}
+
+.reviewButton {
+  display: block;
+  margin: 10px auto;
+  background-color: #2095b9;
+  width: 150px;
+  height: 37px;
+  font-size: 20px;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.noReviewNotice {
+  color: rgb(80, 80, 80);
+  margin-top: 20px;
+}
+
+.reviewForm {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.reviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  th {
+    background-color: #bdc4c7;
+    color: white;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  tr:hover {
+    background-color: #ddd;
+    cursor: pointer;
+  }
+}
+
+.editButton,
+.deleteButton {
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.deleteButton {
+  background-color: #bdc4c7;
+}

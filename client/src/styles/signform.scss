@@ -1,0 +1,145 @@
+@import './utilies';
+
+$transition-duration: 0.5s;
+
+.signForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--header-margin);
+
+  .signInputForm {
+    max-width: 400px;
+    @include size(100%, 550px);
+
+    .signUp {
+      animation: slide $transition-duration ease-in-out;
+    }
+
+    .signMsg {
+      @include smallText(12px, tomato, 15px);
+      text-align: center;
+      height: 30px;
+    }
+
+    .signInput {
+      margin: 20px 0;
+      max-width: 600px;
+      height: 80px;
+      position: relative;
+
+      label {
+        padding-left: 4px;
+      }
+
+      .profileNicknameBox {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .profileNickname {
+          width: 80%;
+          height: 30px;
+          margin-top: 10px;
+          opacity: 0.7;
+        }
+        .editButton {
+          margin: 0 5px;
+          height: 35px;
+          font-size: 12px;
+          box-shadow: 1px 2px 1px 1px #5b5b5b;
+          @include button(10px, 5px);
+          background-color: var(--bright-blue);
+          color: white;
+        }
+      }
+
+      input {
+        display: block;
+        padding: 5px 10px;
+        margin: 7px 0;
+        border: 0;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(to right, var(--bright-blue), #e74c3c);
+        border-image-slice: 1;
+        position: relative;
+        outline: none;
+        width: 100%;
+      }
+
+      input[type='number']::-webkit-inner-spin-button,
+      input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+      }
+
+      span {
+        position: absolute;
+        right: 94px;
+        top: 26px;
+        font-size: 11px;
+        color: var(--main-blue);
+      }
+
+      .editBox {
+        display: flex;
+
+        .editButtonBox {
+          display: flex;
+          justify-content: flex-end;
+          width: 30%;
+
+          .editButton {
+            margin: 0 5px;
+            height: 35px;
+            font-size: 12px;
+            box-shadow: 1px 2px 1px 1px #5b5b5b;
+            @include button(10px, 5px);
+            background-color: var(--bright-blue);
+            color: white;
+          }
+        }
+      }
+
+      .duplicateButton {
+        @include button(10px, 7px);
+        position: absolute;
+        bottom: 40px;
+        right: 10px;
+        font-size: 10px;
+        background-color: var(--bright-blue);
+        color: white;
+        animation: slide $transition-duration ease-in-out;
+        box-shadow: 2px 2px 1px 1px #5b5b5b;
+        transition-duration: 0.2s;
+
+        &:active {
+          box-shadow: none;
+        }
+
+        &:disabled {
+          opacity: 0.3;
+        }
+      }
+
+      small {
+        display: block;
+        @include smallText(11px, tomato, 10px);
+      }
+    }
+  }
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateY(-5%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

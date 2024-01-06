@@ -1,0 +1,117 @@
+.commonBtn {
+  display: block;
+  margin: 10px auto;
+  background-color: #2095b9;
+  width: 150px;
+  height: 37px;
+  font-size: 20px;
+  color: white;
+  border: none;
+  border-radius: 20px;
+}
+
+.productDetail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 220px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  margin: auto;
+  padding: 20px;
+  position: absolute;
+
+  .productInfo {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    align-items: center;
+
+    .productImageContainer {
+      object-fit: cover;
+      margin-right: 20px;
+      border: none;
+      position: relative;
+      .productImage {
+        width: 350px;
+        height: 350px;
+      }
+      .heart {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #ff0000;
+      }
+    }
+
+    .productDescription {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      .buttonsContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-top: 40px;
+        align-items: center;
+        button {
+          &.commonBtn {
+            background-color: var(--bright-blue);
+            &:first-of-type {
+              background-color: #808080;
+              margin-right: 10px;
+              &.heartClicked {
+                background-color: #ff0000; // 찜하기 버튼이 눌렸을 때 빨간색으로 변경
+              }
+            }
+          }
+        }
+      }
+      .productTitle {
+        text-align: left;
+        margin-bottom: 10px;
+        margin-top: 15px;
+        font-size: 30px;
+      }
+      .productPrice {
+        text-align: left;
+        margin-bottom: 5px;
+        font-size: 40px;
+      }
+      hr {
+        width: 100%;
+      }
+    }
+  }
+
+  .productContent {
+    margin: 50px 25px;
+    text-align: left;
+  }
+
+  hr:not(.productDescription > hr) {
+    border: 2px solid transparent;
+    background-image: linear-gradient(#fff, #fff),
+      linear-gradient(to right, #00bbea 0%, #e74c3c 100%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    margin: 0px 25px;
+    margin-bottom: 30px;
+  }
+}
+
+label {
+  margin-right: 10px;
+}
+
+textarea {
+  resize: none;
+}
