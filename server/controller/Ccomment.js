@@ -33,7 +33,7 @@ exports.updateComment = async (req, res) => {
       { where: { commentId: req.params.commentId } }
     );
     res.send("update review success");
-  } catch {
+  } catch(error) {
     console.error("글 수정 오류 발생:", error);
     res.status(500).send("상품 후기를 수정할 수 없습니다.");
   }

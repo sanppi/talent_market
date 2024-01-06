@@ -64,7 +64,14 @@ export default function Review({ boardId }) {
       if (editingReview) {
         // 수정 중인 리뷰가 있다면
         // 리뷰 업데이트
-        await handleReviewUpdate(editingReview.commentId, reviewData);
+        await handleReviewUpdate(editingReview.commentId, {
+          title: editingReview.title,
+          memberId: memberId,
+          review: editingReview.review,
+          stars: editingReview.stars,
+          boardId: boardId,
+          isAnonymous: editingReview.isAnonymous,
+        });
         setEditingReview(null); // 수정이 완료되면 상태를 초기화
       } else {
         // 새 리뷰 작성
@@ -89,10 +96,10 @@ export default function Review({ boardId }) {
     setIsReviewFormVisible(!isReviewFormVisible);
   };
 
-  const handleReviewUpdate = async (reviewId, reviewData) => {
+  const handleReviewUpdate = async (commentId, reviewData) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8000/review/update/${reviewId}`,
+      const response = await axios.patch(
+        `http://localhost:8000/review/update/${commentId}`,
         reviewData
       );
 
@@ -102,6 +109,7 @@ export default function Review({ boardId }) {
       }
     } catch (error) {
       alert("리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      console.log(error);
     }
   };
 
@@ -112,7 +120,7 @@ export default function Review({ boardId }) {
       );
       if (response.status === 200) {
         alert("리뷰가 성공적으로 삭제되었습니다.");
-        getReviews(); // 삭제 후 리뷰 목록을 갱신합니다.
+        getReviews();
       }
     } catch (error) {
       alert("리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
@@ -173,6 +181,7 @@ export default function Review({ boardId }) {
                                 setReviewContent("");
                               } else {
                                 setEditingReview(review);
+                                setReviewTitle(review.title);
                                 setIsReviewFormVisible(true);
                               }
                             }}
@@ -214,7 +223,16 @@ export default function Review({ boardId }) {
               type="text"
               placeholder="한 줄 리뷰 제목"
               value={editingReview ? editingReview.title : reviewTitle}
-              onChange={(event) => setReviewTitle(event.target.value)}
+              onChange={(event) => {
+                if (editingReview) {
+                  setEditingReview({
+                    ...editingReview,
+                    title: event.target.value,
+                  });
+                } else {
+                  setReviewTitle(event.target.value);
+                }
+              }}
               maxLength="15"
               required
             />
@@ -224,7 +242,17 @@ export default function Review({ boardId }) {
                 checked={
                   editingReview ? editingReview.isAnonymous : isAnonymous
                 }
-                onChange={(event) => setIsAnonymous(event.target.checked)}
+                onChange={(event) => {
+                  const newValue = event.target.checked;
+                  if (editingReview) {
+                    setEditingReview((prev) => ({
+                      ...prev,
+                      isAnonymous: newValue,
+                    }));
+                  } else {
+                    setIsAnonymous(newValue);
+                  }
+                }}
               />
               익명
             </label>
@@ -239,19 +267,34 @@ export default function Review({ boardId }) {
                         ? editingReview.stars === rating
                         : reviewRating === rating
                     }
-                    onChange={(event) =>
-                      setReviewRating(Number(event.target.value))
-                    }
+                    onChange={(event) => {
+                      const newValue = Number(event.target.value);
+                      if (editingReview) {
+                        setEditingReview((prev) => ({
+                          ...prev,
+                          stars: newValue,
+                        }));
+                      } else {
+                        setReviewRating(newValue);
+                      }
+                    }}
                     required
                   />
-                  {"★".repeat(rating)} {/* 별 모양으로 표시합니다. */}
+                  {"★".repeat(rating)}
                 </label>
               ))}
             </div>
             <textarea
               placeholder="한 줄 리뷰 내용"
               value={editingReview ? editingReview.review : reviewContent}
-              onChange={(event) => setReviewContent(event.target.value)}
+              onChange={(event) => {
+                const newValue = event.target.value;
+                if (editingReview) {
+                  setEditingReview((prev) => ({ ...prev, review: newValue }));
+                } else {
+                  setReviewContent(newValue);
+                }
+              }}
               maxLength="50"
               required
             />
