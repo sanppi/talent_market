@@ -99,10 +99,7 @@ const toggleLike = async (req, res) => {
     const likeCount = await LikeBoardTable.count({
       where: { boardId: boardId },
     });
-    await Board.update(
-      { likeNum: likeCount },
-      { where: { boardId: boardId } }
-    );
+    await Board.update({ likeNum: likeCount }, { where: { boardId: boardId } });
 
     res.json({ success: true, likeNum: likeCount });
   } catch (error) {

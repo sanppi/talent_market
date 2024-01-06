@@ -4,7 +4,7 @@ import "../../styles/productdetail.scss";
 import { useSelector } from "react-redux";
 import "../../styles/review.scss";
 
-export default function Review({ boardId }) {
+export default function Review({ boardId, productMemberId }) {
   const [reviews, setReviews] = useState([]);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewContent, setReviewContent] = useState("");
@@ -214,9 +214,11 @@ export default function Review({ boardId }) {
             </tbody>
           </table>
         )}
-        <button onClick={handleReviewButtonClick} className="reviewButton">
-          리뷰 작성하기
-        </button>
+        {memberId !== productMemberId && (
+          <button onClick={handleReviewButtonClick} className="reviewButton">
+            리뷰 작성하기
+          </button>
+        )}
         {isReviewFormVisible && (
           <form className="reviewForm" onSubmit={handleReviewSubmit}>
             <input
