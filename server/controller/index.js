@@ -5,7 +5,17 @@ const { Op } = require('sequelize'); // 추가된 부분
 exports.index = async (req, res) => {
   // res.render("index");
   try {
-    const boards = await Board.findAll();
+    const category = req.query.category;
+    let boards;
+
+    if(category) {
+      boards = await Board.findAll({
+        where : {category : category}
+      })
+    }
+    else{
+      boards = await Board.findAll();
+    }
     // console.log(boards);
     res.json({ products: boards });
   } catch (error) {
@@ -16,7 +26,7 @@ exports.index = async (req, res) => {
 
 exports.search = async (req, res, next) => {
   const words = req.query.search;
-  const category = req.query.category; // 카테고리를 query에서 받아옵니다.
+  // const category = req.query.category; // 카테고리를 query에서 받아옵니다.
 
   try {
     let conditions = [
@@ -29,11 +39,11 @@ exports.search = async (req, res, next) => {
     ];
 
     // 만약 카테고리가 존재한다면, conditions에 카테고리 조건을 추가합니다.
-    if (category) {
-      conditions.push({
-        category: { [Op.eq]: category },
-      });
-    }
+    // if (category) {
+    //   conditions.push({
+    //     category: { [Op.eq]: category },
+    //   });
+    // }
 
     const results = await Board.findAll({
       where: {
