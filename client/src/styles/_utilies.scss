@@ -49,3 +49,11 @@
     }
   }
 }
+
+@mixin responsiveText($size, $smaller) {
+  font-size: $size;
+
+  @media (max-width: 768px) {
+    font-size: $smaller;
+  }
+}
