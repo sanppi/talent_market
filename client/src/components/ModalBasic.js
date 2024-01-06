@@ -11,8 +11,6 @@ export default function ModalBasic({
     setToggleState();
   };
 
-  // TODO : 결제정보, 확인(신고, 탈퇴, 수정)
-
   return (
     <>
       {toggleState && (
