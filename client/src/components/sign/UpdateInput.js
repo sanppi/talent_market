@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUser } from '../../module/action/authActions';
+import axios from 'axios';
 import useToggle from '../hook/UseToggle';
 import ModalBasic from '../ModalBasic';
-import { useState, useEffect } from 'react';
 
 export default function UpdateInput({
   label,
@@ -23,60 +25,98 @@ export default function UpdateInput({
   const [modal, onModal] = useToggle(false);
   const [isEditing, onIsEditing] = useToggle(false);
   const [inputValue, setInputValue] = useState(value);
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // useEffect를 사용하여 value prop이 변경될 때마다 inputValue를 업데이트
   useEffect(() => {
     setInputValue(value);
   }, [value]);
 
   const handleBtnClick = async () => {
-    onIsEditing();
-    onChange(id, inputValue);
-    onInfoChange(inputValue); // Call onInfoChange to update the parent state
+    const isValid = validateInput();
 
-    // TODO : 닉네임은 글자수 제한
-    // TODO : 이메일은 형식 체크
-    // const response = await axios({
-    //   url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
-    //   data: { type: id, userData: inputValue },
-    //   withCredentials: true,
-    // });
-    // if (response.data.result) {
-    //   onModal();
-    //   // div에 값 업데이트
-    // onIsEditing();
-    // onChange(id, inputValue);
-    // }
-    // TODO : 서버 요청 확인 후 redux 값 업데이트
+    if (isValid === '') {
+      onIsEditing();
+      onChange(id, inputValue);
+      onInfoChange(inputValue);
+      // 주석 처리한 서버와 연결
+      // const response = await axios({
+      //   url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+      //   data: { type: id, userData: inputValue },
+      //   withCredentials: true,
+      // });
+      // if (response.data.result) {
+      //   onModal();
+      //   onIsEditing();
+      //   onChange(id, inputValue);
+      // }
+      dispatch(updateUser({ [id]: inputValue }));
+    } else {
+      setErrorMsg('유효하지 않은 값이 있습니다.');
+    }
+  };
+
+  // input value 실시간 추적 후 유효성 메시지 세팅
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    setInputValue(inputValue);
+    const validationError = validateInput(inputValue);
+    setErrorMsg(validationError);
+  };
+
+  // 유효성 검사 에러 메시지
+  const validateInput = (value = inputValue) => {
+    const { maxLength, pattern, required } = validation;
+
+    if (required && value.trim() === '') {
+      return '필수값을 입력하세요.';
+    }
+
+    if (maxLength && value.length > maxLength.value) {
+      return `최대 ${maxLength.value}자 이내로 입력하세요.`;
+    }
+
+    if (type === 'email' && pattern && !pattern.value.test(value)) {
+      return pattern.message || '올바른 이메일 형식을 입력하세요.';
+    }
+
+    return '';
   };
 
   return (
     <div className="signInput">
       <label htmlFor={id}>{label}</label>
       {isEditing ? (
-        <div className="editBox">
-          <input
-            type={type}
-            id={id}
-            {...register(id, validation)}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder={placeholder}
-          />
-          <div className="editButtonBox">
-            <button
-              className="editButton"
-              type="button"
-              onClick={handleBtnClick}
-            >
-              저장
-            </button>
-            <button className="editButton" type="button" onClick={onIsEditing}>
-              취소
-            </button>
+        <>
+          <div className="editBox">
+            <input
+              type={type}
+              id={id}
+              {...register(id, validation)}
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder={placeholder}
+            />
+            <div className="editButtonBox">
+              <button
+                className="editButton"
+                type="button"
+                onClick={handleBtnClick}
+              >
+                저장
+              </button>
+              <button
+                className="editButton"
+                type="button"
+                onClick={onIsEditing}
+              >
+                취소
+              </button>
+            </div>
           </div>
-        </div>
+          <small role="alert">{errorMsg}</small>
+        </>
       ) : (
         <div className="profileNicknameBox">
           <div className="profileNickname">

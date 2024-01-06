@@ -13,33 +13,30 @@ const initialState = {
   id: '',
   nickname: '',
   redCard: 0,
-  //  bankName: '',
-  //  accountNum: null
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case LOGIN_SUCCESS:
-      const { memberId, id, nickname, redCard } = action.payload;
+    case LOGIN_SUCCESS: {
+      const { memberId, id, nickname } = action.payload;
       return {
         ...state,
         isLoggedIn: true,
         memberId,
         id,
         nickname,
-        redCard,
-        //  bankName: '',
-        //  accountNum: null
       };
-    case UPDATE_USER:
+    }
+    case UPDATE_USER: {
+      const { nickname, email } = action.payload;
       return {
         ...state,
         isLoggedIn: true,
-        memberId,
-        id,
-        nickname,
-        redCard,
+        nickname: nickname !== undefined ? nickname : state.nickname,
+        email: email !== undefined ? email : state.email,
       };
+    }
+
     case LOGOUT:
       return initialState;
     case DELETE_SUCCESS:
