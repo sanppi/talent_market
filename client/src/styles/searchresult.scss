@@ -1,6 +1,7 @@
 .searchResultsWrapper {
   display: flex;
   justify-content: center;
+  margin-top: 40px;
 }
 
 .searchResultsPage {
@@ -70,4 +71,10 @@
       color: #666;
     }
   }
+}
+
+.searchNotice {
+  position: absolute;
+  left: 30%;
+  transform: translate(-50%, -50%);
 }

@@ -26,7 +26,7 @@ export default function CategoryResult() {
   return (
     <>
       <span className="categoryNotice">
-        {category} 카테고리 상품들이 {products.length}개 있습니다.
+        {category} 카테고리 상품이 {products.length}개 존재합니다.
       </span>
       <div className="categoryProducts">
         {products.map((product) => (
