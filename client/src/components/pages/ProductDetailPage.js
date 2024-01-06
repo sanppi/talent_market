@@ -23,7 +23,7 @@ export default function ProductDetailPage() {
       try {
         console.log(`Requested boardId: ${boardId}`);
         const response = await axios.get(
-          `http://localhost:8000/product/${boardId}`,
+          `${process.env.REACT_APP_DB_HOST}product/${boardId}`,
           { params: { isDetailView: true } }
         );
 
@@ -41,7 +41,7 @@ export default function ProductDetailPage() {
     async function fetchLikeStatus() {
       try {
         const response = await axios.get(
-          `http://localhost:8000/product/like/${boardId}/${memberId}`
+          `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`
         );
         setHeart(response.data.isLike);
       } catch (error) {
@@ -61,7 +61,7 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/product/like/${boardId}/${memberId}`,
+        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`,
         {
           isLike: !heart,
         }
@@ -78,7 +78,7 @@ export default function ProductDetailPage() {
       <div className="productInfo">
         <div className="productImageContainer">
           <img
-            src={`http://localhost:8000/static/userImg/${product.image}`}
+            src={`${process.env.REACT_APP_DB_HOST}static/userImg/${product.image}`}
             alt={product.title}
             className="productImage"
           />

@@ -32,7 +32,7 @@ export default function NavBar() {
   const handleSearchButtonClick = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/search?search=${searchTermLocal}`
+        `${process.env.REACT_APP_DB_HOST}search?search=${searchTermLocal}`
       );
       // response.data가 배열인지 확인
       if (Array.isArray(response.data)) {
@@ -57,7 +57,7 @@ export default function NavBar() {
   const handleCategoryClick = async (category) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/category?category=${category}`
+        `${process.env.REACT_APP_DB_HOST}category?category=${category}`
       );
       if (Array.isArray(response.data.products)) {
         setSearchResults(response.data.products);
