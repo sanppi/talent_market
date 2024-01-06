@@ -57,14 +57,14 @@ export default function NavBar() {
   const handleCategoryClick = async (category) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000?category=${category}`
+        `http://localhost:8000/category?category=${category}`
       );
-      if (Array.isArray(response.data)) {
-        setSearchResults(response.data);
+      if (Array.isArray(response.data.products)) {
+        setSearchResults(response.data.products);
       } else {
         setSearchResults([]);
       }
-      navigate(`?category=${category}`);
+      navigate(`/category?category=${category}`);
     } catch (error) {
       console.error("Category fetch failed", error);
     }
