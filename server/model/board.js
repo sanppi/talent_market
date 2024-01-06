@@ -13,7 +13,7 @@ function Board(sequelize, DataTypes) {
         allowNull: false,
       },
       image: {
-        type: DataTypes.STRING(500),
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       createdAt: {
@@ -35,7 +35,7 @@ function Board(sequelize, DataTypes) {
         defaultValue: "sale",
       },
       content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING(500),
         allowNull: false,
       },
       title: {
