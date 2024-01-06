@@ -91,7 +91,7 @@ export default function ProductDetailPage() {
           </div>
           <hr />
           {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
-          <div className="sellerInfo">판매자: {product.nickname}</div>
+          <div className="sellerInfo">판매자: {product.Member?.nickname}</div>
           <div>조회수: {product.views}</div>
           {/* 찜한 횟수는 바로 볼 수 있도록 클라이언트에 적었습니다. 불필요하시다면 주석 또는 삭제해주세요. */}
           <div>찜한 횟수: {product.likeNum}</div>
