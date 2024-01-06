@@ -54,6 +54,22 @@ export default function NavBar() {
     }
   };
 
+  const handleCategoryClick = async (category) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000?category=${category}`
+      );
+      if (Array.isArray(response.data)) {
+        setSearchResults(response.data);
+      } else {
+        setSearchResults([]);
+      }
+      navigate(`?category=${category}`);
+    } catch (error) {
+      console.error("Category fetch failed", error);
+    }
+  };
+
   useEffect(() => {
     if (!location.search) {
       setSearchResults([]);
@@ -76,12 +92,12 @@ export default function NavBar() {
           <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
             <div className="categoryInfo">전체 카테고리</div>
             <hr />
-            <div>언어</div>
-            <div>음악</div>
-            <div>예술</div>
-            <div>취미</div>
-            <div>상담</div>
-            <div>기타</div>
+            <div onClick={() => handleCategoryClick("언어")}>언어</div>
+            <div onClick={() => handleCategoryClick("음악")}>음악</div>
+            <div onClick={() => handleCategoryClick("예술")}>예술</div>
+            <div onClick={() => handleCategoryClick("취미")}>취미</div>
+            <div onClick={() => handleCategoryClick("상담")}>상담</div>
+            <div onClick={() => handleCategoryClick("기타")}>기타</div>
           </div>
         )}
 
