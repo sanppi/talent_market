@@ -3,7 +3,9 @@ const {
   Comment,
   Board,
   LikeBoardTable,
+  ChattingList,
   sequelize,
+  ChattingRoom,
 } = require("../model");
 
 // 회원가입
@@ -285,7 +287,7 @@ exports.getMyReviews = async (req, res) => {
   }
 };
 
-// 마이페이지 조회 > 채팅 목록 (수정중,,,,,.,.,.,.,..,)
+// 마이페이지 조회 > 채팅 목록
 exports.getMyChattings = async (req, res) => {
   const targetMemberId = req.session.user;
   const check = checkUser(targetMemberId);
@@ -294,6 +296,35 @@ exports.getMyChattings = async (req, res) => {
     return res
       .status(404)
       .send({ success: false, message: "회원을 찾을 수 없습니다." });
+
+  try {
+    const chattingList = await ChattingList.findAll({
+      where: { memberId: targetMemberId },
+      include: [
+        {
+          model: ChattingRoom,
+          attributes: ["roomId", "roomName"],
+          include: [
+            {
+              model: Board,
+              attributes: ["title"],
+            },
+          ],
+        },
+      ],
+    });
+
+    const formattedChatList = chattingList.map((chatting) => ({
+      roomId: chatting.ChattingRoom.roomId,
+      roomName: chatting.ChattingRoom.roomName,
+      title: chatting.ChattingRoom.Board.title,
+    }));
+
+    res.send({ result: true, userData: formattedChatList });
+  } catch (error) {
+    console.error("Error fetching chatting rooms", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 // 마이페이지 조회
