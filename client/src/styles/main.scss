@@ -3,7 +3,8 @@
   justify-content: center;
 }
 
-.mainPage {
+.mainPage,
+.categoryProducts {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -12,6 +13,7 @@
   max-width: 1200px;
   margin: 0 auto;
   min-width: 1000;
+  margin-top: 40px;
 
   .productCard {
     margin: 0 10px 30px;
