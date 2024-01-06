@@ -33,6 +33,28 @@ $transition-duration: 0.5s;
         padding-left: 4px;
       }
 
+      .profileNicknameBox {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .profileNickname {
+          width: 80%;
+          height: 30px;
+          margin-top: 10px;
+          opacity: 0.7;
+        }
+        .editButton {
+          margin: 0 5px;
+          height: 35px;
+          font-size: 12px;
+          box-shadow: 1px 2px 1px 1px #5b5b5b;
+          @include button(10px, 5px);
+          background-color: var(--bright-blue);
+          color: white;
+        }
+      }
+
       input {
         display: block;
         padding: 5px 10px;
@@ -62,7 +84,27 @@ $transition-duration: 0.5s;
         color: var(--main-blue);
       }
 
-      button[type='button'] {
+      .editBox {
+        display: flex;
+
+        .editButtonBox {
+          display: flex;
+          justify-content: flex-end;
+          width: 30%;
+
+          .editButton {
+            margin: 0 5px;
+            height: 35px;
+            font-size: 12px;
+            box-shadow: 1px 2px 1px 1px #5b5b5b;
+            @include button(10px, 5px);
+            background-color: var(--bright-blue);
+            color: white;
+          }
+        }
+      }
+
+      .duplicateButton {
         @include button(10px, 7px);
         position: absolute;
         bottom: 40px;

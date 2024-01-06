@@ -12,20 +12,11 @@ import UpdateBasicInput from '../../sign/UpdateBasicInput';
 import UpdatePwInput from '../../sign/UpdatePwInput';
 import ModalAccount from '../../ModalAccount';
 
-// --- 회원정보 수정 변경 로직 ---
-// 이메일 정보 서버에서 보내주기
-// 1. FE) {type: 'nickname', 'email', 'pw'
-// ㄴtype이 pw(비밀번호 변경)이라면 data도 보냄(data: 'oldPw': ~~, 'newPw': ~~)
-// 2. BE)
-// -> if(type==='~~') 유저 찾기 findOne
-// -> 결과 전달({result, userData} 통일)
-// 3. FE) 받아온 정보를 라우터 이동하며 같이 전달해서 Update 화면에서 뿌리기
-
 export function MyPageUpdate({ user, deleteSuccess }) {
   const { memberId, nickname, email } = user;
   const [signUpCk, setSignUpCk] = useState({ id: false, nickname: false });
   const [msg, setMsg] = useState({
-    validIn: '',
+    validPw: '',
     validUp: '',
     idDuplicate: '',
     nicknameDuplicate: '',
@@ -51,7 +42,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
   //   if (!signUpCk.id || !signUpCk.nickname) {
   //     setMsg((prev) => ({
   //       ...prev,
-  //       validUp: '',
+  //       validPw: '',
   //     }));
   //   }
   // }, [signUpCk.id, signUpCk.nickname]);
@@ -97,7 +88,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     // 중복 체크 미통과
     setMsg((prev) => ({
       ...prev,
-      validUp: '기존 비밀번호와 일치하지 않습니다.',
+      validPw: '기존 비밀번호와 일치하지 않습니다.',
     }));
   };
 
@@ -189,9 +180,10 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                   </div>
                 </>
               )}
-              {/* TODO : 결제 정보(은행, 계좌번호) 컴포넌트 */}
               <div
-                className={`myAccount ${accountToggle} ? 'slideIn': 'slideOut'`}
+                className={`myAccount ${
+                  accountToggle ? 'slideIn' : 'slideOut'
+                }`}
                 onClick={onAccountToggle}
               >
                 결제정보 등록 >

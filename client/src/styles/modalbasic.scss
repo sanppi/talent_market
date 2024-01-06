@@ -15,7 +15,7 @@
 
   .modalExitWrapper {
     position: absolute;
-    top: 4px;
+    top: 8px;
     right: 4px;
     font-size: 32px;
     @include size(32px, 32px);
@@ -40,12 +40,79 @@
       @include button(30px, 15px);
     }
 
+    .accountBox {
+      flex-direction: column;
+      align-items: center;
+      height: 50%;
+
+      .accountSelect {
+        position: relative;
+
+        .bankSelect {
+          width: 100%;
+          height: 3vh;
+        }
+
+        .accountNumber {
+          display: block;
+          @include size(100%, 25px);
+          margin-top: 10px;
+          border: none;
+          border-bottom: 2px solid var(--light-blue);
+          margin: 2px 0;
+          height: 3vh;
+          font-size: 10px;
+          text-indent: 5px;
+        }
+
+        .accountButton {
+          font-size: 14px;
+          @include size(50px, 20px);
+          line-height: 140%;
+          border-radius: 20px;
+          width: 45px;
+          position: absolute;
+          top: 32px;
+          right: 5px;
+          box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.8);
+          background-color: var(--light-blue);
+          cursor: pointer;
+
+          &:active {
+            box-shadow: none;
+          }
+        }
+
+        small {
+          width: 100%;
+          height: 13px;
+          font-size: 10px;
+          color: tomato;
+          margin: 10px 0;
+        }
+      }
+    }
+
     ul {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      max-height: 100%;
-      overflow-y: auto;
+      height: 60%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      padding-top: 25px;
+
+      &::-webkit-scrollbar {
+        background-color: white;
+        width: 3px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--light-blue);
+        border-radius: 20px;
+      }
+      &::-webkit-scrollbar-trac {
+        margin-right: 3px;
+      }
     }
 
     li {

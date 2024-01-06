@@ -115,14 +115,11 @@ export function SignForm({ type, loginSuccess }) {
           withCredentials: true,
         });
 
-        // DB에 존재 -> 메인 이동
         if (response.data.result) {
           // loginSuccess 함수를 호출할 때 액션 생성자 함수로 호출
           loginSuccess(response.data.userData);
           navigate('/');
-        }
-        // DB에 없음
-        else {
+        } else {
           setMsg((prev) => ({
             ...prev,
             validIn: '아이디와 비밀번호가 일치하지 않습니다.',
@@ -227,7 +224,6 @@ export function SignForm({ type, loginSuccess }) {
                     },
                   }}
                   error={errors.pw}
-                  hasButton={false}
                 />
                 <div className="signUp">
                   <SignUpInput
@@ -247,7 +243,6 @@ export function SignForm({ type, loginSuccess }) {
                       },
                     }}
                     error={errors.pwCk}
-                    hasButton={false}
                   />
                   <SignUpInput
                     label="닉네임"
@@ -259,6 +254,10 @@ export function SignForm({ type, loginSuccess }) {
                     error={errors.nickname}
                     validation={{
                       required: '닉네임은 필수값입니다.',
+                      maxLength: {
+                        value: 7,
+                        message: '닉네임은 최대 7자까지 입력 가능합니다.',
+                      },
                     }}
                     hasButton={true}
                     onButtonClick={(type) =>
@@ -280,7 +279,6 @@ export function SignForm({ type, loginSuccess }) {
                       },
                     }}
                     error={errors.email}
-                    hasButton={false}
                   />
                   <div className="signMsg">{msg.validUp}</div>
                   {/* TODO : 결제 정보(은행, 계좌번호) 컴포넌트 */}
@@ -288,7 +286,6 @@ export function SignForm({ type, loginSuccess }) {
                     disabled={!isValid}
                     onKeyDown={(e) => handleEnter(e)}
                     type="회원가입"
-                    isMsg={false}
                   />
                 </div>
               </>
@@ -328,14 +325,12 @@ export function SignForm({ type, loginSuccess }) {
   );
 }
 
-// 위에서 정의한 SignForm 컴포넌트에 connect 적용
 const ConnectedSignForm = connect(
   (state) => ({
     user: state.auth.user,
   }),
   {
     loginSuccess,
-    // logout,
   }
 )(SignForm);
 
