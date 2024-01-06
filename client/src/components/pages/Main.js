@@ -78,6 +78,9 @@ function Main() {
   return (
     <>
       <Navbar setSearchTerm={setSearchTerm} />
+      {/* <span className="mainNotice">
+        전체 상품이 {products.length}개 존재합니다.
+      </span> */}
       <div className="mainPageWrapper">
         <div className="mainPage" style={{ top: "90px", position: "absolute" }}>
           <button className="writeButton" onClick={handleWriteButtonClick}>

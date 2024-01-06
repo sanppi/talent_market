@@ -38,7 +38,7 @@ export default function SearchResults() {
   return (
     <>
       <span className="searchNotice">
-        '{searchParam}'를 포함한 상품이 {searchParam.length}개 존재합니다.
+        '{searchParam}'를 포함한 상품이 {searchResults.length}개 존재합니다.
       </span>
       <div className="searchResultsWrapper">
         <div className="searchResultsPage">
