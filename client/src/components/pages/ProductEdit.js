@@ -25,7 +25,7 @@ export default function ProductEdit() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/product/${boardId}`
+          `${process.env.REACT_APP_DB_HOST}product/${boardId}`
         );
         const board = response.data;
         setTitle(board.product.title || "");
@@ -33,7 +33,7 @@ export default function ProductEdit() {
         setCategory(board.product.category || "");
         setContent(board.product.content || "");
         setImage(
-          `http://localhost:8000/static/userImg/${board.product.image}` || null
+          `${process.env.REACT_APP_DB_HOST}static/userImg/${board.product.image}` || null
         );
         console.log(image);
       } catch (error) {
@@ -67,7 +67,7 @@ export default function ProductEdit() {
 
     try {
       const response = await axios.patch(
-        `http://localhost:8000/product/update/${boardId}`,
+        `${process.env.REACT_APP_DB_HOST}product/update/${boardId}`,
         formData,
         {
           headers: {
