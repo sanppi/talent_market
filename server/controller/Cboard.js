@@ -141,12 +141,12 @@ const boardUpdatePage = async (req, res) => {
 // 게시글 수정
 const boardUpdateProcess = async (req, res, next) => {
   try {
-    const { title, price, category, content } = req.body;
+    const { title, price, category, content, isOnMarket } = req.body;
 
     // 이미지는 일단 보류 했습니다.
 
     await Board.update(
-      { title, price, category, content },
+      { title, price, category, content, isOnMarket },
       { where: { boardId: req.params.boardId } }
     );
     res.send("update success");
