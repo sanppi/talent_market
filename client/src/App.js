@@ -11,6 +11,7 @@ import MyPageUpdate from "./components/pages/mypage/MyPageUpdate";
 import ProductDetailPage from "./components/pages/ProductDetailPage";
 import SearchResults from "./components/pages/SearchResult";
 import CategoryResult from "./components/pages/CategoryResult";
+import ProductEdit from "./components/pages/ProductEdit";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/member/signin" element={<SignIn />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/category" element={<CategoryResult />} />
+        <Route path="/product/edit/:boardId" element={<ProductEdit />} />
       </Routes>
     </Router>
   );

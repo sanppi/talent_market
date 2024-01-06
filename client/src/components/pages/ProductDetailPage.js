@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import "../../styles/productdetail.scss";
 import { useSelector } from "react-redux";
 import Review from "./Review";
@@ -82,9 +82,11 @@ export default function ProductDetailPage() {
             alt={product.title}
             className="productImage"
           />
-          <div className="heart" onClick={handleHeartClick}>
-            {heart ? "❤️" : "🤍"}
-          </div>
+          {memberId !== product.memberId && (
+            <div className="heart" onClick={handleHeartClick}>
+              {heart ? "❤️" : "🤍"}
+            </div>
+          )}
         </div>
         <div className="productDescription">
           <div className="productTitle">{product.title}</div>
@@ -98,13 +100,26 @@ export default function ProductDetailPage() {
           {/* 찜한 횟수는 바로 볼 수 있도록 클라이언트에 적었습니다. 불필요하시다면 주석 또는 삭제해주세요. */}
           <div>찜한 횟수: {product.likeNum}</div>
           <div className="buttonsContainer">
-            <button
-              className={`commonBtn ${heart ? "heartClicked" : ""}`}
-              onClick={handleHeartClick}
-            >
-              찜하기
-            </button>
-            <button className="commonBtn">연락하기</button>
+            {memberId === product.memberId ? (
+              <>
+                <button
+                  className="commonBtn"
+                  style={{ backgroundColor: "#2095b9" }}
+                >
+                  <Link to={`/product/edit/${boardId}`}>수정 / 삭제</Link>
+                </button>
+              </>
+            ) : (
+              <button
+                className={`commonBtn ${heart ? "heartClicked" : ""}`}
+                onClick={handleHeartClick}
+              >
+                찜하기
+              </button>
+            )}
+            {memberId !== product.memberId && (
+              <button className="commonBtn">연락하기</button>
+            )}
           </div>
         </div>
       </div>
@@ -112,7 +127,7 @@ export default function ProductDetailPage() {
         <p>상품설명 : {product.content}</p>
       </div>
       <hr />
-      <Review boardId={boardId} />
+      <Review boardId={boardId} productMemberId={product.memberId} />
     </div>
   );
 }
