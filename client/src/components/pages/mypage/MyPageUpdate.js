@@ -175,7 +175,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                       handleInputChange={handleInputChange}
                       watchObj={watchObj}
                       errors={errors}
-                      handleEnter={handleEnter}
                     />
                   </div>
                 </>

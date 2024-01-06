@@ -53,9 +53,11 @@ export default function ModalAccount({ setToggleState }) {
         });
 
         if (response.data.result) {
-          setToggleState();
-          // TODO : 등록되었습니다 모달 왜 안 나옴
           onModal();
+          // TODO : 등록되었습니다 모달 왜 안 나옴
+          setTimeout(() => {
+            setToggleState((prevState) => !prevState);
+          }, 2000);
         }
       }
     } catch (err) {
@@ -77,7 +79,7 @@ export default function ModalAccount({ setToggleState }) {
                 className="accountNumber"
                 type="number"
                 onChange={(e) => setAccountNum(e.target.value)}
-                placeholder="계좌번호"
+                placeholder="계좌번호만 입력"
               />
               <div className="accountButton" onClick={handleAccount}>
                 입력
@@ -99,9 +101,16 @@ export default function ModalAccount({ setToggleState }) {
                   <span>{bank.name}</span>
                 </li>
               ))}
-            {modal && <ModalBasic content="등록" />}
           </ul>
         </div>
+        {modal && (
+          <ModalBasic
+            type="confirm"
+            content="등록"
+            toggleState={true}
+            setToggleState={onModal}
+          />
+        )}
       </div>
     </>
   );
