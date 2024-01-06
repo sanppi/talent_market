@@ -14,7 +14,7 @@ export function ProductCard({ product }) {
       <Link to={`/product/${product.boardId}`}>
         <div className="imgContainer">
           <img
-            src={`http://localhost:8000/static/userImg/${product.image}`}
+            src={`${process.env.REACT_APP_DB_HOST}static/userImg/${product.image}`}
             alt={product.title}
           />
         </div>

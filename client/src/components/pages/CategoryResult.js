@@ -12,7 +12,7 @@ export default function CategoryResult() {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/category?category=${category}`
+          `${process.env.REACT_APP_DB_HOST}category?category=${category}`
         );
         setProducts(response.data.products);
       } catch (error) {
