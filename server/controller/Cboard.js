@@ -108,19 +108,24 @@ const toggleLike = async (req, res) => {
   }
 };
 
-// 게시글 수정
-const boardUpdateProcess = async (req, res, next) => {
+// 상세 페이지 수정
+const boardUpdateProcess = async (req, res) => {
   try {
     const { title, price, category, content, isOnMarket } = req.body;
+    const image = req.file ? req.file.filename : null;
 
-    // 이미지는 일단 보류 했습니다.
+    // 이미지를 변경하는 경우에만 image 필드를 업데이트
+    const imageUpdate = req.file ? { image } : {};
 
     await Board.update(
-      { title, price, category, content, isOnMarket },
+      { title, price, category, content, isOnMarket, ...imageUpdate },
       { where: { boardId: req.params.boardId } }
     );
-    res.send("update success");
-  } catch {
+
+    console.log("아이디 ", req.params.boardId);
+    
+    res.send({ message: "update Success" });
+  } catch (error) {
     console.error("에러 메시지 ", error);
     res.status(500).send("게시글을 수정할 수 없습니다.");
   }
@@ -131,7 +136,7 @@ module.exports = {
   boardDetail: boardDetailPage,
   getLike: getLikeStatus,
   boardLike: toggleLike,
-  boardUpdate: boardUpdateProcess,
+  boardUpdate: [upload.single("image"), boardUpdateProcess],
 };
 
 // 게시글 수정 페이지

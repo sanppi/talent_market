@@ -62,8 +62,6 @@ export default function ProductEdit() {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("content", content);
-    formData.append("memberId", memberId);
-    formData.append("nickname", nickname);
 
     try {
       const response = await axios.patch(
@@ -77,7 +75,7 @@ export default function ProductEdit() {
       );
 
       if (response.status === 200) {
-        navigate(`/product/${response.data.boardId}`);
+        navigate(`/product/${boardId}`);
       }
     } catch (error) {
       alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
