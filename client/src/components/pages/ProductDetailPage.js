@@ -40,7 +40,9 @@ export default function ProductDetailPage() {
   useEffect(() => {
     async function fetchLikeStatus() {
       try {
-        const response = await axios.get(`http://localhost:8000/product/like/${boardId}/${memberId}`);
+        const response = await axios.get(
+          `http://localhost:8000/product/like/${boardId}/${memberId}`
+        );
         setHeart(response.data.isLike);
       } catch (error) {
         console.error("찜 정보를 불러오는데 실패하였습니다: ", error);
