@@ -7,9 +7,11 @@ import "../../styles/searchresult.scss";
 export default function SearchResults() {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
+  const [searchParam, setSearchParam] = useState("");
 
   useEffect(() => {
     const searchParam = new URLSearchParams(location.search).get("search");
+    setSearchParam(searchParam);
 
     if (searchParam) {
       const fetchSearchResults = async () => {
@@ -34,24 +36,29 @@ export default function SearchResults() {
   }, [location.search]);
 
   return (
-    <div className="searchResultsWrapper">
-      <div className="searchResultsPage">
-        {searchResults.map((product) => (
-          <div key={product.boardId} className="searchResultCard">
-            <Link to={`/product/${product.boardId}`}>
-              <div className="imgContainer">
-                <img
-                  src={`http://localhost:8000/static/userImg/${product.image}`}
-                  alt={product.title}
-                />
-              </div>
-              <h4>{product.title}</h4>
-              <p>{product.price}원</p>
-              <p>{product.rating}</p>
-            </Link>
-          </div>
-        ))}
+    <>
+      <span className="searchNotice">
+        '{searchParam}'를 포함한 상품이 {searchParam.length}개 존재합니다.
+      </span>
+      <div className="searchResultsWrapper">
+        <div className="searchResultsPage">
+          {searchResults.map((product) => (
+            <div key={product.boardId} className="searchResultCard">
+              <Link to={`/product/${product.boardId}`}>
+                <div className="imgContainer">
+                  <img
+                    src={`http://localhost:8000/static/userImg/${product.image}`}
+                    alt={product.title}
+                  />
+                </div>
+                <h4>{product.title}</h4>
+                <p>{product.price}원</p>
+                <p>{product.rating}</p>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
