@@ -8,6 +8,9 @@ router.get('/', controller.index);
 // 검색 기능
 router.get('/search', controller.search);
 
+// 카테고리
+router.get('/category', controller.categories)
+
 router.post('/getSession', controller.getSession);
 
 module.exports = router;
