@@ -58,29 +58,26 @@ app.get("*", function (req, res) {
 
 
 
-const userIdArr = {};
-
-const updateUserList = () => {
-  io.emit("userList", userIdArr)
-}
-
 io.on("connection", (socket) => {
-  updateUserList();
-  socket.on("entry", (res) => {
-    io.emit("notice", { memberId: res.memberId});
-    // socket.emit("entrySuccess", { memberId: res.memberId });
-    userIdArr[socket.id] = res.memberId;
+  socket.onAny((event) => {
+    console.log(`Socket Event:${event}`);
   });
 
-  socket.on("disconnect", () => {
-    io.emit("notice", { msg: `${userIdArr[socket.id]}님이 퇴장하셨습니다.` });
-    delete userIdArr[socket.id];
-    // console.log(userIdArr);
-    updateUserList();
+  socket.on("entry", (res) => {
+    socket.join(res.roomName);
+    console.log("socket.rooms", socket.rooms);
+    io.to(res.roomName).emit("notice", { msg: `${res.userDo}님이 입장하셨습니다.` });
+  });
+
+  socket.on("disconnect", (res) => {
+    socket.leave(res.roomName);
+    io.to(res.roomName).emit("notice", { msg: `${res.userDo}님이 퇴장하셨습니다.` });
+    console.log("socket.rooms", socket.rooms);
+    // socket.rooms.forEach((room) => socket.to)
   });
 
   socket.on("sendMsg", (res) => {
-    io.emit("chat", { memberId: res.memberId, msg: res.msg })
+    io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 });
 
