@@ -96,16 +96,16 @@
     margin: 50px 25px;
     text-align: left;
   }
-}
 
-hr:not(.productDescription > hr) {
-  border: 2px solid transparent;
-  background-image: linear-gradient(#fff, #fff),
-    linear-gradient(to right, #00bbea 0%, #e74c3c 100%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  margin: 0px 25px;
-  margin-bottom: 30px;
+  hr:not(.productDescription > hr) {
+    border: 2px solid transparent;
+    background-image: linear-gradient(#fff, #fff),
+      linear-gradient(to right, #00bbea 0%, #e74c3c 100%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    margin: 0px 25px;
+    margin-bottom: 30px;
+  }
 }
 
 label {

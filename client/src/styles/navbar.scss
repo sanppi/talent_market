@@ -85,6 +85,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
+    hr {
+      padding-bottom: 0;
+    }
+
     .searchInput {
       width: 300px;
       height: 40px;
