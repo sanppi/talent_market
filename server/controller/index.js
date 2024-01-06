@@ -3,10 +3,8 @@ const { Op } = require('sequelize'); // 추가된 부분
 
 // 메인 화면
 exports.index = async (req, res) => {
-  // res.render("index");
   try {
     const boards = await Board.findAll();
-    // console.log(boards);
     res.json({ products: boards });
   } catch (error) {
     console.log('에러 코드 ', error);
@@ -14,9 +12,9 @@ exports.index = async (req, res) => {
   }
 };
 
+// 검색 기능
 exports.search = async (req, res, next) => {
   const words = req.query.search;
-  // const category = req.query.category; // 카테고리를 query에서 받아옵니다.
 
   try {
     let conditions = [
@@ -27,13 +25,6 @@ exports.search = async (req, res, next) => {
         content: { [Op.like]: '%' + words + '%' },
       },
     ];
-
-    // 만약 카테고리가 존재한다면, conditions에 카테고리 조건을 추가합니다.
-    // if (category) {
-    //   conditions.push({
-    //     category: { [Op.eq]: category },
-    //   });
-    // }
 
     const results = await Board.findAll({
       where: {
@@ -47,6 +38,7 @@ exports.search = async (req, res, next) => {
   }
 };
 
+// 카테고리 별로 분류
 exports.categories = async (req, res) => {
   try {
     const category = req.query.category;
