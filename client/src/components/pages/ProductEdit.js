@@ -3,7 +3,7 @@ import axios from "axios";
 import Navbar from "./Navbar";
 import "../../styles/salepost.scss";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProductEdit() {
   const [title, setTitle] = useState("");
@@ -14,21 +14,41 @@ export default function ProductEdit() {
   const memberId = useSelector((state) => state.auth.memberId);
   const nickname = useSelector((state) => state.auth.nickname);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const { boardId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 이 부분 추가
     if (!isLoggedIn) {
-      navigate("/member/signin"); // 변경된 부분
+      navigate("/member/signin");
     }
-  }, [isLoggedIn, navigate]);
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/product/${boardId}`
+        );
+        const board = response.data;
+        setTitle(board.product.title || "");
+        setPrice(board.product.price || "");
+        setCategory(board.product.category || "");
+        setContent(board.product.content || "");
+        setImage(
+          `http://localhost:8000/static/userImg/${board.product.image}` || null
+        );
+        console.log(image);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [isLoggedIn, navigate, boardId]);
 
   const handleImageUpload = (e) => {
     setImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
-    // 페이지 새로고침 방지
     e.preventDefault();
 
     if (category === "") {
@@ -45,10 +65,9 @@ export default function ProductEdit() {
     formData.append("memberId", memberId);
     formData.append("nickname", nickname);
 
-    // 데이터 받으십쇼~~!!
     try {
-      const response = await axios.post(
-        "http://localhost:8000/product/create",
+      const response = await axios.patch(
+        `http://localhost:8000/product/update/${boardId}`,
         formData,
         {
           headers: {
@@ -62,6 +81,7 @@ export default function ProductEdit() {
       }
     } catch (error) {
       alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
+      console.log(error);
     }
   };
 
@@ -83,12 +103,8 @@ export default function ProductEdit() {
             >
               <div>상품이미지</div>
               <label htmlFor="fileInput">
-                {!image && (
-                  <img
-                    src="/static/img.png"
-                    alt="img example"
-                    className="exImage"
-                  />
+                {image && !(image instanceof Blob) && (
+                  <img src={image} alt="img example" className="exImage" />
                 )}
                 <input
                   id="fileInput"
@@ -96,7 +112,7 @@ export default function ProductEdit() {
                   onChange={handleImageUpload}
                   style={{ display: "none" }}
                 />
-                {image && (
+                {image && image instanceof Blob && (
                   <img
                     src={URL.createObjectURL(image)}
                     alt="preview"
@@ -152,7 +168,7 @@ export default function ProductEdit() {
           </div>
 
           <button type="submit" className="submitButton">
-            상품 등록하기
+            상품 수정하기
           </button>
         </form>
       </div>
