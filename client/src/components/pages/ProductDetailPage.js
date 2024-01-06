@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
           <div className="sellerInfo">판매자: {product.Member?.nickname}</div>
           <div>조회수: {product.views}</div>
           {/* 찜한 횟수는 바로 볼 수 있도록 클라이언트에 적었습니다. 불필요하시다면 주석 또는 삭제해주세요. */}
-          <div>찜한 횟수: {product.likeNum}</div>
+          <div>찜 개수: {product.likeNum}</div>
           <div className="buttonsContainer">
             {memberId === product.memberId ? (
               <>
