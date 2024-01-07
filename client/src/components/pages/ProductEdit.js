@@ -86,6 +86,24 @@ export default function ProductEdit() {
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_DB_HOST}product/delete/${boardId}`
+        );
+
+        if (response.status === 200) {
+          alert("상품이 삭제되었습니다.")
+          navigate("/"); // 홈 페이지 또는 적절한 페이지로 리다이렉션
+        }
+      } catch (error) {
+        alert("상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.");
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -181,6 +199,9 @@ export default function ProductEdit() {
 
           <button type="submit" className="submitButton">
             상품 수정하기
+          </button>
+          <button type="button" className="submitButton" onClick={handleDelete}>
+            상품 삭제하기
           </button>
         </form>
       </div>

@@ -147,5 +147,5 @@ module.exports = {
   getLike: getLikeStatus,
   boardLike: toggleLike,
   boardUpdate: [upload.single("image"), boardUpdateProcess],
-  // boardDelete: boardDeleteProcess,
+  boardDelete: boardDeleteProcess,
 };
