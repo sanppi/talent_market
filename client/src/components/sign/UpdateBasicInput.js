@@ -61,7 +61,7 @@ export default function UpdateBasicInput({
         onButtonClick={(type) => handleCheck(type, updatedEmail)}
         msg={msg}
         isUpdate={true}
-        onInfoChange={(newInfo) => setUpdatedEmail(newInfo)} // pass onInfoChange for email
+        onInfoChange={(newInfo) => setUpdatedEmail(newInfo)}
       />
     </>
   );
