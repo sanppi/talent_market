@@ -90,9 +90,19 @@ export default function ProductDetailPage() {
         </div>
         <div className="productDescription">
           <div className="productTitle">{product.title}</div>
-          <div className="productPrice">
-            <p>{product.price}원</p>
-          </div>
+          {product.isOnMarket === 'stop' ? (
+            <div className="productPrice">
+              <p>판매 중단</p>
+            </div>
+          ) : product.isOnMarket === 'ends' ? (
+            <div className="productPrice">
+              <p>판매 종료</p>
+            </div>
+          ) : (
+            <div className="productPrice">
+              <p>{product.price}원</p>
+            </div>
+          )}
           <hr />
           {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
           <div className="sellerInfo">판매자: {product.Member?.nickname}</div>
