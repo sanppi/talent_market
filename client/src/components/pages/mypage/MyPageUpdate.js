@@ -24,7 +24,13 @@ export function MyPageUpdate({ user, deleteSuccess }) {
   const [accountToggle, onAccountToggle] = useToggle(false);
   const [deleteToggle, onDeleteToggle] = useToggle(false);
   const [pwToggle, onPwToggle] = useToggle(false);
+  const [doneToggle, onDoneToggle] = useToggle(false);
   const navigate = useNavigate();
+  const [doneMsg, setDoneMsg] = useState('');
+  const [accountInfo, setAccountInfo] = useState({
+    accountNum: null,
+    bankName: '',
+  });
 
   const {
     register,
@@ -56,10 +62,12 @@ export function MyPageUpdate({ user, deleteSuccess }) {
   }, [watchObj.id, watchObj.nickname]);
 
   useEffect(() => {
+    const goToSignIn = () => navigate('/member/signin');
+
     if (!memberId) {
-      navigate('/member/signin');
+      goToSignIn();
     }
-  }, [memberId]);
+  }, [memberId, doneToggle, navigate]);
 
   // 수동으로 유효성 검사
   const handleInputChange = useCallback(
@@ -129,22 +137,42 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     [setSignUpCk, setMsg, errors.id]
   );
 
-  // 엔터키 동작
-  const handleEnter = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit(onSubmit);
-    }
-  };
-
   // 회원 탈퇴
   const deleteUser = async () => {
     const response = await axios({
       url: `${process.env.REACT_APP_DB_HOST}member/mypage/delete/${memberId}`,
       method: 'DELETE',
     });
-    if (response.data.success) {
-      deleteSuccess();
-      navigate('/');
+    if (response.data.result) {
+      setDoneMsg(response.data.message);
+      onDoneToggle();
+      onDeleteToggle();
+      setTimeout(() => {
+        deleteSuccess();
+      }, 3000);
+    }
+  };
+
+  // 이미 등록된 결제 정보 확인
+  const hasAccountCk = async () => {
+    const response = await axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/account/${memberId}`,
+    });
+
+    if (response.data) {
+      onAccountToggle();
+      const data = response.data.userData;
+      setAccountInfo({
+        accountNum: data.accountNum,
+        bankName: data.bankName,
+      });
+
+      if (response.data.result) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
@@ -183,12 +211,16 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                 className={`myAccount ${
                   accountToggle ? 'slideIn' : 'slideOut'
                 }`}
-                onClick={onAccountToggle}
+                onClick={hasAccountCk}
               >
-                결제정보 등록 >
+                결제정보 등록/확인 >
               </div>
               {accountToggle && (
-                <ModalAccount setToggleState={onAccountToggle} />
+                <ModalAccount
+                  accountInfo={accountInfo}
+                  setToggleState={onAccountToggle}
+                  setAccountInfo={setAccountInfo}
+                />
               )}
               <div className="userDelete" onClick={onDeleteToggle}>
                 회원 탈퇴
@@ -199,6 +231,14 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                   onButtonClick={deleteUser}
                   toggleState={true}
                   setToggleState={onDeleteToggle}
+                />
+              )}
+              {doneToggle && (
+                <ModalBasic
+                  type="confirm"
+                  content={doneMsg}
+                  toggleState={true}
+                  setToggleState={onDoneToggle}
                 />
               )}
             </div>

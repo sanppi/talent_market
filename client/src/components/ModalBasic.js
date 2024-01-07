@@ -37,7 +37,7 @@ export default function ModalBasic({
             <div className="modalWrapper">
               {type === 'confirm' ? (
                 <>
-                  <p>{content}되었습니다.</p>
+                  <p>{content}</p>
                   <button onClick={disableModal}>확인</button>
                 </>
               ) : (
@@ -48,7 +48,7 @@ export default function ModalBasic({
               )}
             </div>
           </div>
-          {/* <div className="modalCanvas" onClick={disableModal}></div> */}
+          <div className="modalCanvas" onClick={disableModal}></div>
         </>
       )}
     </>

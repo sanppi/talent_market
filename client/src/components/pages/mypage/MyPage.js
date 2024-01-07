@@ -42,7 +42,6 @@ function MyPage({ user }) {
           ...data,
           type: endpointMapping[endpoint],
         }));
-        console.log(resData);
         setSelectedData(resData);
       } else {
         console.error('result error:', response.data.message);
@@ -98,11 +97,17 @@ function MyPage({ user }) {
                       case 'favorite':
                       case 'selling':
                         return (
-                          <ProductCard key={data.boardId} product={data} />
+                          <ProductCard product={data} boardId={data.boardId} />
                         );
                       case 'review':
-                        // TODO : 데이터바인딩
-                        return <ReviewList key={data.boardId} reviews={data} />;
+                        return (
+                          <ReviewList
+                            reviews={selectedData.filter(
+                              (data) => data.type === 'review'
+                            )}
+                            key={data.boardId}
+                          />
+                        );
                       default:
                         return null;
                     }
