@@ -10,6 +10,7 @@ export default function ProductEdit() {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
+  const [isOnMarket, setIsOnMarket] = useState("");
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
   const nickname = useSelector((state) => state.auth.nickname);
@@ -32,6 +33,7 @@ export default function ProductEdit() {
         setPrice(board.product.price || "");
         setCategory(board.product.category || "");
         setContent(board.product.content || "");
+        setIsOnMarket(board.product.isOnMarket || "");
         setImage(
           `${process.env.REACT_APP_DB_HOST}static/userImg/${board.product.image}` || null
         );
@@ -62,6 +64,7 @@ export default function ProductEdit() {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("content", content);
+    formData.append("isOnMarket", isOnMarket);
 
     try {
       const response = await axios.patch(
@@ -142,6 +145,17 @@ export default function ProductEdit() {
             </div>
           </div>
           <hr />
+          <div>
+            <select
+              value={isOnMarket}
+              onChange={(e) => setIsOnMarket(e.target.value)}
+            >
+              <option value="">상품 상태 선택</option>
+              <option value="sale">판매 중</option>
+              <option value="stop">판매 중단</option>
+              <option value="ends">판매 종료</option>
+            </select>
+          </div>
           <div>
             <select
               value={category}
