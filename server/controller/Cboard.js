@@ -126,25 +126,26 @@ const boardUpdateProcess = async (req, res) => {
   }
 };
 
+// 게시글 삭제
+const boardDeleteProcess = (req, res) => {
+  Board.destroy({
+    where: { boardId: req.params.boardId },
+  })
+  .then((result) => {
+    console.log("삭제 ", result);
+    res.send({ result: true });
+  })
+  .catch((error) => {
+    console.log("에러 메시지 ", error);
+    res.status(400).send;
+  });
+};
+
 module.exports = {
   boardCreate: [upload.single("image"), boardCreateHandler],
   boardDetail: boardDetailPage,
   getLike: getLikeStatus,
   boardLike: toggleLike,
   boardUpdate: [upload.single("image"), boardUpdateProcess],
-};
-
-// 게시글 삭제
-const boardDelete = (req, res) => {
-  Board.destroy({
-    where: { boardId: req.params.boardId },
-  })
-    .then((result) => {
-      console.log("삭제 ", result);
-      res.send({ result: true });
-    })
-    .catch((error) => {
-      console.log("에러 메시지 ", error);
-      res.status(400).send;
-    });
+  // boardDelete: boardDeleteProcess,
 };
