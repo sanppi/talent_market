@@ -4,7 +4,19 @@ const { Op } = require('sequelize'); // 추가된 부분
 // 메인 화면
 exports.index = async (req, res) => {
   try {
-    const boards = await Board.findAll();
+    const { orderBy, order } = req.query;
+
+    // 정렬 기준과 방법을 검증하여 기본값을 설정합니다.
+    const validOrderBy = ['createdAt', 'title']; // 가능한 정렬 기준 추가
+    const validOrder = ['asc', 'desc'];
+    
+    const selectedOrderBy = validOrderBy.includes(orderBy) ? orderBy : 'createdAt';
+    const selectedOrder = validOrder.includes(order) ? order : 'desc';
+
+    const boards = await Board.findAll({
+      order: [[selectedOrderBy, selectedOrder]],
+    });
+
     res.json({ products: boards });
   } catch (error) {
     console.log('에러 코드 ', error);
@@ -30,6 +42,7 @@ exports.search = async (req, res, next) => {
       where: {
         [Op.or]: conditions,
       },
+      order: [['createdAt', 'DESC']], // createdAt을 기준으로 내림차순 정렬
     });
 
     res.json(results);
@@ -43,7 +56,8 @@ exports.categories = async (req, res) => {
   try {
     const category = req.query.category;
     const boards = await Board.findAll({
-      where: {category: category}
+      where: {category: category},
+      order: [['createdAt', 'DESC']], // createdAt을 기준으로 내림차순 정렬
     })
 
     res.json({ products: boards });
