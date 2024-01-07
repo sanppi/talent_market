@@ -18,8 +18,8 @@ function ChatRoom({ user }) {
   const [otherNickname, setOtherNickname] = useState(null);
   const [boardInfo, setBoardInfo] = useState({});
   const [roomName, setRoomName] = useState(null);
-  const [userDo, setUserDo] = useState("");
-
+  const [userDo, setUserDo] = useState(null);
+  const [otherDo, setOtherrDo] = useState("");
   
   const [msgInput, setMsgInput] = useState("");
   const [chatList, setChatList] = useState([]);
@@ -46,14 +46,16 @@ function ChatRoom({ user }) {
 
       setRoomName(response.data.title)
 
+      const sell = "판매";
+      const buy = "구매";
       if (memberId == response.data.sellerMemberId) {
-        const Do = "판매";
-        setUserDo(Do);
+        setUserDo(sell);
+        setOtherrDo(buy)
         setOtherNickname(response.data.buyerNickname);
         setOtherMemberId(response.data.buyerMemberId);
       } else if (memberId == response.data.buyerMemberId) {
-        const Do = "구매";
-        setUserDo(Do);
+        setUserDo(buy);
+        setOtherrDo(sell)
         setOtherNickname(response.data.sellerNickname);
         setOtherMemberId(response.data.sellerMemberId);
       } else {
@@ -67,7 +69,9 @@ function ChatRoom({ user }) {
 
   useEffect(() => {
     initSocketConnect();
-    socket.emit("entry", { memberId: memberId, roomName: roomName });
+    if (userDo !== null) {
+      socket.emit("entry", { memberId: memberId, roomName: roomName, userDo: userDo });
+    }
   }, [roomName]);
 
   const initSocketConnect = () => {
@@ -77,10 +81,18 @@ function ChatRoom({ user }) {
     }
   };
 
-  const notice = useCallback(() => {
-    const newChatList = [...chatList, { type: "notice", roomName: roomName, userDo: userDo }];
+  const notice = useCallback((res) => {
+    const newChatList = [
+      ...chatList,
+      {
+        type: "notice",
+        content: `${res.msg}`,
+        roomName: roomName,
+        userDo: userDo,
+      },
+    ];
     setChatList(newChatList);
-  },[userDo, chatList, roomName]);
+  }, [userDo, chatList, roomName]);
 
   useEffect(()=>{
     socket.on("notice", notice);
@@ -128,7 +140,6 @@ function ChatRoom({ user }) {
 
   const addChatList = useCallback(
     (res) => {
-      console.log("res!!!!!!!!!!!!!", res)
       const type = res.memberId === memberId ? "my" : "other";
       const nick = res.memberId === memberId ? "" : otherNickname;
       const content = `${res.msg}`
@@ -172,18 +183,38 @@ function ChatRoom({ user }) {
     return () => socket.off("chat", addChatList);
   }, [addChatList])
 
-  useEffect(() => {
-    // socket.on("error", (res) => {
-    //   alert(res.msg);
-    // });
-  }, []);
+  const exitRoom = () => {
+    socket.emit("disconnection", { roomName: roomName, userDo: userDo });
+    window.history.back(); // 이전 페이지로 이동
+  };
+
+  // window.onpageshow = function(event) {
+  //   if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+  //     console.log('back button event');
+  //   }
+  // }
+
+  // socket.on("bye", () => {
+  //   const newChatList = [...chatList, { type: "notice", content: "bye" }];
+  //   setChatList(newChatList);
+  // })
+
+  // useEffect(() => {
+  //   if (window.performance && window.performance.navigation.type == 2) {
+  //     console.log("out2")
+  //   }
+  // }, []);
+
 
   return (
     <>
       <div className="container text-center" style={{ backgroundColor: 'lightyellow', marginBottom: '10px' }}>
         <div className="row">
           <div className="col">
-          {boardInfo.image}
+            <button onClick={exitRoom}>목록 보기</button>
+          </div>
+          <div className="col">
+            {boardInfo.image}
           </div>
           <div className="col-6">
             <div>{boardInfo.title}</div>
