@@ -18,6 +18,6 @@ router.post("/like/:boardId/:memberId", Cboard.boardLike);
 router.patch("/update/:boardId", Cboard.boardUpdate);
 
 // 게시글 삭제
-// router.delete("/delete/:boardId", Cboard.boardDelete);
+router.delete("/delete/:boardId", Cboard.boardDelete);
 
 module.exports = router;
