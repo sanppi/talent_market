@@ -1,40 +1,58 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { Fragment } from 'react';
+import useReviewListFunctions from './hook/UseReviewListFunctions';
+import '../styles/reviewlist.scss';
 
-export default function ReviewList({ reviews }) {
-  const reviewArray = Array.isArray(reviews) ? reviews : [reviews];
-
-  // const formattedReviews = reviews.map((review) => ({
-  //   review: review.review,
-  //   title: review.title,
-  //   isAnonymous: review.isAnonymous,
-  //   stars: review.stars,
-  //   boardId: review.Board.boardId,
-  //   memberId: review.Member.memberId,
-  // }));
-  const memberId = useSelector((state) => state.auth.memberId);
-  const [selectedReview, setSelectedReview] = useState(null);
+const ReviewList = ({ boardId, reviews }) => {
+  const { selectedReview, setSelectedReview } = useReviewListFunctions(boardId);
 
   return (
     <>
-      {reviewArray.length === 0 ? (
+      {/* <div className="myReviewList"> */}
+      {reviews.length === 0 ? (
         <div className="noReviewNotice">아직 작성된 리뷰가 없습니다.</div>
       ) : (
-        reviewArray.map((review, index) => (
-          <div key={review.commentId}>
-            <div
-              onClick={() =>
-                setSelectedReview(selectedReview !== index ? index : null)
-              }
-            >
-              {index + 1}. {review.title} - {review.isAnonymous ? '익명' : ''} (
-              {new Date(review.createdAt).toLocaleDateString()}){' '}
-              {'★'.repeat(review.stars)}
-            </div>
-            {selectedReview === index && <p>{review.review}</p>}
-          </div>
-        ))
+        <table className="reviewTable">
+          <thead className="reviewTableList">
+            <tr>
+              <th>번호</th>
+              <th>제목</th>
+              <th>작성자</th>
+              <th>작성일</th>
+              <th>별점</th>
+              {/* <th></th> */}
+            </tr>
+          </thead>
+          <tbody className="reviewTableList">
+            {reviews.map((review, index) => (
+              <Fragment key={review.commentId}>
+                <tr
+                  onClick={() =>
+                    setSelectedReview(selectedReview !== index ? index : null)
+                  }
+                >
+                  <td>{index + 1}</td>
+                  <td>{review.title}</td>
+                  <td>
+                    {review.isAnonymous
+                      ? '익명'
+                      : review.Member.nickname || review.nickname}
+                  </td>
+                  <td>{new Date(review.createdAt).toLocaleDateString()}</td>
+                  <td>{'★'.repeat(review.stars)}</td>
+                </tr>
+                {selectedReview === index && (
+                  <tr>
+                    <td colSpan="5">{review.review}</td>
+                  </tr>
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
       )}
+      {/* </div> */}
     </>
   );
-}
+};
+
+export default ReviewList;
