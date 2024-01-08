@@ -1,9 +1,26 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import useReviewListFunctions from './hook/UseReviewListFunctions';
-import '../styles/reviewlist.scss';
+import '../styles/mypage.scss';
 
 const ReviewList = ({ boardId, reviews }) => {
-  const { selectedReview, setSelectedReview } = useReviewListFunctions(boardId);
+  const {
+    reviewTitle,
+    reviewContent,
+    reviewRating,
+    selectedReview,
+    editingReview,
+    setReviewTitle,
+    setReviewContent,
+    setReviewRating,
+    setIsAnonymous,
+    setSelectedReview,
+    setEditingReview,
+    handleReviewSubmit,
+    handleReviewDelete,
+    isAnonymous,
+    toggleForm,
+    onToggleForm,
+  } = useReviewListFunctions(boardId);
 
   return (
     <>
@@ -14,15 +31,15 @@ const ReviewList = ({ boardId, reviews }) => {
         <table className="reviewTable">
           <thead className="reviewTableList">
             <tr>
-              <th>번호</th>
+              <th></th>
               <th>제목</th>
-              <th>작성자</th>
+              {/* <th>작성자</th> */}
               <th>작성일</th>
               <th>별점</th>
-              {/* <th></th> */}
+              <th>수정/삭제</th>
             </tr>
           </thead>
-          <tbody className="reviewTableList">
+          <tbody className="reviewTableContents">
             {reviews.map((review, index) => (
               <Fragment key={review.commentId}>
                 <tr
@@ -32,13 +49,35 @@ const ReviewList = ({ boardId, reviews }) => {
                 >
                   <td>{index + 1}</td>
                   <td>{review.title}</td>
-                  <td>
-                    {review.isAnonymous
-                      ? '익명'
-                      : review.Member.nickname || review.nickname}
-                  </td>
+                  {/* <td>
+                      {review.isAnonymous
+                        ? '익명'
+                        : review.Member.nickname || review.nickname}
+                    </td> */}
                   <td>{new Date(review.createdAt).toLocaleDateString()}</td>
                   <td>{'★'.repeat(review.stars)}</td>
+                  <td className="editButtonBox">
+                    <button
+                      className="editButton"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setEditingReview(review);
+                        setReviewTitle(review.title);
+                        onToggleForm();
+                      }}
+                    >
+                      {toggleForm ? '수정 취소' : '수정'}
+                    </button>
+                    <button
+                      className="deleteButton"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleReviewDelete(review.commentId);
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </td>
                 </tr>
                 {selectedReview === index && (
                   <tr>
@@ -49,6 +88,91 @@ const ReviewList = ({ boardId, reviews }) => {
             ))}
           </tbody>
         </table>
+      )}
+
+      {toggleForm && (
+        <form className="reviewForm" onSubmit={handleReviewSubmit}>
+          <input
+            type="text"
+            placeholder="한 줄 리뷰 제목"
+            value={editingReview ? editingReview.title : reviewTitle}
+            onChange={(event) => {
+              if (editingReview) {
+                setEditingReview({
+                  ...editingReview,
+                  title: event.target.value,
+                });
+              } else {
+                setReviewTitle(event.target.value);
+              }
+            }}
+            maxLength="15"
+            required
+          />
+          <label>
+            <input
+              type="checkbox"
+              checked={editingReview ? editingReview.isAnonymous : isAnonymous}
+              onChange={(event) => {
+                const newValue = event.target.checked;
+                if (editingReview) {
+                  setEditingReview((prev) => ({
+                    ...prev,
+                    isAnonymous: newValue,
+                  }));
+                } else {
+                  setIsAnonymous(newValue);
+                }
+              }}
+            />
+            익명
+          </label>
+          <div>
+            {[5, 4, 3, 2, 1].map((rating) => (
+              <label key={rating}>
+                <input
+                  type="radio"
+                  value={rating}
+                  checked={
+                    editingReview
+                      ? editingReview.stars === rating
+                      : reviewRating === rating
+                  }
+                  onChange={(event) => {
+                    const newValue = Number(event.target.value);
+                    if (editingReview) {
+                      setEditingReview((prev) => ({
+                        ...prev,
+                        stars: newValue,
+                      }));
+                    } else {
+                      setReviewRating(newValue);
+                    }
+                  }}
+                  required
+                />
+                {'★'.repeat(rating)}
+              </label>
+            ))}
+          </div>
+          <textarea
+            placeholder="한 줄 리뷰 내용"
+            value={editingReview ? editingReview.review : reviewContent}
+            onChange={(event) => {
+              const newValue = event.target.value;
+              if (editingReview) {
+                setEditingReview((prev) => ({ ...prev, review: newValue }));
+              } else {
+                setReviewContent(newValue);
+              }
+            }}
+            maxLength="50"
+            required
+          />
+          <button type="submit" className="reviewSumbitButton">
+            수정하기
+          </button>
+        </form>
       )}
       {/* </div> */}
     </>
