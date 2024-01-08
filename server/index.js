@@ -73,8 +73,8 @@ io.on("connection", (socket) => {
       roomArr[socket.id] = [];
     }
     socket.join(res.roomName);
-
     socket.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 입장하셨습니다.` });
+
     userDoArr[socket.id] = res.userDo;
     roomArr[socket.id].push(res.roomName);
   });
@@ -88,6 +88,7 @@ io.on("connection", (socket) => {
     io.to(res.roomName).emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
   });
 
+
   socket.on("disconnection", (res) => {
     socket.leave(res.roomName);
     io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
@@ -99,7 +100,6 @@ io.on("connection", (socket) => {
     io.to(roomArr[socket.id]).emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
     // 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
     delete userDoArr[socket.id];
-    console.log("socket.rooms?????????????????", socket.rooms);
   });
 });
 server.listen(PORT, function () {

@@ -231,9 +231,9 @@ function ChatRoom({ user }) {
 
 
 
-
   // 리더님 현재 브라우저가 꺼질때, 목록보기를 누를 때, 다른 채팅방에 들어갈 때에만 룸 나가기가 됩니다.
   // 페이지를 벗어나면 룸 나가기를 하고 싶은데 어떻게 해야할까요
+
   // window.addEventListener('beforeunload', function(event) {
   //   console.log("out2")
   // });
@@ -249,6 +249,7 @@ function ChatRoom({ user }) {
   //   //   event.returnValue = '이 페이지를 벗어나시겠습니까?';
   //   return ()=>{socket.emit("disconnection", { roomName: roomName, userDo: userDo });}
   // }, []);
+
 
 
 
