@@ -26,7 +26,7 @@ body {
         .myProfileImg {
           @include size(100%, 100%);
           margin-bottom: 10px;
-          border-radius: 50px;
+          border-radius: 50%;
           // border: 3px solid var(--main-red);
           font-size: 180px;
           text-align: center;
@@ -133,6 +133,7 @@ body {
       .myListContent {
         margin-top: 40px;
         max-width: 400px;
+        // @include leftToRight(0.5s);
 
         .pageWrapper {
           width: 100%;

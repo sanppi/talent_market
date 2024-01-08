@@ -180,7 +180,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     <>
       {memberId && (
         <form name="myPageForm" onSubmit={handleSubmit(onSubmit)}>
-          <div className="signForm">
+          <div className="signForm slideIn">
             <div className="signInputForm">
               <div>기본정보</div>
               <UpdateBasicInput
@@ -207,12 +207,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                   </div>
                 </>
               )}
-              <div
-                className={`myAccount ${
-                  accountToggle ? 'slideIn' : 'slideOut'
-                }`}
-                onClick={hasAccountCk}
-              >
+              <div className="myAccount" onClick={hasAccountCk}>
                 결제정보 등록/확인 >
               </div>
               {accountToggle && (
