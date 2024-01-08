@@ -13,11 +13,7 @@ const boardCreateHandler = async (req, res) => {
     const image = req.file ? req.file.filename : null;
 
     const newBoard = await Board.create({
-      title,
-      price,
-      category,
-      content,
-      memberId,
+      title, price, category, content, memberId,
       image: image || null,
     });
 
@@ -56,6 +52,7 @@ const boardDetailPage = async (req, res) => {
   }
 };
 
+// 찜 개수 불러오기
 const getLikeStatus = async (req, res) => {
   try {
     const boardId = req.params.boardId;
@@ -94,8 +91,6 @@ const toggleLike = async (req, res) => {
       });
     }
 
-    // 클라이언트에 보이지 않을 순 있지만 일단 작성하였습니다.
-    // 이슈가 발생하거나 불필요한 기능이라면 주석 또는 삭제처리하면 됩니다.
     const likeCount = await LikeBoardTable.count({
       where: { boardId: boardId },
     });
@@ -108,62 +103,49 @@ const toggleLike = async (req, res) => {
   }
 };
 
-module.exports = {
-  boardCreate: [upload.single("image"), boardCreateHandler],
-  boardDetail: boardDetailPage,
-  getLike: getLikeStatus,
-  boardLike: toggleLike,
-};
-
-// 게시글 수정 페이지
-const boardUpdatePage = async (req, res) => {
-  // 로그인 확인 추가 예정
-
-  // 사용자 추가 예정
-  try {
-    const boardId = req.params.boardId;
-    const board = await Board.findOne({
-      where: { boardId: boardId },
-      // include 추가 예정
-    });
-
-    res.json({ board: board }); // 이 코드는 수정 가능성이 있습니다.
-    console.log("update product details by boardId");
-  } catch (error) {
-    console.log("에러 코드 ", error);
-    res.status(500).send("상세 페이지에 접근할 수 없습니다.");
-  }
-};
-
-// 게시글 수정
-const boardUpdateProcess = async (req, res, next) => {
+// 상세 페이지 수정
+const boardUpdateProcess = async (req, res) => {
   try {
     const { title, price, category, content, isOnMarket } = req.body;
+    const image = req.file ? req.file.filename : null;
 
-    // 이미지는 일단 보류 했습니다.
+    // 이미지를 변경하는 경우에만 image 필드를 업데이트
+    const imageUpdate = req.file ? { image } : {};
 
     await Board.update(
-      { title, price, category, content, isOnMarket },
+      { title, price, category, content, isOnMarket, ...imageUpdate },
       { where: { boardId: req.params.boardId } }
     );
-    res.send("update success");
-  } catch {
+
+    console.log("아이디 ", req.params.boardId);
+    
+    res.send({ message: "update Success" });
+  } catch (error) {
     console.error("에러 메시지 ", error);
     res.status(500).send("게시글을 수정할 수 없습니다.");
   }
 };
 
 // 게시글 삭제
-const boardDelete = (req, res) => {
+const boardDeleteProcess = (req, res) => {
   Board.destroy({
     where: { boardId: req.params.boardId },
   })
-    .then((result) => {
-      console.log("삭제 ", result);
-      res.send({ result: true });
-    })
-    .catch((error) => {
-      console.log("에러 메시지 ", error);
-      res.status(400).send;
-    });
+  .then((result) => {
+    console.log("삭제 ", result);
+    res.send({ result: true });
+  })
+  .catch((error) => {
+    console.log("에러 메시지 ", error);
+    res.status(400).send;
+  });
+};
+
+module.exports = {
+  boardCreate: [upload.single("image"), boardCreateHandler],
+  boardDetail: boardDetailPage,
+  getLike: getLikeStatus,
+  boardLike: toggleLike,
+  boardUpdate: [upload.single("image"), boardUpdateProcess],
+  boardDelete: boardDeleteProcess,
 };

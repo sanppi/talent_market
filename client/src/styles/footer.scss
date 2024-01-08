@@ -1,0 +1,13 @@
+.footer {
+  margin: var(--header-margin) 0;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.6;
+
+  .footerContent {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}

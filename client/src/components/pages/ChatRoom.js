@@ -14,19 +14,18 @@ function ChatRoom({ user }) {
 
   const { id } = useParams();
 
-  const [otherNickname, setOtherNickname] = useState(null);
   const [otherMemberId, setOtherMemberId] = useState(null);
+  const [otherNickname, setOtherNickname] = useState(null);
   const [boardInfo, setBoardInfo] = useState({});
-  const [userDo, setUserDo] = useState("");
-
+  const [roomName, setRoomName] = useState(null);
+  const [userDo, setUserDo] = useState(null);
+  const [otherDo, setOtherrDo] = useState("");
   
   const [msgInput, setMsgInput] = useState("");
-  const [preChatList, setPreChatList] = useState([]);
   const [chatList, setChatList] = useState([]);
 
   useEffect(() => {
     getBoardInfo();
-    getChatText();
   }, [memberId]);
 
   const getBoardInfo = async() => {
@@ -45,18 +44,18 @@ function ChatRoom({ user }) {
         price: response.data.price,
       })
 
-      initSocketConnect();
+      setRoomName(response.data.title)
 
+      const sell = "판매";
+      const buy = "구매";
       if (memberId == response.data.sellerMemberId) {
-        const Do = "판매";
-        setUserDo(Do);
-        noticeFunc(Do);
+        setUserDo(sell);
+        setOtherrDo(buy)
         setOtherNickname(response.data.buyerNickname);
         setOtherMemberId(response.data.buyerMemberId);
       } else if (memberId == response.data.buyerMemberId) {
-        const Do = "구매";
-        setUserDo(Do);
-        noticeFunc(Do);
+        setUserDo(buy);
+        setOtherrDo(sell)
         setOtherNickname(response.data.sellerNickname);
         setOtherMemberId(response.data.sellerMemberId);
       } else {
@@ -68,68 +67,85 @@ function ChatRoom({ user }) {
     }
   };
 
+  useEffect(() => {
+    initSocketConnect();
+    if (userDo !== null) {
+      socket.emit("entry", { memberId: memberId, roomName: roomName, userDo: userDo });
+    }
+  }, [roomName]);
+
   const initSocketConnect = () => {
     if (!socket.connected) {
       socket.connect();
       console.log("connected", socket.connected);
-      socket.emit("entry", { memberId: memberId });
     }
   };
 
-  const noticeFunc = (Do) => {
-    const notice = (res) => {
-      const msg = `${Do}자님이 입장하셨습니다.`;
-      const newChatList = [...chatList, { type: "notice", content: msg }];
-      setChatList(newChatList);
-    };
+  const notice = useCallback((res) => {
+    const newChatList = [
+      ...chatList,
+      {
+        type: "notice",
+        content: `${res.msg}`,
+        roomName: roomName,
+        userDo: userDo,
+      },
+    ];
+    setChatList(newChatList);
+  }, [userDo, chatList, roomName]);
 
+  useEffect(()=>{
     socket.on("notice", notice);
-    return () => socket.off("notice", notice);
-  }
+    return () => socket.off("notice", notice)
+  },[notice])
 
   const sendMsg = () => {
     if (msgInput !== "") {
-      socket.emit("sendMsg", { memberId: memberId, msg: msgInput });
+      socket.emit("sendMsg", { memberId: memberId, msg: msgInput, roomName: roomName });
       setMsgInput("");
     }
   };
 
+  useEffect(() => {
+    getChatText();
+  }, [otherMemberId]);
 
-
-  const getChatText = async() => {
+  const getChatText = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getChatText?roomId=${id}&myMemberId=${memberId}&otherMemberId=${otherMemberId}`,
       );
-
-      console.log("response.data!!!!!!!!!!!!!!!!!", response.data[0])
-
-      // for (let i = 0; i < response.data.length; i++) {
-      //   const type = response.data[i].memberId === memberId ? "my" : "other";
-      //   const content = `${response.data[i].chatText}`
-      //   const newChatList = [
-      //     ...chatList,
-      //     { type: type, content: content, createdAt: response.data[i].createdAt },
-      //   ];
-      //   setChatList(newChatList);
-      // }
-      console.log(chatList)
+  
+      console.log("response.data", response.data);
+      let newChatList = []; // 빈 배열로 초기화
+  
+      for (let i = 0; i < response.data.length; i++) {
+        const type = response.data[i].memberId === memberId ? "my" : "other";
+        const nick = response.data[i].memberId === memberId ? "" : otherNickname;
+        const content = `${response.data[i].chatText}`;
+        const newItem = {
+          type: type,
+          nickname: nick,
+          content: content,
+          createdAt: response.data[i].createdAt,
+        };
+        newChatList.push(newItem); // chatList에 요소 추가
+      }
+  
+      setChatList(newChatList);
     } catch (error) {
-      console.error('Get Chat Text Error:', error);
+      console.error("Get Chat Text Error:", error);
     }
   };
-
-  useEffect(() => {
-    console.log("chatList", chatList)
-  }, [chatList]);
 
   const addChatList = useCallback(
     (res) => {
       const type = res.memberId === memberId ? "my" : "other";
+      const nick = res.memberId === memberId ? "" : otherNickname;
       const content = `${res.msg}`
       const newChatList = [
         ...chatList,
-        { type: type, content: content },
+        { type: type, nickname: nick, content: content },
       ];
       setChatList(newChatList);
 
@@ -139,15 +155,11 @@ function ChatRoom({ user }) {
         chatData.roomId = id;
         chatData.memberId = memberId;
         chatData.chatText = content;
-      } else if (type === "other") {
-        chatData.roomId = id;
-        chatData.memberId = otherMemberId;
-        chatData.chatText = content;
       }
       
       const postChat = async() => {
         try {
-          const response = await axios.post(
+          await axios.post(
             `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
           chatData,
             {
@@ -171,24 +183,43 @@ function ChatRoom({ user }) {
     return () => socket.off("chat", addChatList);
   }, [addChatList])
 
-  useEffect(() => {
-    // socket.on("error", (res) => {
-    //   alert(res.msg);
-    // });
-  }, []);
+  const exitRoom = () => {
+    socket.emit("disconnection", { roomName: roomName, userDo: userDo });
+    window.history.back(); // 이전 페이지로 이동
+  };
+
+  // window.onpageshow = function(event) {
+  //   if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+  //     console.log('back button event');
+  //   }
+  // }
+
+  // socket.on("bye", () => {
+  //   const newChatList = [...chatList, { type: "notice", content: "bye" }];
+  //   setChatList(newChatList);
+  // })
+
+  // useEffect(() => {
+  //   if (window.performance && window.performance.navigation.type == 2) {
+  //     console.log("out2")
+  //   }
+  // }, []);
+
 
   return (
     <>
       <div className="container text-center" style={{ backgroundColor: 'lightyellow', marginBottom: '10px' }}>
         <div className="row">
           <div className="col">
-          {boardInfo.image}
+            <button onClick={exitRoom}>목록 보기</button>
+          </div>
+          <div className="col">
+            {boardInfo.image}
           </div>
           <div className="col-6">
             <div>{boardInfo.title}</div>
             <div>{boardInfo.price}</div>
             <div>{boardInfo.starAvg}</div>
-            <div>{otherNickname}</div>
           </div>
           <div className="col">
             <div>{boardInfo.sellerNickname}</div>

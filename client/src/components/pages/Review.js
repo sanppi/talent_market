@@ -18,7 +18,7 @@ export default function Review({ boardId, productMemberId }) {
   const getReviews = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/product/${boardId}`
+        `${process.env.REACT_APP_DB_HOST}product/${boardId}`
       );
       if (response.data.reviews) {
         setReviews(response.data.reviews);
@@ -76,7 +76,7 @@ export default function Review({ boardId, productMemberId }) {
       } else {
         // 새 리뷰 작성
         const response = await axios.post(
-          `http://localhost:8000/review/create`,
+          `${process.env.REACT_APP_DB_HOST}review/create`,
           reviewData
         );
 
@@ -99,7 +99,7 @@ export default function Review({ boardId, productMemberId }) {
   const handleReviewUpdate = async (commentId, reviewData) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/review/update/${commentId}`,
+        `${process.env.REACT_APP_DB_HOST}review/update/${commentId}`,
         reviewData
       );
 
@@ -116,7 +116,7 @@ export default function Review({ boardId, productMemberId }) {
   const handleReviewDelete = async (commentId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8000/review/delete/${commentId}`
+        `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
       );
       if (response.status === 200) {
         alert("리뷰가 성공적으로 삭제되었습니다.");

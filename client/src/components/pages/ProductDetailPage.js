@@ -23,7 +23,7 @@ export default function ProductDetailPage() {
       try {
         console.log(`Requested boardId: ${boardId}`);
         const response = await axios.get(
-          `http://localhost:8000/product/${boardId}`,
+          `${process.env.REACT_APP_DB_HOST}product/${boardId}`,
           { params: { isDetailView: true } }
         );
 
@@ -41,7 +41,7 @@ export default function ProductDetailPage() {
     async function fetchLikeStatus() {
       try {
         const response = await axios.get(
-          `http://localhost:8000/product/like/${boardId}/${memberId}`
+          `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`
         );
         setHeart(response.data.isLike);
       } catch (error) {
@@ -61,7 +61,7 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/product/like/${boardId}/${memberId}`,
+        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`,
         {
           isLike: !heart,
         }
@@ -78,7 +78,7 @@ export default function ProductDetailPage() {
       <div className="productInfo">
         <div className="productImageContainer">
           <img
-            src={`http://localhost:8000/static/userImg/${product.image}`}
+            src={`${process.env.REACT_APP_DB_HOST}static/userImg/${product.image}`}
             alt={product.title}
             className="productImage"
           />
@@ -90,15 +90,25 @@ export default function ProductDetailPage() {
         </div>
         <div className="productDescription">
           <div className="productTitle">{product.title}</div>
-          <div className="productPrice">
-            <p>{product.price}원</p>
-          </div>
+          {product.isOnMarket === 'stop' ? (
+            <div className="productPrice">
+              <p>판매 중단</p>
+            </div>
+          ) : product.isOnMarket === 'ends' ? (
+            <div className="productPrice">
+              <p>판매 종료</p>
+            </div>
+          ) : (
+            <div className="productPrice">
+              <p>{product.price}원</p>
+            </div>
+          )}
           <hr />
           {/* 이 상품을 판매하는 판매자 이름도 받아오고싶어요.. 클릭하면 판매자가 파는 물품들 쫘라락 나오게 만들고 싶어요.. */}
           <div className="sellerInfo">판매자: {product.Member?.nickname}</div>
           <div>조회수: {product.views}</div>
           {/* 찜한 횟수는 바로 볼 수 있도록 클라이언트에 적었습니다. 불필요하시다면 주석 또는 삭제해주세요. */}
-          <div>찜한 횟수: {product.likeNum}</div>
+          <div>찜 개수: {product.likeNum}</div>
           <div className="buttonsContainer">
             {memberId === product.memberId ? (
               <>

@@ -7,15 +7,8 @@ exports.writeComment = async (req, res) => {
   try {
     const { review, stars, title, memberId, boardId, isAnonymous } = req.body;
 
-    // console.log(req.body);
-
     await Comment.create({
-      review,
-      stars,
-      title,
-      memberId,
-      boardId,
-      isAnonymous,
+      review, stars, title, memberId, boardId, isAnonymous,
     });
     res.send("create review success");
   } catch (error) {
@@ -44,12 +37,12 @@ exports.deleteComment = (req, res) => {
   Comment.destroy({
     where: { commentId: req.params.commentId },
   })
-    .then((result) => {
-      console.log("삭제 ", result);
-      res.send({ result: true });
-    })
-    .catch((error) => {
-      console.log("에러 메시지 ", error);
-      res.status(400).send;
-    });
+  .then((result) => {
+    console.log("삭제 ", result);
+    res.send({ result: true });
+  })
+  .catch((error) => {
+    console.log("에러 메시지 ", error);
+    res.status(400).send;
+  });
 };

@@ -53,7 +53,7 @@ export default function UpdateBasicInput({
         error={errors.email}
         validation={{
           pattern: {
-            value: /^[a-zA-Z0-9]+@[a-z]+.[a-z]+$/,
+            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             message: '올바른 이메일 형식을 입력하세요.',
           },
         }}
@@ -61,7 +61,7 @@ export default function UpdateBasicInput({
         onButtonClick={(type) => handleCheck(type, updatedEmail)}
         msg={msg}
         isUpdate={true}
-        onInfoChange={(newInfo) => setUpdatedEmail(newInfo)} // pass onInfoChange for email
+        onInfoChange={(newInfo) => setUpdatedEmail(newInfo)}
       />
     </>
   );

@@ -1,4 +1,5 @@
 import '../styles/modalbasic.scss';
+import { useEffect } from 'react';
 
 export default function ModalBasic({
   type,
@@ -11,6 +12,20 @@ export default function ModalBasic({
     setToggleState();
   };
 
+  useEffect(() => {
+    let timeoutId;
+
+    if (type === 'confirm') {
+      timeoutId = setTimeout(() => {
+        disableModal();
+      }, 3000);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [toggleState]);
+
   return (
     <>
       {toggleState && (
@@ -21,14 +36,19 @@ export default function ModalBasic({
             </div>
             <div className="modalWrapper">
               {type === 'confirm' ? (
-                <p>{content}되었습니다.</p>
+                <>
+                  <p>{content}</p>
+                  <button onClick={disableModal}>확인</button>
+                </>
               ) : (
-                <p>정말 {content} 하시겠습니까?</p>
+                <>
+                  <p>정말 {content} 하시겠습니까?</p>
+                  <button onClick={onButtonClick}>확인</button>
+                </>
               )}
-              <button onClick={onButtonClick}>확인</button>
             </div>
           </div>
-          {/* <div className="modalCanvas" onClick={disableModal}></div> */}
+          <div className="modalCanvas" onClick={disableModal}></div>
         </>
       )}
     </>

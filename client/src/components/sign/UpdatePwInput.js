@@ -1,13 +1,40 @@
 import SignUpInput from './SignUpInput';
 import SignButton from './SignButton';
+import axios from 'axios';
+import { useState } from 'react';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function UpdatePwInput({
   register,
   handleInputChange,
-  handleEnter,
   watchObj,
   errors,
 }) {
+  const [msg, setMsg] = useState('');
+  const [modal, onModal] = useToggle(false);
+  const handlePwChange = async () => {
+    const userData = { oldPw: watchObj.oldPw, newPw: watchObj.newPw };
+    // console.log(userData);
+    // const response = await axios({
+    //   url: `${process.env.REACT_APP_DB_HOST}`,
+    //   method: 'post',
+    //   data: userData,
+    // });
+    onModal();
+
+    // if (response.data.result) {
+    //   // 비밀번호 변경 로직 :
+    //   // const { oldPw, newPw } = req.body.userData;
+    //   // oldPw와 같은 pw가 Member 테이블에 있는지 확인
+    //   // 있으면 {result: false, message: 기존 비밀번호가 일치하지 않습니다.} 보내기
+    //   // 없으면 newPw로 업데이트하고 {result: true} 보내기
+    //   // onModal();
+    // } else {
+    //   // setMsg(response.data.message);
+    // }
+  };
+
   return (
     <>
       <SignUpInput
@@ -59,7 +86,15 @@ export default function UpdatePwInput({
         error={errors.pwCk}
         isUpdate={true}
       />
-      {/* ERR : oldPw가 빈값이라도 안 되게..  */}
+      {modal && (
+        <ModalBasic
+          type="confirm"
+          content="수정"
+          toggleState={true}
+          setToggleState={onModal}
+        />
+      )}
+      <div>{msg}</div>
       <SignButton
         disabled={
           !watchObj.oldPw ||
@@ -68,8 +103,8 @@ export default function UpdatePwInput({
           errors.newPw ||
           errors.pwCk
         }
+        onClick={handlePwChange}
         type="비밀번호 수정"
-        onKeyDown={(e) => handleEnter(e)}
       />
     </>
   );

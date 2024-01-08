@@ -14,12 +14,18 @@ export function ProductCard({ product }) {
       <Link to={`/product/${product.boardId}`}>
         <div className="imgContainer">
           <img
-            src={`http://localhost:8000/static/userImg/${product.image}`}
+            src={`${process.env.REACT_APP_DB_HOST}static/userImg/${product.image}`}
             alt={product.title}
           />
         </div>
         <h4>{product.title}</h4>
-        <p>{product.price}원</p>
+        {product.isOnMarket === 'stop' ? (
+          <p>판매 중단</p>
+        ) : product.isOnMarket === 'ends' ? (
+          <p>판매 종료</p>
+        ) : (
+          <p>{product.price}원</p>
+        )}
         <p>{product.rating}</p>
       </Link>
     </div>

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
+import ReviewList from '../../ReviewList';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
-import ReviewList from '../../ReviewList';
 
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
+  const location = useLocation();
   const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅 목록'];
   const endpointMapping = {
     '찜 목록': 'favorite',
@@ -16,11 +17,17 @@ function MyPage({ user }) {
     '내 리뷰': 'review',
     '채팅 목록': 'chat',
   };
-  const [selectedData, setSelectedData] = useState(null);
+  const [selectedData, setSelectedData] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   useEffect(() => {
     if (!memberId) navigate('/member/signin');
   }, [memberId]);
+
+  useEffect(() => {
+    handleData('찜 목록');
+    setSelectedIndex(0);
+  }, []);
 
   const handleData = async (endpoint) => {
     try {
@@ -70,7 +77,14 @@ function MyPage({ user }) {
           <div className="myList">
             <ul className="myListTitle">
               {myDataList.map((myData, i) => (
-                <li key={i} onClick={() => handleData(myData)}>
+                <li
+                  key={i}
+                  className={selectedIndex === i ? 'selected' : ''}
+                  onClick={() => {
+                    handleData(myData);
+                    setSelectedIndex(i);
+                  }}
+                >
                   {myData}
                 </li>
               ))}
@@ -78,17 +92,22 @@ function MyPage({ user }) {
             <div className="myListContent">
               <div className="pageWrapper">
                 {selectedData !== null &&
-                  // TODO : 기본으로 찜 목록, 해당 리스트 color 주기
                   selectedData.map((data, i) => {
                     switch (data.type) {
                       case 'favorite':
                       case 'selling':
                         return (
-                          <ProductCard key={data.boardId} product={data} />
+                          <ProductCard product={data} boardId={data.boardId} />
                         );
                       case 'review':
-                        // TODO : 데이터바인딩
-                        return <ReviewList key={data.boardId} reviews={data} />;
+                        return (
+                          <ReviewList
+                            reviews={selectedData.filter(
+                              (data) => data.type === 'review'
+                            )}
+                            key={data.boardId}
+                          />
+                        );
                       default:
                         return null;
                     }

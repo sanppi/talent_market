@@ -15,9 +15,9 @@ router.get("/like/:boardId/:memberId", Cboard.getLike);
 router.post("/like/:boardId/:memberId", Cboard.boardLike);
 
 // 게시글 수정
-// router.patch("/update/:boardId", Cboard.updateBoard);
+router.patch("/update/:boardId", Cboard.boardUpdate);
 
 // 게시글 삭제
-// router.delete("/delete/:boardId", Cboard.deleteBoard);
+router.delete("/delete/:boardId", Cboard.boardDelete);
 
 module.exports = router;

@@ -17,7 +17,7 @@ export default function SearchResults() {
       const fetchSearchResults = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/search?search=${searchParam}`
+            `${process.env.REACT_APP_DB_HOST}search?search=${searchParam}`
           );
           if (Array.isArray(response.data)) {
             setSearchResults(response.data);
@@ -47,12 +47,18 @@ export default function SearchResults() {
               <Link to={`/product/${product.boardId}`}>
                 <div className="imgContainer">
                   <img
-                    src={`http://localhost:8000/static/userImg/${product.image}`}
+                    src={`${process.env.REACT_APP_DB_HOST}static/userImg/${product.image}`}
                     alt={product.title}
                   />
                 </div>
                 <h4>{product.title}</h4>
-                <p>{product.price}원</p>
+                {product.isOnMarket === 'stop' ? (
+                  <p>판매 중단</p>
+                ) : product.isOnMarket === 'ends' ? (
+                  <p>판매 종료</p>
+                ) : (
+                  <p>{product.price}원</p>
+                )}
                 <p>{product.rating}</p>
               </Link>
             </div>

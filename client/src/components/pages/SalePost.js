@@ -48,7 +48,7 @@ export default function SalePost() {
     // 데이터 받으십쇼~~!!
     try {
       const response = await axios.post(
-        "http://localhost:8000/product/create",
+        `${process.env.REACT_APP_DB_HOST}product/create`,
         formData,
         {
           headers: {
