@@ -113,3 +113,59 @@ exports.updateUserInfo = async (req, res) => {
     return res.status(500).send('Internal Server Error');
   }
 };
+
+// 마이페이지 조회 > 내 리뷰
+exports.getMyReviews = async (req, res) => {
+  const targetMemberId = req.session.user;
+  const check = checkUser(targetMemberId);
+
+  if (!check)
+    return res
+      .status(404)
+      .send({ success: false, message: '회원을 찾을 수 없습니다.' });
+
+  try {
+    const reviews = await Comment.findAll({
+      where: { memberId: targetMemberId },
+      attributes: [
+        'commentId',
+        'review',
+        'title',
+        'isAnonymous',
+        'stars',
+        'createdAt',
+        'updatedAt',
+      ],
+      include: [
+        {
+          model: Board,
+          attributes: ['boardId'],
+        },
+        {
+          model: Member,
+          attributes: ['memberId', 'nickname'],
+        },
+      ],
+    });
+
+    const formattedReviews = reviews.map((review) => ({
+      commentId: review.commentId,
+      review: review.review,
+      title: review.title,
+      isAnonymous: review.isAnonymous,
+      stars: review.stars,
+      boardId: review.Board.boardId,
+      memberId: review.Member.memberId,
+      createdAt: review.createdAt,
+      updatedAt: review.updatedAt,
+      Member: {
+        nickname: review.Member.nickname,
+      },
+    }));
+
+    res.send({ result: true, userData: formattedReviews });
+  } catch (error) {
+    console.error('Error fetching reviews', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
