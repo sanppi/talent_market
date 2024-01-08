@@ -58,6 +58,7 @@ app.get("*", function (req, res) {
 
 
 const userDoArr = {};
+const roomArr = {};
 
 io.on("connection", (socket) => {
   socket.onAny((event) => {
@@ -65,35 +66,36 @@ io.on("connection", (socket) => {
   });
 
   socket.on("entry", (res) => {
+    if (!roomArr[socket.id]) {
+      roomArr[socket.id] = [];
+    } else {
+      socket.leave(roomArr[socket.id][0]);
+      roomArr[socket.id] = [];
+    }
     socket.join(res.roomName);
-    console.log("socket.rooms", socket.rooms);
     socket.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 입장하셨습니다.` });
+
     userDoArr[socket.id] = res.userDo;
+    roomArr[socket.id].push(res.roomName);
   });
 
   socket.on("sendMsg", (res) => {
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 
-  // socket.on("disconnecting", (res) => {
-  //   socket.rooms.forEach((room) => socket.to(res.roomName).emit("bye"));
-  // });
 
   socket.on("disconnection", (res) => {
-    console.log(res.roomName)
     socket.leave(res.roomName);
-    io.emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
+    io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
     delete userDoArr[socket.id];
     console.log("socket.rooms", socket.rooms);
   });
   
   socket.on("disconnect", () => {
-    // socket.leave(res.roomName);
-    io.emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
+    io.to(roomArr[socket.id]).emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
     // 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
     delete userDoArr[socket.id];
     console.log("socket.rooms", socket.rooms);
-    // socket.rooms.forEach((room) => socket.to)
   });
 });
 

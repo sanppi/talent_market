@@ -116,7 +116,6 @@ function ChatRoom({ user }) {
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getChatText?roomId=${id}&myMemberId=${memberId}&otherMemberId=${otherMemberId}`,
       );
   
-      console.log("response.data", response.data);
       let newChatList = []; // 빈 배열로 초기화
   
       for (let i = 0; i < response.data.length; i++) {
@@ -188,22 +187,23 @@ function ChatRoom({ user }) {
     window.history.back(); // 이전 페이지로 이동
   };
 
-  // window.onpageshow = function(event) {
-  //   if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
-  //     console.log('back button event');
-  //   }
-  // }
 
-  // socket.on("bye", () => {
-  //   const newChatList = [...chatList, { type: "notice", content: "bye" }];
-  //   setChatList(newChatList);
-  // })
+  // 리더님ㅠㅠㅠ
+  // window.addEventListener('beforeunload', function(event) {
+  //   console.log("out2")
+  // });
 
-  // useEffect(() => {
-  //   if (window.performance && window.performance.navigation.type == 2) {
-  //     console.log("out2")
-  //   }
-  // }, []);
+  useEffect(() => {
+    // if (window.performance && window.performance.navigation.type === 2) {
+    //   console.log("out2")
+    // }
+    // window.onbeforeunload = function() {
+    //   console.log("out2")
+    // };
+    window.addEventListener('beforeunload', function(event) {
+      event.returnValue = '이 페이지를 벗어나시겠습니까?';
+    });
+  }, []);
 
 
   return (
