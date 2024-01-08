@@ -39,8 +39,9 @@ exports.getBuyRoomList = (req, res) => {
           res.status(500).send("Get Latest Created At Error");
         });
     } else {
-      console.log("Get Chatting Room Error");
-      res.status(500).send("Get Chatting Room Error");
+      // chattingRoomList가 없는 경우에 대한 처리
+      console.log("No Chatting Room Exists");
+      res.status(200).send([]);
     }
   })
   .catch((error) => {
@@ -108,8 +109,10 @@ exports.getSellRoomList = async (req, res) => {
 
       res.send(formattedData);
     } else {
-      console.log("채팅방 조회 오류");
-      res.status(500).send("채팅방 조회 오류");
+      // console.log("채팅방 조회 오류");
+      // res.status(500).send("채팅방 조회 오류");
+       // 판매하는 상품이 없는 경우 빈 배열을 반환
+       res.send([]);
     }
   } catch (error) {
     console.log("판매방 목록 조회 오류", error);
