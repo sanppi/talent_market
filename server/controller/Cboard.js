@@ -1,5 +1,5 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
-const { Board, LikeBoardTable, Comment, Member } = require("../model");
+const { Board, LikeBoardTable, Comment, Member, ChattingRoom } = require("../model");
 
 // 클라이언트 product, 서버 board
 
@@ -141,6 +141,41 @@ const boardDeleteProcess = (req, res) => {
   });
 };
 
+// 채팅방 생성
+const createChatRoom = async (req, res) => {
+  try {
+    const { memberId, boardId } = req.body;
+
+    const nickname = await Member.findOne({
+      where: { memberId: req.body.memberId },
+    });
+
+    const title = await Board.findOne({
+      where: { boardId: req.body.boardId },
+    });
+
+    const chattingRoomName = `${title.title}/${nickname.nickname}`
+
+    // 이미 존재하는 채팅방인지 확인
+    const existingRoom = await ChattingRoom.findOne({ where: { roomName: chattingRoomName } });
+    if (existingRoom) {
+      return res.send({ message: "채팅방이 이미 존재합니다.", roomId: existingRoom.roomId });
+    }
+
+    const newChatRoom = await ChattingRoom.create({
+      memberId,
+      boardId,
+      roomName: chattingRoomName
+    });
+
+    res.send({ message: "채팅방이 생성되었습니다.", roomId: newChatRoom.roomId });
+    console.log("ChatRoom created successfully");
+  } catch (error) {
+    console.error("ChatRoom creation error:", error);
+    res.status(500).send("Cannot create chat room.");
+  }
+};
+
 module.exports = {
   boardCreate: [upload.single("image"), boardCreateHandler],
   boardDetail: boardDetailPage,
@@ -148,4 +183,5 @@ module.exports = {
   boardLike: toggleLike,
   boardUpdate: [upload.single("image"), boardUpdateProcess],
   boardDelete: boardDeleteProcess,
+  boardChat: createChatRoom,
 };
