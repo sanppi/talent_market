@@ -72,7 +72,7 @@ export default function ModalAccount({
 
   return (
     <>
-      <div className="modalContainer">
+      <div className="modalContainer slideIn">
         <div className="modalExitWrapper" onClick={disableModal}>
           &times;
         </div>

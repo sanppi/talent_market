@@ -54,7 +54,7 @@ function MyPage({ user }) {
   return (
     <>
       {memberId && (
-        <div className="myPage">
+        <div className="myPage slideIn">
           <div className="myProfileContainer">
             <div className="myProfileBox1">
               <div className="myProfileImg">🦸</div>
