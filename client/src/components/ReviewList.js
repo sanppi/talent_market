@@ -2,7 +2,7 @@ import { Fragment, useEffect } from 'react';
 import useReviewListFunctions from './hook/UseReviewListFunctions';
 import '../styles/mypage.scss';
 
-const ReviewList = ({ boardId, reviews, type }) => {
+const ReviewList = ({ boardId, reviews }) => {
   const {
     reviewTitle,
     reviewContent,
@@ -33,7 +33,7 @@ const ReviewList = ({ boardId, reviews, type }) => {
             <tr>
               <th></th>
               <th>제목</th>
-              {type !== 'my' && <th>작성자</th>}
+              {/* <th>작성자</th> */}
               <th>작성일</th>
               <th>별점</th>
               <th>수정/삭제</th>
@@ -49,13 +49,11 @@ const ReviewList = ({ boardId, reviews, type }) => {
                 >
                   <td>{index + 1}</td>
                   <td>{review.title}</td>
-                  {type !== 'my' && (
-                    <td>
+                  {/* <td>
                       {review.isAnonymous
                         ? '익명'
                         : review.Member.nickname || review.nickname}
-                    </td>
-                  )}
+                    </td> */}
                   <td>{new Date(review.createdAt).toLocaleDateString()}</td>
                   <td>{'★'.repeat(review.stars)}</td>
                   <td className="editButtonBox">
