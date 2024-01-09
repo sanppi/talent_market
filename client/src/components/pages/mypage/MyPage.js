@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
 import ReviewList from '../../ReviewList';
+import Footer from '../Footer';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
 
@@ -115,6 +116,7 @@ function MyPage({ user }) {
           </div>
         </div>
       )}
+      <Footer />
     </>
   );
 }
