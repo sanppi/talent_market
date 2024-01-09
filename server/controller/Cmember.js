@@ -271,6 +271,7 @@ exports.getMyReviews = async (req, res) => {
         'stars',
         'createdAt',
         'updatedAt',
+        'commentId',
       ],
       include: [
         {
@@ -293,10 +294,13 @@ exports.getMyReviews = async (req, res) => {
       memberId: review.Member.memberId,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
+      commentId: review.commentId,
       Member: {
         nickname: review.Member.nickname,
       },
     }));
+
+    console.log('update', formattedReviews);
 
     res.send({ result: true, userData: formattedReviews });
   } catch (error) {
