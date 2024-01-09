@@ -24,10 +24,10 @@
     width: calc(100% / 3 - 20px);
     max-width: calc(100% / 3 - 20px);
 
-    @media screen and (max-width: 1200px) {
-      flex: 1 0 25%;
-      max-width: 25%;
-    }
+    // @media screen and (max-width: 1200px) {
+    //   flex: 1 0 25%;
+    //   max-width: 25%;
+    // }
 
     @media screen and (max-width: 900px) {
       flex: 1 0 33.33%;
@@ -40,7 +40,7 @@
     }
 
     @media screen and (max-width: 400px) {
-      flex: 1 0 100%;
+      flex: 1 0 50%;
       max-width: 100%;
     }
 
