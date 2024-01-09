@@ -97,12 +97,12 @@ function Main() {
             searchProducts(products, searchTerm).map((product) => (
               <ProductCard key={product.boardId} product={product} />
             ))}
+          <Footer />
         </div>
       </div>
       <button className="chattingBtn">
         <Link to="/chatting">⌨️</Link>
       </button>
-      <Footer />
     </>
   );
 }
