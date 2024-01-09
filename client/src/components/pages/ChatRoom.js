@@ -1,12 +1,12 @@
-import "../../styles/chat.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { connect } from "react-redux";
-import axios from "axios";
-import Chat from "./Chat";
-import Notice from "./Notice";
-import Confirmed from "./Confirmed";
-import io from "socket.io-client";
+import '../../styles/chat.scss';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import Chat from './Chat';
+import Notice from './Notice';
+import Confirmed from './Confirmed';
+import io from 'socket.io-client';
 
 const socket = io.connect(process.env.REACT_APP_DB_HOST, {
   autoConnect: false,
@@ -22,11 +22,7 @@ function ChatRoom({ user }) {
   const [boardInfo, setBoardInfo] = useState({});
   const [roomName, setRoomName] = useState(null);
   const [userDo, setUserDo] = useState(null);
-  const [otherDo, setOtherrDo] = useState("");
-  const [msgInput, setMsgInput] = useState("");
-  const [chatList, setChatList] = useState([]);
-  const [price, setPrice] = useState("");
-
+  const [otherDo, setOtherrDo] = useState('');
   const [msgInput, setMsgInput] = useState('');
   const [chatList, setChatList] = useState([]);
   const [price, setPrice] = useState('');
@@ -80,7 +76,7 @@ function ChatRoom({ user }) {
   useEffect(() => {
     initSocketConnect();
     if (userDo !== null) {
-      socket.emit("entry", {
+      socket.emit('entry', {
         memberId: memberId,
         roomName: roomName,
         userDo: userDo,
@@ -105,7 +101,7 @@ function ChatRoom({ user }) {
         const newChatList = [
           ...chatList,
           {
-            type: "notice",
+            type: 'notice',
             content: `${res.msg}`,
             roomName: roomName,
             userDo: userDo,
@@ -113,25 +109,25 @@ function ChatRoom({ user }) {
         ];
         setChatList(newChatList);
       } else {
-        console.log("Notice Error");
+        console.log('Notice Error');
       }
     },
     [userDo, chatList, roomName]
   );
 
   useEffect(() => {
-    socket.on("notice", notice);
-    return () => socket.off("notice", notice);
+    socket.on('notice', notice);
+    return () => socket.off('notice', notice);
   }, [notice]);
 
   const sendMsg = () => {
-    if (msgInput !== "") {
-      socket.emit("sendMsg", {
+    if (msgInput !== '') {
+      socket.emit('sendMsg', {
         memberId: memberId,
         msg: msgInput,
         roomName: roomName,
       });
-      setMsgInput("");
+      setMsgInput('');
     }
   };
 
@@ -144,9 +140,9 @@ function ChatRoom({ user }) {
       let newChatList = []; // 빈 배열로 초기화
 
       for (let i = 0; i < response.data.length; i++) {
-        const type = response.data[i].memberId === memberId ? "my" : "other";
+        const type = response.data[i].memberId === memberId ? 'my' : 'other';
         const nick =
-          response.data[i].memberId === memberId ? "" : otherNickname;
+          response.data[i].memberId === memberId ? '' : otherNickname;
         const content = `${response.data[i].chatText}`;
         const newItem = {
           type: type,
@@ -202,8 +198,8 @@ function ChatRoom({ user }) {
 
   const addChatList = useCallback(
     (res) => {
-      const type = res.memberId === memberId ? "my" : "other";
-      const nick = res.memberId === memberId ? "" : otherNickname;
+      const type = res.memberId === memberId ? 'my' : 'other';
+      const nick = res.memberId === memberId ? '' : otherNickname;
       const content = `${res.msg}`;
       const newChatList = [
         ...chatList,
@@ -225,8 +221,8 @@ function ChatRoom({ user }) {
   );
 
   useEffect(() => {
-    socket.on("chat", addChatList);
-    return () => socket.off("chat", addChatList);
+    socket.on('chat', addChatList);
+    return () => socket.off('chat', addChatList);
   }, [addChatList]);
 
   const exitRoom = () => {
@@ -236,7 +232,7 @@ function ChatRoom({ user }) {
 
   useEffect(() => {
     return () => {
-      socket.emit("disconnection", { roomName: roomName, userDo: userDo });
+      socket.emit('disconnection', { roomName: roomName, userDo: userDo });
     };
   }, []);
 
@@ -247,13 +243,13 @@ function ChatRoom({ user }) {
       );
 
       if (!response.data) {
-        alert("판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.");
+        alert('판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.');
       } else {
         const confirmed = window.confirm(
           `${response.data.bankName} ${response.data.accountNum} 이 계좌번호가 맞습니까?`
         );
-        if (confirmed) {=
-          socket.emit("sell", {
+        if (confirmed) {
+          socket.emit('sell', {
             roomName: roomName,
             memberId: memberId,
             bankName: response.data.bankName,
@@ -261,7 +257,7 @@ function ChatRoom({ user }) {
           });
         } else {
           sellCancel();
-          console.log("sellCancel");
+          console.log('sellCancel');
         }
       }
     } catch (error) {
@@ -274,13 +270,13 @@ function ChatRoom({ user }) {
       let resMemberId = res.memberId;
       let resBankName = res.bankName;
       let resAccountNum = res.accountNum;
-      if (price !== "" && chatList !== null && chatList.length !== 0) {
-        const type = res.memberId === memberId ? "my" : "other";
-        const nick = resMemberId === memberId ? "" : otherNickname;
+      if (price !== '' && chatList !== null && chatList.length !== 0) {
+        const type = res.memberId === memberId ? 'my' : 'other';
+        const nick = resMemberId === memberId ? '' : otherNickname;
         const newChatList = [
           ...chatList,
           {
-            type: "confirmed",
+            type: 'confirmed',
             subType: type,
             nickname: nick,
             content: `${res.bankName} ${res.accountNum}`,
@@ -302,25 +298,25 @@ function ChatRoom({ user }) {
 
         const data = {
           roomId: id,
-          chatState: "sale",
+          chatState: 'sale',
         };
 
         patchChatState(data);
       } else {
-        console.log("Sell Confirmed Error");
+        console.log('Sell Confirmed Error');
       }
     },
     [chatList]
   );
 
   useEffect(() => {
-    socket.on("sellConfirmed", sellConfirmed);
-    return () => socket.off("sellConfirmed", sellConfirmed);
+    socket.on('sellConfirmed', sellConfirmed);
+    return () => socket.off('sellConfirmed', sellConfirmed);
   }, [sellConfirmed]);
 
   useEffect(() => {
-    if (chatState == "sale") {
-      socket.emit("canBuy", { chatState: chatState });
+    if (chatState == 'sale') {
+      socket.emit('canBuy', { chatState: chatState });
     }
   }, [chatState]);
 
@@ -336,12 +332,12 @@ function ChatRoom({ user }) {
   );
 
   useEffect(() => {
-    socket.on("buy", buyConfirmed);
+    socket.on('buy', buyConfirmed);
   }, [chatState]);
 
   useEffect(() => {
-    if (chatState == "done") {
-      socket.emit("done", { chatState: chatState });
+    if (chatState == 'done') {
+      socket.emit('done', { chatState: chatState });
     }
   }, [chatState]);
 
@@ -357,7 +353,7 @@ function ChatRoom({ user }) {
   );
 
   useEffect(() => {
-    socket.on("check", check);
+    socket.on('check', check);
   }, [chatState]);
 
   const sendSellBuyMsg = (msg, myMemberId) => {
@@ -381,12 +377,12 @@ function ChatRoom({ user }) {
   };
 
   const sellCancel = () => {
-    const msg = "판매자가 판매를 취소하였습니다.";
+    const msg = '판매자가 판매를 취소하였습니다.';
     sendSellBuyMsg(msg, memberId);
 
     const data = {
       roomId: id,
-      chatState: "ready",
+      chatState: 'ready',
     };
 
     patchChatState(data);
@@ -404,23 +400,23 @@ function ChatRoom({ user }) {
           sellData,
           {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
         if (response.data) {
-          sendSellBuyMsg("거래가 완료되었습니다.", memberId);
+          sendSellBuyMsg('거래가 완료되었습니다.', memberId);
         } else {
-          sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId);
+          sendSellBuyMsg('거래가 성사되지 않았습니다.', memberId);
         }
         const data = {
           roomId: id,
-          chatState: "ready",
+          chatState: 'ready',
         };
 
         patchChatState(data);
       } catch (error) {
-        console.error("Patch Buyer Info Error:", error);
+        console.error('Patch Buyer Info Error:', error);
       }
     };
 
@@ -429,24 +425,24 @@ function ChatRoom({ user }) {
 
   const buy = () => {
     const msg =
-      "구매자가 결제를 완료하였습니다. 입금내역을 확인 후 확인 완료를 눌러주세요.";
+      '구매자가 결제를 완료하였습니다. 입금내역을 확인 후 확인 완료를 눌러주세요.';
     sendSellBuyMsg(msg, memberId);
 
     const data = {
       roomId: id,
-      chatState: "done",
+      chatState: 'done',
     };
 
     patchChatState(data);
   };
 
   const buyCancel = () => {
-    const msg = "구매자가 구매를 취소하였습니다.";
+    const msg = '구매자가 구매를 취소하였습니다.';
     sendSellBuyMsg(msg, memberId);
 
     const data = {
       roomId: id,
-      chatState: "ready",
+      chatState: 'ready',
     };
 
     patchChatState(data);
