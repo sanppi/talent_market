@@ -6,6 +6,7 @@ import ReviewList from '../../ReviewList';
 import Footer from '../Footer';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
+import Pattern from '../../Pattern';
 
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
@@ -57,7 +58,9 @@ function MyPage({ user }) {
         <div className="myPage slideIn">
           <div className="myProfileContainer">
             <div className="myProfileBox1">
-              <div className="myProfileImg">🦸</div>
+              <div className="myProfileImg">
+                <Pattern />
+              </div>
               <Link to={`/member/mypage/update/${memberId}`}>
                 <button className="myProfileUpdate">내 정보 변경</button>
               </Link>
