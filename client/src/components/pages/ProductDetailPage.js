@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "../../styles/productdetail.scss";
 import { useSelector } from "react-redux";
 import Review from "./Review";
@@ -11,6 +11,9 @@ export default function ProductDetailPage() {
   const { boardId } = useParams();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const memberId = useSelector((state) => state.auth.memberId);
+  const [chattingRoom, setChattingRoom] = useState(null);
+  const [roomId, setRoomId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -61,8 +64,7 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`,
-        {
+        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`, {
           isLike: !heart,
         }
       );
@@ -72,6 +74,37 @@ export default function ProductDetailPage() {
       console.error("찜 정보를 보내는데 실패하였습니다: ", error);
     }
   };
+
+  const handleContactClick = async () => {
+    try {
+      // 채팅방 생성
+      const response = await axios.post(
+        `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`, {
+          memberId: memberId,
+          boardId: boardId,
+        }
+      );
+
+      console.log("콘솔 로그 ", response.data)
+  
+      // 채팅방 정보 업데이트 및 채팅방 ID 저장
+      if (response.data.message === "채팅방이 생성되었습니다.") {
+        setRoomId(response.data.roomId);
+        // 채팅방이 생성되면 해당 채팅방 라우트로 이동
+        navigate(`/chatRoom/${response.data.roomId}`);
+      } else if (response.data.message === "채팅방이 이미 존재합니다.") {
+        // 이미 존재하는 채팅방이므로 roomId 저장
+        setRoomId(response.data.roomId);
+        navigate(`/chatRoom/${response.data.roomId}`);
+      } else {
+        console.error("채팅방 생성에 실패하였습니다: ", response.data.message);
+        // 서버로부터 받은 에러 메시지를 출력하거나, 적절한 에러 처리를 수행할 수 있습니다.
+      }
+    } catch (error) {
+      console.error("채팅방 생성에 실패하였습니다: ", error);
+      console.error("에러 응답 데이터: ", error.response?.data);
+    }
+  };  
 
   return (
     <div className="productDetail">
@@ -127,8 +160,14 @@ export default function ProductDetailPage() {
                 찜하기
               </button>
             )}
-            {memberId !== product.memberId && (
-              <button className="commonBtn">연락하기</button>
+            { memberId !== product.memberId && (
+              chattingRoom ? (
+                <button className="commonBtn">
+                  <Link to={`/chatRoom/${chattingRoom.roomId}`}>채팅방으로 이동</Link>
+                </button>
+              ) : (
+                <button className="commonBtn" onClick={handleContactClick}>연락하기</button>
+              )
             )}
           </div>
         </div>

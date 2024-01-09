@@ -34,10 +34,17 @@ export default function ChattingRoomList({ chattingRoom, setChattingRoomList, re
     }
   };
 
+  // window.onbeforeunload = function() {
+  //   console.log("out1")
+  // };
+
   // useEffect(() => {
-  //   if (window.performance && window.performance.navigation.type == 2) {
+  //   if (window.performance && window.performance.navigation.type === 2) {
   //     console.log("out1")
   //   }
+  //   window.onbeforeunload = function() {
+  //     console.log("out1")
+  //   };
   // }, []);
 
   return (

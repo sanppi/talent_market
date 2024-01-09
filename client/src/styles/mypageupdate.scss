@@ -13,12 +13,11 @@
 .myAccount {
   @include modal;
   margin: 30px 0;
+}
 
-  &.slideIn {
-    @include slideIn(0.3s);
-  }
-
-  &.slideOut {
-    @include slideOut(0.3s);
-  }
+.slideIn {
+  @include slideIn(0.3s);
+}
+.slideOut {
+  @include slideOut(0.3s);
 }

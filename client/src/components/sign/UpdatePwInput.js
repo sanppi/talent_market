@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import useToggle from '../hook/UseToggle';
 import ModalBasic from '../ModalBasic';
+import { useSelector } from 'react-redux';
 
 export default function UpdatePwInput({
   register,
@@ -13,26 +14,28 @@ export default function UpdatePwInput({
 }) {
   const [msg, setMsg] = useState('');
   const [modal, onModal] = useToggle(false);
-  const handlePwChange = async () => {
-    const userData = { oldPw: watchObj.oldPw, newPw: watchObj.newPw };
-    // console.log(userData);
-    // const response = await axios({
-    //   url: `${process.env.REACT_APP_DB_HOST}`,
-    //   method: 'post',
-    //   data: userData,
-    // });
-    onModal();
+  const memberId = useSelector((state) => state.auth.memberId);
+  const [doneMsg, setDoneMsg] = useState('');
 
-    // if (response.data.result) {
-    //   // 비밀번호 변경 로직 :
-    //   // const { oldPw, newPw } = req.body.userData;
-    //   // oldPw와 같은 pw가 Member 테이블에 있는지 확인
-    //   // 있으면 {result: false, message: 기존 비밀번호가 일치하지 않습니다.} 보내기
-    //   // 없으면 newPw로 업데이트하고 {result: true} 보내기
-    //   // onModal();
-    // } else {
-    //   // setMsg(response.data.message);
-    // }
+  const handlePwChange = async () => {
+    const userData = {
+      oldPw: watchObj.oldPw,
+      newPw: watchObj.newPw,
+    };
+
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+      method: 'post',
+      data: { type: 'pw', userData: userData },
+      withCredentials: true,
+    });
+
+    if (response.data.result) {
+      onModal();
+      setDoneMsg(response.data.message);
+    } else {
+      setMsg(response.data.message);
+    }
   };
 
   return (
@@ -89,7 +92,7 @@ export default function UpdatePwInput({
       {modal && (
         <ModalBasic
           type="confirm"
-          content="수정"
+          content={doneMsg}
           toggleState={true}
           setToggleState={onModal}
         />

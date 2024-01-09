@@ -25,9 +25,14 @@ body {
 
         .myProfileImg {
           @include size(100%, 100%);
-          background-color: black;
           margin-bottom: 10px;
-          border-radius: 50px;
+          border-radius: 50%;
+          // border: 3px solid var(--main-red);
+          font-size: 180px;
+          text-align: center;
+          line-height: 140%;
+          overflow: hidden;
+          box-shadow: 0px 2px 1px 3px var(--main-red);
         }
 
         .myProfileUpdate {
@@ -37,7 +42,7 @@ body {
           color: azure;
           box-shadow: 0px 2px 1px 1px #c1bfbf;
           transition-duration: 0.2s;
-          // text-shadow: 0px 2px 0px #3b6e62;
+          margin-top: 5px;
 
           &:active {
             box-shadow: none;
@@ -47,12 +52,11 @@ body {
 
       .myProfileBox2 {
         @include size(200px, 200px);
-        padding: 20px 15px;
+        padding: 20px 0 0 35px;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         flex-direction: column;
-
         .myProfileNickname {
           height: 100px;
           padding-top: 15px;
@@ -129,6 +133,7 @@ body {
       .myListContent {
         margin-top: 40px;
         max-width: 400px;
+        // @include leftToRight(0.5s);
 
         .pageWrapper {
           width: 100%;
@@ -184,6 +189,50 @@ body {
               @include responsiveText(16px, 12px);
             }
           }
+
+          .reviewTable {
+            text-align: center;
+
+            .reviewTableList {
+              font-size: 14px;
+              tr {
+                height: 50px;
+                th {
+                  line-height: 190%;
+                }
+              }
+            }
+
+            .reviewTableContents {
+              font-size: 12px;
+              tr {
+                height: 50px;
+                &:last-child {
+                  text-align: left;
+                }
+
+                .editButtonBox {
+                  width: 185px;
+                  text-align: left;
+                  padding: 15px;
+                  display: flex;
+                  justify-content: space-around;
+                  align-items: center;
+
+                  button {
+                    @include button(10px, 5px);
+                    box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.5);
+                    background-color: var(--light-blue);
+                    margin: 0;
+
+                    &:active {
+                      box-shadow: none;
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -193,8 +242,10 @@ body {
         flex-direction: column;
 
         .myProfileBox2 {
-          margin-top: 30px;
-          height: 100px !important;
+          align-items: center;
+          margin: 30px 0 15px;
+          height: 80px !important;
+          padding-left: 10px;
 
           .myProfileNickname {
             font-size: 15px;

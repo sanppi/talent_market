@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import useToggle from '../hook/UseToggle';
 
 const useReviewListFunctions = (boardId) => {
   const [reviews, setReviews] = useState([]);
@@ -9,8 +10,8 @@ const useReviewListFunctions = (boardId) => {
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewContent, setReviewContent] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
-  const [isReviewFormVisible, setIsReviewFormVisible] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [toggleForm, onToggleForm] = useToggle(false);
 
   const memberId = useSelector((state) => state.auth.memberId);
 
@@ -22,6 +23,8 @@ const useReviewListFunctions = (boardId) => {
         withCredentials: true,
       });
 
+      console.log('getReviews', response.data);
+
       if (response.data.result) {
         setReviews(response.data.userData);
       }
@@ -29,10 +32,6 @@ const useReviewListFunctions = (boardId) => {
       console.error('리뷰를 불러오는데 실패하였습니다: ', error);
     }
   };
-
-  // useEffect(() => {
-  //   getReviews();
-  // }, [boardId, endpoint]);
 
   const handleReviewTitleChange = (event) => {
     setReviewTitle(event.target.value);
@@ -53,20 +52,11 @@ const useReviewListFunctions = (boardId) => {
   const handleReviewSubmit = async (event) => {
     event.preventDefault();
 
-    const reviewData = {
-      title: reviewTitle,
-      memberId: memberId,
-      review: reviewContent,
-      stars: reviewRating,
-      boardId: boardId,
-      isAnonymous: isAnonymous,
-    };
-
     try {
       if (editingReview) {
         // 수정 중인 리뷰가 있다면
         // 리뷰 업데이트
-        await handleReviewUpdate(editingReview.commentId, {
+        const res = await handleReviewUpdate(editingReview.commentId, {
           title: editingReview.title,
           memberId: memberId,
           review: editingReview.review,
@@ -74,28 +64,19 @@ const useReviewListFunctions = (boardId) => {
           boardId: boardId,
           isAnonymous: editingReview.isAnonymous,
         });
-        setEditingReview(null); // 수정이 완료되면 상태를 초기화
-      } else {
-        // 새 리뷰 작성
-        const response = await axios.post(
-          `${process.env.REACT_APP_DB_HOST}review/create`,
-          reviewData
-        );
 
-        if (response.status === 200) {
-          alert('리뷰가 성공적으로 작성되었습니다.');
-          getReviews(); // 새 리뷰 작성 후 리뷰 목록을 갱신합니다.
+        if (res) {
+          console.log('2 editingReview', editingReview);
+          setEditingReview(null); // 수정이 완료되면 상태를 초기화
         }
       }
-      // 리뷰 작성 혹은 수정이 완료된 후, editingReview 상태를 초기화해줍니다.
-      setEditingReview(null);
     } catch (error) {
       alert('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
   const handleReviewButtonClick = () => {
-    setIsReviewFormVisible(!isReviewFormVisible);
+    onToggleForm();
   };
 
   const handleReviewUpdate = async (commentId, reviewData) => {
@@ -106,8 +87,9 @@ const useReviewListFunctions = (boardId) => {
       );
 
       if (response.status === 200) {
-        alert('리뷰가 성공적으로 수정되었습니다.');
-        getReviews(); // 리뷰 수정 후 리뷰 목록을 갱신합니다.
+        console.log('서버 요청 완료');
+        onToggleForm();
+        return true;
       }
     } catch (error) {
       alert('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
@@ -131,13 +113,15 @@ const useReviewListFunctions = (boardId) => {
 
   return {
     reviews,
+    reviewTitle,
+    reviewContent,
+    reviewRating,
     selectedReview,
     editingReview,
     memberId,
     setReviewTitle,
     setReviewContent,
     setReviewRating,
-    setIsReviewFormVisible,
     setIsAnonymous,
     setSelectedReview,
     setEditingReview,
@@ -149,6 +133,9 @@ const useReviewListFunctions = (boardId) => {
     handleReviewButtonClick,
     handleReviewUpdate,
     handleReviewDelete,
+    isAnonymous,
+    toggleForm,
+    onToggleForm,
   };
 };
 
