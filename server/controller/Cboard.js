@@ -174,7 +174,7 @@ const createChatRoom = async (req, res) => {
     const chattingRoomName = `${title.title}/${nickname.nickname}`
 
     // 이미 존재하는 채팅방인지 확인
-    const existingRoom = await ChattingRoom.findOne({ where: { roomName: chattingRoomName } });
+    const existingRoom = await ChattingRoom.findOne({ where: { roomName: chattingRoomName, boardId: boardId } });
     if (existingRoom) {
       return res.send({ message: "채팅방이 이미 존재합니다.", roomId: existingRoom.roomId });
     }

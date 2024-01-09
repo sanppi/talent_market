@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import Navbar from './Navbar';
-import '../../styles/main.scss';
-import { useSelector } from 'react-redux';
-import Footer from './Footer';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
+import "../../styles/main.scss";
+import { useSelector } from "react-redux";
+import Footer from "./Footer";
 
 // 상품 카드..?
 export function ProductCard({ product }) {
@@ -20,9 +20,9 @@ export function ProductCard({ product }) {
           />
         </div>
         <h4>{product.title}</h4>
-        {product.isOnMarket === 'stop' ? (
+        {product.isOnMarket === "stop" ? (
           <p>판매 중단</p>
-        ) : product.isOnMarket === 'ends' ? (
+        ) : product.isOnMarket === "ends" ? (
           <p>판매 종료</p>
         ) : (
           <p>{product.price}원</p>
@@ -35,11 +35,11 @@ export function ProductCard({ product }) {
 
 function Main() {
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // 상품 검색 함수
@@ -54,31 +54,31 @@ function Main() {
   const handleWriteButtonClick = (e) => {
     if (!isLoggedIn) {
       e.preventDefault();
-      alert('로그인이 필요한 기능입니다.');
+      alert("로그인이 필요한 기능입니다.");
     }
   };
 
   useEffect(() => {
     async function getProduct() {
       try {
-        const response = await axios.get('http://localhost:8000/', {
+        const response = await axios.get(process.env.REACT_APP_DB_HOST, {
           withCredentials: true,
         }); // 수정된 부분
         setProducts(response.data.products);
         // console.log(response.data);
         // console.log(response.data.products);
       } catch (error) {
-        console.error('데이터를 불러오는데 실패하였습니다: ', error);
+        console.error("데이터를 불러오는데 실패하였습니다: ", error);
       }
     }
 
     getProduct();
 
-    const writeButton = document.querySelector('.writeButton');
-    writeButton.addEventListener('click', scrollToTop);
+    const writeButton = document.querySelector(".writeButton");
+    writeButton.addEventListener("click", scrollToTop);
 
     return () => {
-      writeButton.removeEventListener('click', scrollToTop);
+      writeButton.removeEventListener("click", scrollToTop);
     };
   }, []);
 
@@ -89,7 +89,7 @@ function Main() {
         전체 상품이 {products.length}개 존재합니다.
       </span> */}
       <div className="mainPageWrapper">
-        <div className="mainPage" style={{ top: '90px', position: 'absolute' }}>
+        <div className="mainPage" style={{ top: "90px", position: "absolute" }}>
           <button className="writeButton" onClick={handleWriteButtonClick}>
             <Link to="/write">판매글 작성</Link>
           </button>

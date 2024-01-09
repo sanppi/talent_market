@@ -70,7 +70,7 @@ const useReviewListFunctions = (boardId) => {
         console.log(res);
 
         if (res) {
-          getReviews();
+          await getReviews();
           console.log('??', editingReview.title);
           setReviewTitle(editingReview.title);
           console.log(reviewTitle);
@@ -94,6 +94,7 @@ const useReviewListFunctions = (boardId) => {
       );
 
       if (response.status === 200) {
+        alert('리뷰가 성공적으로 수정되었습니다.');
         setReviews(reviewData);
         onToggleForm();
         return true;
@@ -111,7 +112,7 @@ const useReviewListFunctions = (boardId) => {
       );
       if (response.status === 200) {
         alert('리뷰가 성공적으로 삭제되었습니다.');
-        getReviews();
+        await getReviews();
       }
     } catch (error) {
       alert('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
