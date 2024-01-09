@@ -30,6 +30,14 @@ export default function ProductDetailPage() {
           { params: { isDetailView: true } }
         );
 
+        if (response.data.product.isDelete) {
+          // 추가: 삭제된 게시글 알림을 alert로 변경
+          alert("삭제된 게시글입니다.");
+          // 예를 들어, 삭제된 게시글을 알리고 사용자를 리다이렉트하거나 다른 동작을 수행할 수 있음
+          navigate("/"); // 예시: 홈페이지로 리다이렉트
+          return;
+        }
+
         setProduct(response.data.product);
         console.log(response.data);
         console.log(response.data.product);

@@ -11,6 +11,7 @@ import axios from 'axios';
 import UpdateBasicInput from '../../sign/UpdateBasicInput';
 import UpdatePwInput from '../../sign/UpdatePwInput';
 import ModalAccount from '../../ModalAccount';
+import Footer from '../Footer';
 
 export function MyPageUpdate({ user, deleteSuccess }) {
   const { memberId, nickname, email } = user;
@@ -220,6 +221,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
               <div className="userDelete" onClick={onDeleteToggle}>
                 회원 탈퇴
               </div>
+              <Footer />
+
               {deleteToggle && (
                 <ModalBasic
                   content="탈퇴"

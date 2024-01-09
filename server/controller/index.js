@@ -14,6 +14,7 @@ exports.index = async (req, res) => {
     const selectedOrder = validOrder.includes(order) ? order : 'desc';
 
     const boards = await Board.findAll({
+      where: { isDelete: false },
       order: [[selectedOrderBy, selectedOrder]],
     });
 
@@ -41,6 +42,7 @@ exports.search = async (req, res, next) => {
     const results = await Board.findAll({
       where: {
         [Op.or]: conditions,
+        isDelete: false
       },
       order: [['createdAt', 'DESC']], // createdAt을 기준으로 내림차순 정렬
     });
@@ -56,7 +58,7 @@ exports.categories = async (req, res) => {
   try {
     const category = req.query.category;
     const boards = await Board.findAll({
-      where: {category: category},
+      where: {category: category, isDelete: false},
       order: [['createdAt', 'DESC']], // createdAt을 기준으로 내림차순 정렬
     })
 

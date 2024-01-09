@@ -3,13 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
 import ReviewList from '../../ReviewList';
+import Footer from '../Footer';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
 
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
-  // const location = useLocation();
   const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅 목록'];
   const endpointMapping = {
     '찜 목록': 'favorite',
@@ -103,7 +103,7 @@ function MyPage({ user }) {
                             reviews={selectedData.filter(
                               (data) => data.type === 'review'
                             )}
-                            key={data.boardId}
+                            boardId={data.boardId}
                           />
                         );
                       default:
@@ -115,6 +115,7 @@ function MyPage({ user }) {
           </div>
         </div>
       )}
+      <Footer />
     </>
   );
 }
