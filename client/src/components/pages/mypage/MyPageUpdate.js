@@ -221,6 +221,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
               <div className="userDelete" onClick={onDeleteToggle}>
                 회원 탈퇴
               </div>
+              <Footer />
+
               {deleteToggle && (
                 <ModalBasic
                   content="탈퇴"
@@ -241,7 +243,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
           </div>
         </form>
       )}
-      <Footer />
     </>
   );
 }
