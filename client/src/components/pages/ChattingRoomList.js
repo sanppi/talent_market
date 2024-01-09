@@ -34,23 +34,9 @@ export default function ChattingRoomList({ chattingRoom, setChattingRoomList, re
     }
   };
 
-  // window.onbeforeunload = function() {
-  //   console.log("out1")
-  // };
-
-  // useEffect(() => {
-  //   if (window.performance && window.performance.navigation.type === 2) {
-  //     console.log("out1")
-  //   }
-  //   window.onbeforeunload = function() {
-  //     console.log("out1")
-  //   };
-  // }, []);
-
   return (
     <div style={{ backgroundColor: 'pink', marginBottom: '10px' }}>
       <Link to={`/chatRoom/${chattingRoom.roomId}`}>{chattingRoom.roomName}/{chattingRoom.title}</Link>
-      <button onClick={handleSetRoomId}>채팅방 나가기</button>
       <button >신고하기</button>
     </div>
   );

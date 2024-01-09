@@ -14,6 +14,7 @@ export default function ModalAccount({
   const [logo, onLogo] = useToggle(false);
   const [modal, onModal] = useToggle(false);
   const [msg, setMsg] = useState('');
+  const [doneMsg, setDoneMsg] = useState('');
   const memberId = useSelector((state) => state.auth.memberId);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function ModalAccount({
         });
 
         if (response.data.result) {
-          setMsg(response.data.message);
+          setDoneMsg(response.data.message);
           onModal();
           setTimeout(() => {
             setToggleState((prevState) => !prevState);
@@ -116,27 +117,33 @@ export default function ModalAccount({
             </div>
             <ul>
               {logo &&
-                bankData?.banks?.map((bank) => (
-                  <li key={bank.name} onClick={() => handleBank(bank.name)}>
-                    <img
-                      src={`${bankData.logoBasePath}${bank.logoPath}`}
-                      alt={`${bank.name} 로고`}
-                    />
-                    <span>{bank.name}</span>
-                  </li>
-                ))}
+                bankData?.banks?.map((bank) => {
+                  return (
+                    <li key={bank.name} onClick={() => handleBank(bank.name)}>
+                      <img
+                        src={`/${encodeURIComponent(
+                          bankData.logoBasePath + bank.logoPath
+                        )}`}
+                        alt={`/${encodeURIComponent(
+                          bankData.logoBasePath + bank.logoPath
+                        )} 로고`}
+                      />
+                      <span>{bank.name}</span>
+                    </li>
+                  );
+                })}
             </ul>
           </div>
         )}
-        {modal && (
-          <ModalBasic
-            type="confirm"
-            content={msg}
-            toggleState={true}
-            setToggleState={onModal}
-          />
-        )}
       </div>
+      {modal && (
+        <ModalBasic
+          type="confirm"
+          content={doneMsg}
+          toggleState={true}
+          setToggleState={onModal}
+        />
+      )}
       <div className="modalCanvas" onClick={disableModal}></div>
     </>
   );

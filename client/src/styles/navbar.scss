@@ -10,9 +10,13 @@
   box-sizing: border-box;
   z-index: 8900;
 
+  @media screen and (max-width: 500px) {
+    height: 70px;
+  }
+
   .hamburgerButton {
     width: 40px;
-    height: 40px;
+    height: 4vh;
     font-size: 17px;
     margin-right: auto;
     cursor: pointer;
@@ -21,6 +25,11 @@
     font-size: 17px;
     border: none;
     border-radius: 5px;
+
+    @media screen and (max-width: 500px) {
+      width: 30px;
+      height: 30px;
+    }
   }
 
   .categoryWindow {
@@ -45,7 +54,7 @@
 
       &:after {
         display: block;
-        content: "";
+        content: '';
         padding-bottom: 5px;
         border-bottom: solid 3px var(--light-blue);
         transform: scaleX(0);
@@ -68,13 +77,29 @@
   }
 
   .pageTitle {
-    margin: 0 0 0 -50%;
+    margin: 5px 0 0 -50%;
     z-index: 999;
     font-size: 35px;
-  }
 
-  .pageTitle a {
-    color: white !important;
+    @media screen and (max-width: 500px) {
+      font-size: 30px;
+    }
+
+    a {
+      color: white !important;
+      &::after {
+        content: '🏞️';
+
+        @media screen and (min-width: 800px) {
+          content: '재능마켓🏞️';
+          font-size: 30px;
+        }
+
+        @media screen and (min-width: 1000px) {
+          content: '재능마켓🏞️';
+        }
+      }
+    }
   }
 
   .searchSection {
@@ -85,34 +110,85 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
+    @media screen and (max-width: 550px) {
+      padding-right: 27px;
+    }
+
     hr {
       padding-bottom: 0;
     }
 
     .searchInput {
-      width: 300px;
+      width: 30vw;
       height: 40px;
       margin-right: 10px;
       font-size: 20px;
       border: none;
       border-radius: 5px;
       padding-left: 10px;
+
+      @media screen and (max-width: 1000px) {
+        font-size: 15px;
+        &::placeholder {
+          font-size: 15px;
+        }
+      }
+
+      @media screen and (max-width: 700px) {
+        font-size: 12px;
+        &::placeholder {
+          font-size: 12px;
+        }
+      }
+
+      @media screen and (max-width: 500px) {
+        width: 130px;
+        height: 30px;
+
+        &::placeholder {
+          font-size: 12px;
+        }
+      }
+
+      @media screen and (max-width: 400px) {
+        margin-left: 6px;
+        margin-right: 0;
+      }
     }
 
     .searchButton {
       cursor: pointer;
-      height: 37px;
+      height: 40px;
       width: 40px;
-      font-size: 14px;
+      font-size: 30px;
       border: none;
-      border-radius: 5px;
-      background-color: #ffffff;
+      border-radius: 40px;
+      background-color: transparent;
+      text-shadow: 2px 4px 1px black;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        scale: 1.1;
+      }
+
+      @media screen and (max-width: 500px) {
+        font-size: 20px;
+        height: 30px;
+        margin-right: 5px;
+      }
+
+      @media screen and (max-width: 400px) {
+        margin-right: 10px;
+        font-size: 16px;
+        margin: 0px;
+        text-align: left;
+      }
     }
   }
 
   .loginButton,
   .logoutButton {
-    width: 80px;
+    width: 50px;
     height: 40px;
     font-size: 17px;
     margin-left: auto;
@@ -122,10 +198,24 @@
     font-size: 17px;
     border: none;
     border-radius: 5px;
+
+    @media screen and (max-width: 500px) {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+  }
+
+  .logoutButton {
+    width: 55px;
+  }
+
+  .logoutButton {
+    margin: 0 10px;
   }
 
   .mypageButton {
-    width: 90px;
+    width: 60px;
     height: 40px;
     font-size: 17px;
     margin-left: auto;
@@ -135,14 +225,33 @@
     font-size: 17px;
     border: none;
     border-radius: 5px;
+
+    @media screen and (max-width: 500px) {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
   }
 
   .authButtons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-around;
     gap: 10px;
-    width: 200px;
+    width: 23vw;
     margin-left: auto;
+
+    @media screen and (max-width: 400px) {
+      width: 80px;
+    }
+
+    a {
+      display: block;
+    }
+
+    div {
+      display: flex;
+      justify-content: space-around;
+    }
   }
 }
 

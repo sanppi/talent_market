@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Navbar from "./Navbar";
-import "../../styles/salepost.scss";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Navbar from './Navbar';
+import '../../styles/salepost.scss';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function ProductEdit() {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [content, setContent] = useState("");
-  const [isOnMarket, setIsOnMarket] = useState("");
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [content, setContent] = useState('');
+  const [isOnMarket, setIsOnMarket] = useState('');
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
   const nickname = useSelector((state) => state.auth.nickname);
@@ -20,7 +20,7 @@ export default function ProductEdit() {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate("/member/signin");
+      navigate('/member/signin');
     }
 
     const fetchData = async () => {
@@ -31,21 +31,22 @@ export default function ProductEdit() {
 
         // 추가: 삭제된 게시글인 경우 처리
         if (response.data.product.isDelete) {
-          alert("삭제된 게시글입니다.");
-          navigate("/"); // 삭제된 게시글이라면 홈페이지로 리다이렉트 또는 적절한 페이지로 이동
+          alert('삭제된 게시글입니다.');
+          navigate('/'); // 삭제된 게시글이라면 홈페이지로 리다이렉트 또는 적절한 페이지로 이동
           return;
         }
 
         const board = response.data;
-        setTitle(board.product.title || "");
-        setPrice(board.product.price || "");
-        setCategory(board.product.category || "");
-        setContent(board.product.content || "");
-        setIsOnMarket(board.product.isOnMarket || "");
+        setTitle(board.product.title || '');
+        setPrice(board.product.price || '');
+        setCategory(board.product.category || '');
+        setContent(board.product.content || '');
+        setIsOnMarket(board.product.isOnMarket || '');
         setImage(
-          `${process.env.REACT_APP_DB_HOST}static/userImg/${board.product.image}` || null
+          `${process.env.REACT_APP_DB_HOST}static/userImg/${board.product.image}` ||
+            null
         );
-        console.log(image);
+        // console.log(image);
       } catch (error) {
         console.error(error);
       }
@@ -61,18 +62,18 @@ export default function ProductEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (category === "") {
-      alert("카테고리를 선택해주세요.");
+    if (category === '') {
+      alert('카테고리를 선택해주세요.');
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", image);
-    formData.append("title", title);
-    formData.append("price", price);
-    formData.append("category", category);
-    formData.append("content", content);
-    formData.append("isOnMarket", isOnMarket);
+    formData.append('image', image);
+    formData.append('title', title);
+    formData.append('price', price);
+    formData.append('category', category);
+    formData.append('content', content);
+    formData.append('isOnMarket', isOnMarket);
 
     try {
       const response = await axios.patch(
@@ -80,7 +81,7 @@ export default function ProductEdit() {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -89,25 +90,25 @@ export default function ProductEdit() {
         navigate(`/product/${boardId}`);
       }
     } catch (error) {
-      alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
-      console.log(error);
+      alert('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
+      // console.log(error);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+    if (window.confirm('정말로 이 상품을 삭제하시겠습니까?')) {
       try {
         const response = await axios.patch(
           `${process.env.REACT_APP_DB_HOST}product/delete/${boardId}`,
-          { isDelete: true }  // 서버로 보낼 요청 바디에 isDelete: true 추가
+          { isDelete: true } // 서버로 보낼 요청 바디에 isDelete: true 추가
         );
 
         if (response.status === 200) {
-          alert("상품이 삭제되었습니다.")
-          navigate("/"); // 홈 페이지 또는 적절한 페이지로 리다이렉션
+          alert('상품이 삭제되었습니다.');
+          navigate('/'); // 홈 페이지 또는 적절한 페이지로 리다이렉션
         }
       } catch (error) {
-        alert("상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.");
+        alert('상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.');
         console.error(error);
       }
     }
@@ -119,14 +120,14 @@ export default function ProductEdit() {
       <div className="SalePost">
         <form
           onSubmit={handleSubmit}
-          style={{ top: "140px", position: "absolute" }}
+          style={{ top: '140px', position: 'absolute' }}
         >
           <div>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
               <div>상품이미지</div>
@@ -138,7 +139,7 @@ export default function ProductEdit() {
                   id="fileInput"
                   type="file"
                   onChange={handleImageUpload}
-                  style={{ display: "none" }}
+                  style={{ display: 'none' }}
                 />
                 {image && image instanceof Blob && (
                   <img

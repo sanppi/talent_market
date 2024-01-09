@@ -42,7 +42,7 @@ export default function UpdateInput({
       onIsEditing();
       onChange(id, inputValue);
       onInfoChange(inputValue);
-      // 주석 처리한 서버와 연결
+
       const response = await axios({
         url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
         method: 'post',
@@ -50,7 +50,6 @@ export default function UpdateInput({
         withCredentials: true,
       });
 
-      console.log('response', response.data);
       if (response.data.result) {
         setDoneMsg(response.data.message);
         onModal();

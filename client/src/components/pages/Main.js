@@ -65,8 +65,8 @@ function Main() {
           withCredentials: true,
         }); // 수정된 부분
         setProducts(response.data.products);
-        console.log(response.data);
-        console.log(response.data.products);
+        // console.log(response.data);
+        // console.log(response.data.products);
       } catch (error) {
         console.error('데이터를 불러오는데 실패하였습니다: ', error);
       }
@@ -97,12 +97,12 @@ function Main() {
             searchProducts(products, searchTerm).map((product) => (
               <ProductCard key={product.boardId} product={product} />
             ))}
+          <Footer />
+          <button className="chattingBtn">
+            <Link to="/chatting">⌨️</Link>
+          </button>
         </div>
       </div>
-      <button className="chattingBtn">
-        <Link to="/chatting">⌨️</Link>
-      </button>
-      <Footer />
     </>
   );
 }
