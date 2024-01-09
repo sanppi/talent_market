@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChattingRoomList from './ChattingRoomList';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import Footer from './Footer';
 
 function Chatting({ user }) {
   const { memberId, nickname } = user;
@@ -11,16 +12,16 @@ function Chatting({ user }) {
   const getAllRoomList = async () => {
     try {
       const buyResponse = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatting/getBuyRoomList?memberId=${memberId}`,
-      );
-      
-      const sellResponse = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatting/getSellRoomList?memberId=${memberId}`,
+        `${process.env.REACT_APP_DB_HOST}chatting/getBuyRoomList?memberId=${memberId}`
       );
 
-       // 채팅방이 없는 경우에 대한 처리 추가
+      const sellResponse = await axios.get(
+        `${process.env.REACT_APP_DB_HOST}chatting/getSellRoomList?memberId=${memberId}`
+      );
+
+      // 채팅방이 없는 경우에 대한 처리 추가
       if (buyResponse.data.length === 0 && sellResponse.data.length === 0) {
-        alert("현재 사용하는 채팅방이 없습니다.");
+        alert('현재 사용하는 채팅방이 없습니다.');
         return;
       }
 
@@ -37,7 +38,7 @@ function Chatting({ user }) {
       console.error('Get Room List Error:', error);
     }
   };
-  
+
   const removeChattingRoom = (roomIndex) => {
     // 특정 목록을 제거하는 함수
     const updatedRoomList = [...chattingRoomList];
@@ -51,10 +52,9 @@ function Chatting({ user }) {
     }
   }, [memberId]);
 
-
   return (
     <>
-      { memberId ? (
+      {memberId ? (
         <>
           <div> {nickname}님의 채팅방</div>
           <div>
@@ -72,7 +72,10 @@ function Chatting({ user }) {
             </div>
           </div>
         </>
-      ) : (<div>로그인이 필요한 서비스입니다.</div>) }
+      ) : (
+        <div>로그인인이 필요한 서비스입니다.</div>
+      )}
+      <Footer />
     </>
   );
 }

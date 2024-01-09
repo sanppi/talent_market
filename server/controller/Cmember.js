@@ -154,6 +154,7 @@ exports.getFavorites = async (req, res) => {
               attributes: [],
             },
           ],
+          where: { isDelete: false }, // 수정: isDelete가 false인 데이터만 가져오도록 추가
         },
       ],
       order: [
@@ -215,7 +216,7 @@ exports.getSellingProducts = async (req, res) => {
   try {
     // Board와 Comment 테이블을 조인
     const sellingProducts = await Board.findAll({
-      where: { memberId: targetMemberId },
+      where: { memberId: targetMemberId, isDelete: false },
       attributes: [
         'boardId',
         'image',
@@ -270,6 +271,7 @@ exports.getMyReviews = async (req, res) => {
         'stars',
         'createdAt',
         'updatedAt',
+        'commentId',
       ],
       include: [
         {
@@ -292,10 +294,13 @@ exports.getMyReviews = async (req, res) => {
       memberId: review.Member.memberId,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
+      commentId: review.commentId,
       Member: {
         nickname: review.Member.nickname,
       },
     }));
+
+    console.log('update', formattedReviews);
 
     res.send({ result: true, userData: formattedReviews });
   } catch (error) {
