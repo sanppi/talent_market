@@ -10,7 +10,6 @@ import axios from 'axios';
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
-  // const location = useLocation();
   const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅 목록'];
   const endpointMapping = {
     '찜 목록': 'favorite',
@@ -104,7 +103,7 @@ function MyPage({ user }) {
                             reviews={selectedData.filter(
                               (data) => data.type === 'review'
                             )}
-                            key={data.boardId}
+                            boardId={data.boardId}
                           />
                         );
                       default:

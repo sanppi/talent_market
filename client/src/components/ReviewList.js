@@ -24,7 +24,6 @@ const ReviewList = ({ boardId, reviews }) => {
 
   return (
     <>
-      {/* <div className="myReviewList"> */}
       {reviews.length === 0 ? (
         <div className="noReviewNotice">아직 작성된 리뷰가 없습니다.</div>
       ) : (
