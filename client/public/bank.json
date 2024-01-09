@@ -1,9 +1,9 @@
 {
-  "logoBasePath": "/static/bankLogo/금융아이콘_SVG_",
+  "logoBasePath": "static/bankLogo/금융아이콘_SVG_",
   "banks": [
     {
       "name": "국민은행",
-      "logoPath": "Kb.svg"
+      "logoPath": "KB.svg"
     },
     {
       "name": "신한은행",
