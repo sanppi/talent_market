@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
-import axios from "axios";
-import "../../styles/main.scss";
-import "../../styles/searchresult.scss";
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import axios from 'axios';
+import '../../styles/main.scss';
+import '../../styles/searchresult.scss';
+import Footer from './Footer';
 
 export default function SearchResults() {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
-  const [searchParam, setSearchParam] = useState("");
+  const [searchParam, setSearchParam] = useState('');
 
   useEffect(() => {
-    const searchParam = new URLSearchParams(location.search).get("search");
+    const searchParam = new URLSearchParams(location.search).get('search');
     setSearchParam(searchParam);
 
     if (searchParam) {
@@ -25,7 +26,7 @@ export default function SearchResults() {
             setSearchResults([]);
           }
         } catch (error) {
-          console.error("Search failed", error);
+          console.error('Search failed', error);
         }
       };
 
@@ -65,6 +66,7 @@ export default function SearchResults() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   );
 }
