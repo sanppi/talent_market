@@ -15,24 +15,25 @@ export default function UpdatePwInput({
   const [modal, onModal] = useToggle(false);
   const handlePwChange = async () => {
     const userData = { oldPw: watchObj.oldPw, newPw: watchObj.newPw };
-    // console.log(userData);
-    // const response = await axios({
-    //   url: `${process.env.REACT_APP_DB_HOST}`,
-    //   method: 'post',
-    //   data: userData,
-    // });
-    onModal();
+    console.log(userData);
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}`,
+      method: 'post',
+      data: userData,
+    });
+    console.log('pw res', response);
+    // onModal();
 
-    // if (response.data.result) {
-    //   // 비밀번호 변경 로직 :
-    //   // const { oldPw, newPw } = req.body.userData;
-    //   // oldPw와 같은 pw가 Member 테이블에 있는지 확인
-    //   // 있으면 {result: false, message: 기존 비밀번호가 일치하지 않습니다.} 보내기
-    //   // 없으면 newPw로 업데이트하고 {result: true} 보내기
-    //   // onModal();
-    // } else {
-    //   // setMsg(response.data.message);
-    // }
+    if (response.data.result) {
+      // 비밀번호 변경 로직 :
+      // const { oldPw, newPw } = req.body.userData;
+      // oldPw와 같은 pw가 Member 테이블에 있는지 확인
+      // 있으면 {result: false, message: 기존 비밀번호가 일치하지 않습니다.} 보내기
+      // 없으면 newPw로 업데이트하고 {result: true} 보내기
+      onModal();
+    } else {
+      // setMsg(response.data.message);
+    }
   };
 
   return (
