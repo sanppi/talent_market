@@ -1,13 +1,13 @@
-import React, { useState, useEffect, Fragment } from "react";
-import axios from "axios";
-import "../../styles/productdetail.scss";
-import { useSelector } from "react-redux";
-import "../../styles/review.scss";
+import React, { useState, useEffect, Fragment } from 'react';
+import axios from 'axios';
+import '../../styles/productdetail.scss';
+import { useSelector } from 'react-redux';
+import '../../styles/review.scss';
 
 export default function Review({ boardId, productMemberId }) {
   const [reviews, setReviews] = useState([]);
-  const [reviewTitle, setReviewTitle] = useState("");
-  const [reviewContent, setReviewContent] = useState("");
+  const [reviewTitle, setReviewTitle] = useState('');
+  const [reviewContent, setReviewContent] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -24,7 +24,7 @@ export default function Review({ boardId, productMemberId }) {
         setReviews(response.data.reviews);
       }
     } catch (error) {
-      console.error("리뷰를 불러오는데 실패하였습니다: ", error);
+      console.error('리뷰를 불러오는데 실패하였습니다: ', error);
     }
   };
 
@@ -81,14 +81,14 @@ export default function Review({ boardId, productMemberId }) {
         );
 
         if (response.status === 200) {
-          alert("리뷰가 성공적으로 작성되었습니다.");
+          alert('리뷰가 성공적으로 작성되었습니다.');
           getReviews(); // 새 리뷰 작성 후 리뷰 목록을 갱신합니다.
         }
       }
       // 리뷰 작성 혹은 수정이 완료된 후, editingReview 상태를 초기화해줍니다.
       setEditingReview(null);
     } catch (error) {
-      alert("리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      alert('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -104,11 +104,11 @@ export default function Review({ boardId, productMemberId }) {
       );
 
       if (response.status === 200) {
-        alert("리뷰가 성공적으로 수정되었습니다.");
+        alert('리뷰가 성공적으로 수정되었습니다.');
         getReviews(); // 리뷰 수정 후 리뷰 목록을 갱신합니다.
       }
     } catch (error) {
-      alert("리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      alert('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
       console.log(error);
     }
   };
@@ -119,15 +119,15 @@ export default function Review({ boardId, productMemberId }) {
         `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
       );
       if (response.status === 200) {
-        alert("리뷰가 성공적으로 삭제되었습니다.");
+        alert('리뷰가 성공적으로 삭제되었습니다.');
         getReviews();
       }
     } catch (error) {
-      alert("리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      alert('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
-  console.log("review: ", reviews);
+  // console.log("review: ", reviews);
 
   return (
     <>
@@ -159,10 +159,10 @@ export default function Review({ boardId, productMemberId }) {
                     <td>{index + 1}</td>
                     <td>{review.title}</td>
                     <td>
-                      {review.isAnonymous ? "익명" : review.Member.nickname}
+                      {review.isAnonymous ? '익명' : review.Member.nickname}
                     </td>
                     <td>{new Date(review.createdAt).toLocaleDateString()}</td>
-                    <td>{"★".repeat(review.stars)}</td>
+                    <td>{'★'.repeat(review.stars)}</td>
                     <td>
                       {memberId === review.memberId && (
                         <>
@@ -175,10 +175,10 @@ export default function Review({ boardId, productMemberId }) {
                                 editingReview.commentId === review.commentId
                               ) {
                                 setEditingReview(null);
-                                setReviewTitle("");
+                                setReviewTitle('');
                                 setIsAnonymous(false);
-                                setReviewRating("");
-                                setReviewContent("");
+                                setReviewRating('');
+                                setReviewContent('');
                               } else {
                                 setEditingReview(review);
                                 setReviewTitle(review.title);
@@ -188,8 +188,8 @@ export default function Review({ boardId, productMemberId }) {
                           >
                             {editingReview &&
                             editingReview.commentId === review.commentId
-                              ? "수정 취소"
-                              : "수정"}
+                              ? '수정 취소'
+                              : '수정'}
                           </button>
                           <button
                             className="deleteButton"
@@ -282,7 +282,7 @@ export default function Review({ boardId, productMemberId }) {
                     }}
                     required
                   />
-                  {"★".repeat(rating)}
+                  {'★'.repeat(rating)}
                 </label>
               ))}
             </div>
@@ -301,7 +301,7 @@ export default function Review({ boardId, productMemberId }) {
               required
             />
             <button type="submit" className="reviewSumbitButton">
-              {editingReview ? "수정하기" : "작성하기"}
+              {editingReview ? '수정하기' : '작성하기'}
             </button>
           </form>
         )}

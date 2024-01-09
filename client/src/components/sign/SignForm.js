@@ -175,12 +175,6 @@ export function SignForm({ type, loginSuccess }) {
     }
   };
 
-  // redux 꺼내오기
-  // const user1 = useSelector((state) => state.auth.user);
-  // useEffect(() => {
-  //   console.log('auth user', user1);
-  // }, [user1]);
-
   return (
     <>
       <form name="allSignForm" onSubmit={handleSubmit(onSubmit)}>
