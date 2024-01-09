@@ -34,6 +34,19 @@ export default function ChattingRoomList({ chattingRoom, setChattingRoomList, re
     }
   };
 
+  // window.onbeforeunload = function() {
+  //   console.log("out1")
+  // };
+
+  // useEffect(() => {
+  //   if (window.performance && window.performance.navigation.type === 2) {
+  //     console.log("out1")
+  //   }
+  //   window.onbeforeunload = function() {
+  //     console.log("out1")
+  //   };
+  // }, []);
+
   return (
     <div style={{ backgroundColor: 'pink', marginBottom: '10px' }}>
       <Link to={`/chatRoom/${chattingRoom.roomId}`}>{chattingRoom.roomName}/{chattingRoom.title}</Link>

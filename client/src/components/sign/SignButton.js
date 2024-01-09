@@ -1,7 +1,7 @@
 import '../../styles/signbutton.scss';
 import { Link } from 'react-router-dom';
 
-export default function SignButton({ disabled, onKeyDown, type }) {
+export default function SignButton({ disabled, onClick, onKeyDown, type }) {
   return (
     <>
       <div className="signButtonBox">
@@ -10,6 +10,7 @@ export default function SignButton({ disabled, onKeyDown, type }) {
           className="signButton"
           disabled={disabled}
           onKeyDown={onKeyDown}
+          onClick={onClick}
         >
           {type}
         </button>

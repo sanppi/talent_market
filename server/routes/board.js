@@ -18,6 +18,9 @@ router.post("/like/:boardId/:memberId", Cboard.boardLike);
 router.patch("/update/:boardId", Cboard.boardUpdate);
 
 // 게시글 삭제
-// router.delete("/delete/:boardId", Cboard.deleteBoard);
+router.delete("/delete/:boardId", Cboard.boardDelete);
+
+// 채팅방 생성
+router.post("/chatRoom/create", Cboard.boardChat);
 
 module.exports = router;

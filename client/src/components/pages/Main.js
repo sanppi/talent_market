@@ -19,7 +19,13 @@ export function ProductCard({ product }) {
           />
         </div>
         <h4>{product.title}</h4>
-        <p>{product.price}원</p>
+        {product.isOnMarket === 'stop' ? (
+          <p>판매 중단</p>
+        ) : product.isOnMarket === 'ends' ? (
+          <p>판매 종료</p>
+        ) : (
+          <p>{product.price}원</p>
+        )}
         <p>{product.rating}</p>
       </Link>
     </div>

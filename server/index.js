@@ -57,6 +57,8 @@ app.get("*", function (req, res) {
 });
 
 
+const userDoArr = {};
+const roomArr = {};
 
 io.on("connection", (socket) => {
   socket.onAny((event) => {
@@ -64,23 +66,42 @@ io.on("connection", (socket) => {
   });
 
   socket.on("entry", (res) => {
+    if (!roomArr[socket.id]) {
+      roomArr[socket.id] = [];
+    } else {
+      socket.leave(roomArr[socket.id][0]);
+      roomArr[socket.id] = [];
+    }
     socket.join(res.roomName);
-    console.log("socket.rooms", socket.rooms);
-    io.to(res.roomName).emit("notice", { msg: `${res.userDo}님이 입장하셨습니다.` });
-  });
+    socket.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 입장하셨습니다.` });
 
-  socket.on("disconnect", (res) => {
-    socket.leave(res.roomName);
-    io.to(res.roomName).emit("notice", { msg: `${res.userDo}님이 퇴장하셨습니다.` });
-    console.log("socket.rooms", socket.rooms);
-    // socket.rooms.forEach((room) => socket.to)
+    userDoArr[socket.id] = res.userDo;
+    roomArr[socket.id].push(res.roomName);
   });
 
   socket.on("sendMsg", (res) => {
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
-});
 
+  socket.on("sell", (res) => {
+    console.log("socket.rooms", socket.rooms);
+    io.to(res.roomName).emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
+  });
+
+
+  socket.on("disconnection", (res) => {
+    socket.leave(res.roomName);
+    io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
+    delete userDoArr[socket.id];
+    console.log("socket.rooms", socket.rooms);
+  });
+  
+  socket.on("disconnect", () => {
+    io.to(roomArr[socket.id]).emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
+    // 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
+    delete userDoArr[socket.id];
+  });
+});
 server.listen(PORT, function () {
   console.log(`Sever Open: ${PORT}`);
 });

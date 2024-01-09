@@ -10,6 +10,7 @@ export default function ProductEdit() {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
+  const [isOnMarket, setIsOnMarket] = useState("");
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
   const nickname = useSelector((state) => state.auth.nickname);
@@ -32,6 +33,7 @@ export default function ProductEdit() {
         setPrice(board.product.price || "");
         setCategory(board.product.category || "");
         setContent(board.product.content || "");
+        setIsOnMarket(board.product.isOnMarket || "");
         setImage(
           `${process.env.REACT_APP_DB_HOST}static/userImg/${board.product.image}` || null
         );
@@ -62,8 +64,7 @@ export default function ProductEdit() {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("content", content);
-    formData.append("memberId", memberId);
-    formData.append("nickname", nickname);
+    formData.append("isOnMarket", isOnMarket);
 
     try {
       const response = await axios.patch(
@@ -77,11 +78,29 @@ export default function ProductEdit() {
       );
 
       if (response.status === 200) {
-        navigate(`/product/${response.data.boardId}`);
+        navigate(`/product/${boardId}`);
       }
     } catch (error) {
       alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
       console.log(error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_DB_HOST}product/delete/${boardId}`
+        );
+
+        if (response.status === 200) {
+          alert("상품이 삭제되었습니다.")
+          navigate("/"); // 홈 페이지 또는 적절한 페이지로 리다이렉션
+        }
+      } catch (error) {
+        alert("상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.");
+        console.error(error);
+      }
     }
   };
 
@@ -146,6 +165,17 @@ export default function ProductEdit() {
           <hr />
           <div>
             <select
+              value={isOnMarket}
+              onChange={(e) => setIsOnMarket(e.target.value)}
+            >
+              <option value="">상품 상태 선택</option>
+              <option value="sale">판매 중</option>
+              <option value="stop">판매 중단</option>
+              <option value="ends">판매 종료</option>
+            </select>
+          </div>
+          <div>
+            <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
@@ -169,6 +199,9 @@ export default function ProductEdit() {
 
           <button type="submit" className="submitButton">
             상품 수정하기
+          </button>
+          <button type="button" className="submitButton" onClick={handleDelete}>
+            상품 삭제하기
           </button>
         </form>
       </div>

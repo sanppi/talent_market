@@ -1,13 +1,43 @@
 import SignUpInput from './SignUpInput';
 import SignButton from './SignButton';
+import axios from 'axios';
+import { useState } from 'react';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
+import { useSelector } from 'react-redux';
 
 export default function UpdatePwInput({
   register,
   handleInputChange,
-  handleEnter,
   watchObj,
   errors,
 }) {
+  const [msg, setMsg] = useState('');
+  const [modal, onModal] = useToggle(false);
+  const memberId = useSelector((state) => state.auth.memberId);
+  const [doneMsg, setDoneMsg] = useState('');
+
+  const handlePwChange = async () => {
+    const userData = {
+      oldPw: watchObj.oldPw,
+      newPw: watchObj.newPw,
+    };
+
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+      method: 'post',
+      data: { type: 'pw', userData: userData },
+      withCredentials: true,
+    });
+
+    if (response.data.result) {
+      onModal();
+      setDoneMsg(response.data.message);
+    } else {
+      setMsg(response.data.message);
+    }
+  };
+
   return (
     <>
       <SignUpInput
@@ -59,7 +89,15 @@ export default function UpdatePwInput({
         error={errors.pwCk}
         isUpdate={true}
       />
-      {/* ERR : oldPw가 빈값이라도 안 되게..  */}
+      {modal && (
+        <ModalBasic
+          type="confirm"
+          content={doneMsg}
+          toggleState={true}
+          setToggleState={onModal}
+        />
+      )}
+      <div>{msg}</div>
       <SignButton
         disabled={
           !watchObj.oldPw ||
@@ -68,8 +106,8 @@ export default function UpdatePwInput({
           errors.newPw ||
           errors.pwCk
         }
+        onClick={handlePwChange}
         type="비밀번호 수정"
-        onKeyDown={(e) => handleEnter(e)}
       />
     </>
   );

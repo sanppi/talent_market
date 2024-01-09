@@ -1,196 +1,265 @@
 @import './utilies';
 
-.myPage {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: var(--header-margin);
+body {
+  transition: all 0.3s ease-in-out;
+  overflow-y: scroll;
 
-  .myProfileContainer {
+  .myPage {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-    max-width: 400px;
-    width: 100%;
+    margin-top: var(--header-margin);
 
-    .myProfileBox1 {
-      margin: 0 auto;
-      @include size(200px, 200px);
-
-      .myProfileImg {
-        @include size(100%, 100%);
-        background-color: black;
-        margin-bottom: 10px;
-        border-radius: 50px;
-      }
-
-      .myProfileUpdate {
-        width: 100%;
-        @include button(20px, 10px);
-        background-color: #26c9fc;
-        color: azure;
-        box-shadow: 0px 2px 1px 1px #c1bfbf;
-        transition-duration: 0.2s;
-        // text-shadow: 0px 2px 0px #3b6e62;
-
-        &:active {
-          box-shadow: none;
-        }
-      }
-    }
-
-    .myProfileBox2 {
-      @include size(200px, 200px);
-      padding: 20px 15px;
+    .myProfileContainer {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-direction: column;
-
-      .myProfileNickname {
-        height: 100px;
-        padding-top: 15px;
-
-        span {
-          margin-top: 4px;
-          font-size: 12px;
-          opacity: 0.7;
-        }
-      }
-      .myProfileContent {
-        flex-grow: 1;
-        position: relative;
-
-        span {
-          color: var(--bright-blue);
-        }
-      }
-    }
-  }
-
-  .myList {
-    margin-top: 80px;
-    max-width: 400px;
-    width: 100%;
-
-    .myListTitle {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 10px;
-
-      li {
-        color: #000;
-        display: inline-block;
-        margin: 0;
-        padding: 0 7px;
-        cursor: pointer;
-
-        &:active {
-          color: var(--bright-blue);
-        }
-
-        &:after {
-          display: block;
-          content: '';
-          padding-bottom: 5px;
-          border-bottom: solid 3px var(--light-blue);
-          transform: scaleX(0);
-          transition: transform 250ms ease-in-out;
-          transform-origin: 0% 50%;
-        }
-
-        &:hover:after {
-          transform: scaleX(1);
-        }
-      }
-    }
-
-    .myListContent {
-      margin-top: 40px;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
       max-width: 400px;
+      width: 100%;
 
-      .pageWrapper {
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        flex-wrap: wrap;
+      .myProfileBox1 {
+        margin: 0 auto;
+        @include size(200px, 200px);
 
-        .productCard {
-          margin: 0 25px 40px;
-          width: 100px;
-          max-width: 400px;
-          background-color: #f5f5f5;
-          border-radius: 5px;
+        .myProfileImg {
+          @include size(100%, 100%);
+          margin-bottom: 10px;
+          border-radius: 50%;
+          // border: 3px solid var(--main-red);
+          font-size: 180px;
+          text-align: center;
+          line-height: 140%;
           overflow: hidden;
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 2px 1px 3px var(--main-red);
+        }
+
+        .myProfileUpdate {
+          width: 100%;
+          @include button(20px, 10px);
+          background-color: #26c9fc;
+          color: azure;
+          box-shadow: 0px 2px 1px 1px #c1bfbf;
+          transition-duration: 0.2s;
+          margin-top: 5px;
+
+          &:active {
+            box-shadow: none;
+          }
+        }
+      }
+
+      .myProfileBox2 {
+        @include size(200px, 200px);
+        padding: 20px 0 0 35px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-direction: column;
+        .myProfileNickname {
+          height: 100px;
+          padding-top: 15px;
+
+          span {
+            margin-top: 4px;
+            font-size: 12px;
+            opacity: 0.7;
+          }
+        }
+        .myProfileContent {
+          flex-grow: 1;
+          position: relative;
+
+          span {
+            color: var(--main-red);
+          }
+        }
+      }
+    }
+
+    .myList {
+      margin-top: 80px;
+      max-width: 400px;
+      width: 100%;
+
+      @media screen and (max-width: 768px) {
+        margin-top: 35px;
+      }
+
+      .myListTitle {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+
+        li {
+          color: #000;
+          display: inline-block;
+          margin: 0;
+          padding: 0 7px;
           cursor: pointer;
-          max-width: 400px;
-          flex: 1 0 30%;
+          transition: all 0.3s ease-in-out;
+
+          &:active {
+            color: var(--main-red);
+          }
+
+          &:after {
+            display: block;
+            content: '';
+            padding-bottom: 5px;
+            border-bottom: solid 3px var(--light-blue);
+            transform: scaleX(0);
+            transition: transform 250ms ease-in-out;
+            transform-origin: 0% 50%;
+          }
+
+          &:hover:after {
+            transform: scaleX(1);
+          }
+
+          &.selected {
+            color: var(--main-blue);
+            transition: all 0.3s ease-in-out;
+          }
+
+          &.selected::after {
+            border-bottom: none;
+          }
+        }
+      }
+
+      .myListContent {
+        margin-top: 40px;
+        max-width: 400px;
+        // @include leftToRight(0.5s);
+
+        .pageWrapper {
+          width: 100%;
           display: flex;
-          flex-direction: column;
+          flex-wrap: wrap;
 
-          @media screen and (max-width: 1200px) {
-            flex: 1 0 25%;
+          @media screen and (max-width: 419px) {
+            justify-content: center;
           }
 
-          @media screen and (max-width: 400px) {
-            flex: 1 0 50%;
-          }
+          .productCard {
+            margin: 0 25px 40px;
+            width: 150px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
 
-          .imgContainer {
-            position: relative;
-            width: 100%;
-            padding-top: 100%;
-
-            img {
-              position: absolute;
-              top: 0;
-              left: 0;
+            .imgContainer {
+              position: relative;
               width: 100%;
-              height: 100%;
-              object-fit: cover;
+              padding-top: 100%;
+
+              img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+
+            h4 {
+              padding: 10px;
+              color: #333;
+              width: 100%;
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              text-overflow: ellipsis;
+
+              @include responsiveText(18px, 13px);
+            }
+
+            p {
+              padding: 0 10px;
+              color: #666;
+
+              @include responsiveText(16px, 12px);
             }
           }
 
-          h4 {
-            padding: 10px;
-            font-size: 18px;
-            color: #333;
-          }
+          .reviewTable {
+            text-align: center;
 
-          p {
-            padding: 0 10px;
-            font-size: 16px;
-            color: #666;
+            .reviewTableList {
+              font-size: 14px;
+              tr {
+                height: 50px;
+                th {
+                  line-height: 190%;
+                }
+              }
+            }
+
+            .reviewTableContents {
+              font-size: 12px;
+              tr {
+                height: 50px;
+                &:last-child {
+                  text-align: left;
+                }
+
+                .editButtonBox {
+                  width: 185px;
+                  text-align: left;
+                  padding: 15px;
+                  display: flex;
+                  justify-content: space-around;
+                  align-items: center;
+
+                  button {
+                    @include button(10px, 5px);
+                    box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.5);
+                    background-color: var(--light-blue);
+                    margin: 0;
+
+                    &:active {
+                      box-shadow: none;
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
-  }
 
-  @media (max-width: 768px) {
-    .myProfileContainer {
-      flex-direction: column;
+    @media (max-width: 768px) {
+      .myProfileContainer {
+        flex-direction: column;
 
-      .myProfileBox2 {
-        margin-top: 30px;
-        height: 100px !important;
+        .myProfileBox2 {
+          align-items: center;
+          margin: 30px 0 15px;
+          height: 80px !important;
+          padding-left: 10px;
 
-        .myProfileNickname {
-          font-size: 15px;
-          line-height: 100%;
+          .myProfileNickname {
+            font-size: 15px;
+            line-height: 100%;
 
-          span {
-            display: inline !important;
+            span {
+              display: inline !important;
+            }
           }
-        }
 
-        .myProfileContent {
-          padding: 0;
-          font-size: 13px;
+          .myProfileContent {
+            padding: 0;
+            font-size: 13px;
+          }
         }
       }
     }

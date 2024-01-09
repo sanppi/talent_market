@@ -18,7 +18,17 @@ function ChattingRoom(sequelize, DataTypes){
               roomName: {
                 type: DataTypes.STRING(100),
                 allowNull: false
-              }
+              },
+              canRedCard: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+              },
+              canReview: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0,
+              },
             }, {
               tableName: 'ChattingRoom',
             freezeTableName: true,
