@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import "../../styles/navbar.scss";
-import "../../styles/main.scss";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import '../../styles/navbar.scss';
+import '../../styles/main.scss';
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [searchTermLocal, setSearchTermLocal] = useState("");
+  const [searchTermLocal, setSearchTermLocal] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,8 +16,8 @@ export default function NavBar() {
   const { isLoggedIn } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    if (window.confirm("로그아웃 하시겠습니까?")) {
-      dispatch({ type: "LOGOUT" });
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      dispatch({ type: 'LOGOUT' });
     }
   };
 
@@ -42,14 +42,14 @@ export default function NavBar() {
         setSearchResults([]);
       }
       navigate(`/search?search=${searchTermLocal}`); // 이 부분을 수정
-      setSearchTermLocal("");
+      setSearchTermLocal('');
     } catch (error) {
-      console.error("Search failed", error);
+      console.error('Search failed', error);
     }
   };
 
   const handleOnKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSearchButtonClick();
     }
   };
@@ -66,7 +66,7 @@ export default function NavBar() {
       }
       navigate(`/category?category=${category}`);
     } catch (error) {
-      console.error("Category fetch failed", error);
+      console.error('Category fetch failed', error);
     }
   };
 
@@ -81,7 +81,7 @@ export default function NavBar() {
       {isCategoryOpen && (
         <div className="dimmedBackground" onClick={handleHamburgerClick}></div>
       )}
-      <div className="navBar">
+      <div className="navBar navBarBox">
         {/* 햄버거 버튼 */}
         <button className="hamburgerButton" onClick={handleHamburgerClick}>
           ☰
@@ -89,21 +89,21 @@ export default function NavBar() {
 
         {/* 카테고리 창 */}
         {isCategoryOpen && (
-          <div className={`categoryWindow ${isCategoryOpen ? "open" : ""}`}>
+          <div className={`categoryWindow ${isCategoryOpen ? 'open' : ''}`}>
             <div className="categoryInfo">전체 카테고리</div>
             <hr />
-            <div onClick={() => handleCategoryClick("언어")}>언어</div>
-            <div onClick={() => handleCategoryClick("음악")}>음악</div>
-            <div onClick={() => handleCategoryClick("예술")}>예술</div>
-            <div onClick={() => handleCategoryClick("취미")}>취미</div>
-            <div onClick={() => handleCategoryClick("상담")}>상담</div>
-            <div onClick={() => handleCategoryClick("기타")}>기타</div>
+            <div onClick={() => handleCategoryClick('언어')}>언어</div>
+            <div onClick={() => handleCategoryClick('음악')}>음악</div>
+            <div onClick={() => handleCategoryClick('예술')}>예술</div>
+            <div onClick={() => handleCategoryClick('취미')}>취미</div>
+            <div onClick={() => handleCategoryClick('상담')}>상담</div>
+            <div onClick={() => handleCategoryClick('기타')}>기타</div>
           </div>
         )}
 
         {/* 페이지 이름 부분 */}
         <h2 className="pageTitle">
-          <Link to="/">재능마켓🏞️</Link>
+          <Link to="/"></Link>
         </h2>
 
         {/* 검색창과 검색 버튼 */}
@@ -117,23 +117,23 @@ export default function NavBar() {
             onKeyPress={handleOnKeyPress}
           />
           <button className="searchButton" onClick={handleSearchButtonClick}>
-            검색
+            🔍
           </button>
         </div>
 
         <div className="authButtons">
           {isLoggedIn ? (
-            <>
+            <div>
               <Link to="/member/mypage">
-                <button className="mypageButton">마이페이지</button>
+                <button className="mypageButton">MY</button>
               </Link>
               <button className="logoutButton" onClick={handleLogout}>
-                로그아웃
+                OUT
               </button>
-            </>
+            </div>
           ) : (
             <button className="loginButton">
-              <Link to="/member/signin">로그인</Link>
+              <Link to="/member/signin">IN</Link>
             </button>
           )}
         </div>
