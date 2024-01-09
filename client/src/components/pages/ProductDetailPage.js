@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import '../../styles/productdetail.scss';
 import { useSelector } from 'react-redux';
 import Review from './Review';
+import Footer from './Footer';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -190,6 +191,7 @@ export default function ProductDetailPage() {
       </div>
       <hr />
       <Review boardId={boardId} productMemberId={product.memberId} />
+      <Footer />
     </div>
   );
 }
