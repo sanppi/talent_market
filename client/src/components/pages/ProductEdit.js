@@ -28,6 +28,14 @@ export default function ProductEdit() {
         const response = await axios.get(
           `${process.env.REACT_APP_DB_HOST}product/${boardId}`
         );
+
+        // 추가: 삭제된 게시글인 경우 처리
+        if (response.data.product.isDelete) {
+          alert("삭제된 게시글입니다.");
+          navigate("/"); // 삭제된 게시글이라면 홈페이지로 리다이렉트 또는 적절한 페이지로 이동
+          return;
+        }
+
         const board = response.data;
         setTitle(board.product.title || "");
         setPrice(board.product.price || "");
@@ -89,8 +97,9 @@ export default function ProductEdit() {
   const handleDelete = async () => {
     if (window.confirm("정말로 이 상품을 삭제하시겠습니까?")) {
       try {
-        const response = await axios.delete(
-          `${process.env.REACT_APP_DB_HOST}product/delete/${boardId}`
+        const response = await axios.patch(
+          `${process.env.REACT_APP_DB_HOST}product/delete/${boardId}`,
+          { isDelete: true }  // 서버로 보낼 요청 바디에 isDelete: true 추가
         );
 
         if (response.status === 200) {

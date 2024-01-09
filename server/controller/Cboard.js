@@ -116,8 +116,6 @@ const boardUpdateProcess = async (req, res) => {
       { title, price, category, content, isOnMarket, ...imageUpdate },
       { where: { boardId: req.params.boardId } }
     );
-
-    console.log("아이디 ", req.params.boardId);
     
     res.send({ message: "update Success" });
   } catch (error) {
@@ -126,7 +124,26 @@ const boardUpdateProcess = async (req, res) => {
   }
 };
 
-// 게시글 삭제
+// 게시글 삭제 처리
+const boardIsDeleted = async (req, res) => {
+  try{
+    const { isDelete } = req.body;
+
+    await Board.update({
+        isDelete
+      }, { 
+        where: { boardId: req.params.boardId } 
+      }
+    );    
+    res.send({ message: "delete Success" });
+  }
+  catch(error){
+    console.error("에러 메시지 ", error);
+    res.status(500).send("게시글을 삭제할 수 없습니다.");
+  }
+}
+
+// 게시글 데이터 삭제
 const boardDeleteProcess = (req, res) => {
   Board.destroy({
     where: { boardId: req.params.boardId },
@@ -182,6 +199,6 @@ module.exports = {
   getLike: getLikeStatus,
   boardLike: toggleLike,
   boardUpdate: [upload.single("image"), boardUpdateProcess],
-  boardDelete: boardDeleteProcess,
+  boardDelete: boardIsDeleted,
   boardChat: createChatRoom,
 };
