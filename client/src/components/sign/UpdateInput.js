@@ -28,6 +28,7 @@ export default function UpdateInput({
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const memberId = useSelector((state) => state.auth.memberId);
 
   useEffect(() => {
     setInputValue(value);
@@ -41,16 +42,18 @@ export default function UpdateInput({
       onChange(id, inputValue);
       onInfoChange(inputValue);
       // 주석 처리한 서버와 연결
-      // const response = await axios({
-      //   url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
-      //   data: { type: id, userData: inputValue },
-      //   withCredentials: true,
-      // });
-      // if (response.data.result) {
-      //   onModal();
-      //   onIsEditing();
-      //   onChange(id, inputValue);
-      // }
+      const response = await axios({
+        url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+        data: { type: id, userData: inputValue },
+        withCredentials: true,
+      });
+
+      console.log('response', response);
+      if (response.data.result) {
+        onModal();
+        onIsEditing();
+        onChange(id, inputValue);
+      }
       dispatch(updateUser({ [id]: inputValue }));
     } else {
       setErrorMsg('유효하지 않은 값이 있습니다.');
