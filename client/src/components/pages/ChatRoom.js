@@ -7,6 +7,7 @@ import Chat from './Chat';
 import Notice from './Notice';
 import Confirmed from './Confirmed';
 import io from 'socket.io-client';
+import Footer from '../pages/Footer';
 
 const socket = io.connect(process.env.REACT_APP_DB_HOST, {
   autoConnect: false,
@@ -584,6 +585,7 @@ function ChatRoom({ user }) {
           </div> */}
         </div>
       </div>
+      <Footer />
     </>
   );
 }
