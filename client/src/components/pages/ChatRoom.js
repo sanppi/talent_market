@@ -497,24 +497,27 @@ function ChatRoom({ user }) {
 
   return (
     <>
-      <div className="chatingContainer">
+      <div className="chattingContainer">
         <div className="chattingBox">
           <div className="chattingBoardBox">
             <div className="chattngBoardInfo">
+              <button className="chattingBoardBtn" onClick={exitRoom}>
+                &#60;
+              </button>
               <div className="chattingBoardOne">
-                <button className="chattingBoardBtn" onClick={exitRoom}>
-                  &#60;
-                </button>
-              </div>
-              <div className="chattingBoardOne">{boardInfo.image}</div>
-              <div className="chattingBoardOne">
-                <div>{boardInfo.title}</div>
-                <div>{boardInfo.price}</div>
-                <div>{boardInfo.starAvg}</div>
+                <img
+                  src={`${
+                    process.env.REACT_APP_DB_HOST
+                  }static/userImg/${encodeURIComponent(boardInfo.image)}`}
+                  alt="board img"
+                />
               </div>
               <div className="chattingBoardOne">
-                <div>{boardInfo.sellerNickname}</div>
+                <div className="chattingBoardTitle">{boardInfo.title}</div>
+                <div className="chattingBoardPrice">{boardInfo.price}원</div>
+                {/* <div>{boardInfo.starAvg}</div> */}
               </div>
+              <div className="chattingBoardOne">{boardInfo.sellerNickname}</div>
             </div>
 
             <div className="chatting">
@@ -527,10 +530,10 @@ function ChatRoom({ user }) {
                   else return <Chat key={i} chat={chat} />;
                 })}
               </div>
-              <div>
+              <div className="bottomBtnBox">
                 {userDo === '판매' ? (
                   chatState === 'ready' ? (
-                    <div>
+                    <div className="bottomBtns">
                       <button onClick={sell}>판매 확정</button>
                       <button onClick={sellCancel}>판매 취소</button>
                     </div>
@@ -542,7 +545,7 @@ function ChatRoom({ user }) {
                     </div>
                   )
                 ) : chatState === 'sale' ? (
-                  <div>
+                  <div className="bottomBtns">
                     <button onClick={buy}>구매 확정</button>
                     <button onClick={buyCancel}>구매 취소</button>
                   </div>
