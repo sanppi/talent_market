@@ -60,6 +60,7 @@ app.get("*", function (req, res) {
 const userDoArr = {};
 const roomArr = {};
 
+// 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
 io.on("connection", (socket) => {
   socket.onAny((event) => {
     console.log(`Socket Event:${event}`);
@@ -73,7 +74,7 @@ io.on("connection", (socket) => {
       roomArr[socket.id] = [];
     }
     socket.join(res.roomName);
-    socket.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 입장하셨습니다.` });
+    io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 입장하셨습니다.` });
 
     userDoArr[socket.id] = res.userDo;
     roomArr[socket.id].push(res.roomName);
@@ -84,24 +85,58 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sell", (res) => {
-    console.log("socket.rooms", socket.rooms);
-    io.to(res.roomName).emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
+    socket.emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
   });
+
+  socket.on("canBuy", (res) => {
+    io.emit("buy", { chatState: res.chatState });
+  });
+
+  socket.on("done", (res) => {
+    io.emit("check", { chatState: res.chatState });
+  });
+
+
+
+  // socket.on('Start', function (data) {
+  //   console.log('socket start!!');
+  //   console.log(data);
+  //   var Name = data.Name;
+  //   Files[Name] = {
+  //     FileSize : data.Size,
+  //     Data : "",
+  //     Downloaded : 0
+  //   };
+  //   var Place = 0;
+  //   var Stat = fs.statSync('Temp/' + Name);
+  //   if ( Stat.isFile() ) {
+  //     Files[Name].Downloaded = Stat.size;
+  //     Place = Stat.size / 524288;
+  //   }
+  //   fs.open("Temp/" + Name, "a+", function (err, fd) {
+  //     if (err) console.log(err);
+  //     else {
+  //       Files[Name].Handler = fd;
+  //       socket.emit('MoreData', { 'Place' : Place, Percent : 0 });
+  //     }
+  //   });
+  // });
+  
+
 
 
   socket.on("disconnection", (res) => {
     socket.leave(res.roomName);
     io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
     delete userDoArr[socket.id];
-    console.log("socket.rooms", socket.rooms);
   });
   
   socket.on("disconnect", () => {
     io.to(roomArr[socket.id]).emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
-    // 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
     delete userDoArr[socket.id];
   });
 });
+
 server.listen(PORT, function () {
   console.log(`Sever Open: ${PORT}`);
 });

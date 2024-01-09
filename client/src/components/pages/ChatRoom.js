@@ -1,8 +1,8 @@
 import "../../styles/chat.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from 'react-router-dom';
-import { connect } from 'react-redux';
-import axios from 'axios';
+import { useParams } from "react-router-dom";
+import { connect } from "react-redux";
+import axios from "axios";
 import Chat from "./Chat";
 import Notice from "./Notice";
 import Confirmed from "./Confirmed";
@@ -25,7 +25,9 @@ function ChatRoom({ user }) {
   const [msgInput, setMsgInput] = useState("");
   const [chatList, setChatList] = useState([]);
   const [price, setPrice] = useState("");
-  const [isDone, setIsDone] = useState(false);
+
+  const [chatState, setChatState] = useState("");
+
 
   useEffect(() => {
     getBoardInfo();
@@ -49,6 +51,7 @@ function ChatRoom({ user }) {
 
       setRoomName(response.data.title)
       setPrice(response.data.price)
+      setChatState(response.data.chatState)
 
       const sell = "판매";
       const buy = "구매";
@@ -67,42 +70,9 @@ function ChatRoom({ user }) {
         return;
       }
     } catch (error) {
-      console.error('Get Board Info Error:', error);
+      console.error("Get Board Info Error:", error);
     }
   };
-
-  const renderButtons = () => {
-    if (userDo === "판매") {
-      if (isDone) {
-        return (
-          <div>
-            <button onClick={sellCheck}>확인 완료</button>
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            <button onClick={sell}>판매 확정</button>
-            <button onClick={sellCancel}>판매 취소</button>
-            <button onClick={sellCheck}>확인 완료</button>
-          </div>
-        );
-      }
-    } else if (userDo === "구매") {
-      return (
-        <div>
-          <button onClick={buy}>구매 확정</button>
-          <button onClick={buyCancel}>구매 취소</button>
-        </div>
-      );
-    } else {
-      return null; // 버튼을 숨기려면 null을 반환하면 됩니다.
-    }
-  };
-  
-  useEffect(() => {
-    renderButtons();
-  }, [isDone]);
 
   useEffect(() => {
     initSocketConnect();
@@ -178,6 +148,40 @@ function ChatRoom({ user }) {
     getChatText();
   }, [otherMemberId]);
 
+  const postChat = async(chatData) => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
+      chatData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+    } catch (error) {
+      console.error("Post Chat Error:", error);
+    }
+  };
+
+  const patchChatState = async(data) => {
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchChatState`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      setChatState(data.chatState)
+    } catch (error) {
+      console.error("Patch Chat State Error:", error);
+    }
+  };
+
   const addChatList = useCallback(
     (res) => {
       const type = res.memberId === memberId ? "my" : "other";
@@ -197,24 +201,7 @@ function ChatRoom({ user }) {
         chatData.chatText = content;
       }
 
-      const postChat = async() => {
-        try {
-          await axios.post(
-            `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
-          chatData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-    
-        } catch (error) {
-          console.error('Post Chat Error:', error);
-        }
-      };
-      
-      postChat();
+      postChat(chatData);
     },
     [chatList]
   );
@@ -229,30 +216,9 @@ function ChatRoom({ user }) {
     window.history.back(); // 이전 페이지로 이동
   };
 
-
-
-  // 리더님 현재 브라우저가 꺼질때, 목록보기를 누를 때, 다른 채팅방에 들어갈 때에만 룸 나가기가 됩니다.
-  // 페이지를 벗어나면 룸 나가기를 하고 싶은데 어떻게 해야할까요
-
-  // window.addEventListener('beforeunload', function(event) {
-  //   console.log("out2")
-  // });
-
-  // useEffect(() => {
-  //   // if (window.performance && window.performance.navigation.type === 2) {
-  //   //   console.log("out2")
-  //   // }
-  //   // window.onbeforeunload = function() {
-  //   //   console.log("out2")
-  //   // };
-  //   // window.addEventListener('beforeunload', function(event) {
-  //   //   event.returnValue = '이 페이지를 벗어나시겠습니까?';
-  //   return ()=>{socket.emit("disconnection", { roomName: roomName, userDo: userDo });}
-  // }, []);
-
-
-
-
+  useEffect(() => {
+    return ()=>{socket.emit("disconnection", { roomName: roomName, userDo: userDo });}
+  }, []);
 
   const sell = async () => {
     try {
@@ -278,44 +244,41 @@ function ChatRoom({ user }) {
   };
 
   const sellConfirmed = useCallback((res) => {
-    // 리더님 이거 두번씩 찍혀요ㅜ
+    let resMemberId = res.memberId;
+    let resBankName = res.bankName;
+    let resAccountNum = res.accountNum;
     if (price !== "" && chatList !== null && chatList.length !== 0) {
+      const type = res.memberId === memberId ? "my" : "other";
+      const nick = resMemberId === memberId ? "" : otherNickname;
       const newChatList = [
         ...chatList,
         {
           type: "confirmed",
+          subType: type,
+          nickname: nick,
           content: `${res.bankName} ${res.accountNum}`,
           price: price,
         },
       ];
   
       setChatList(newChatList);
-  
+
       const chatData = {
         roomId: id,
         memberId: res.memberId,
-        chatText: `계좌번호: ${res.bankName} ${res.accountNum}
-        결제금액: ${price}`,
+        chatText: `계좌번호: ${resBankName} ${resAccountNum}
+        결제금액: ${price}
+        결제 후 구매 확정 버튼을 눌러주세요.`,
       };
 
-      const postChat = async() => {
-          try {
-            await axios.post(
-              `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
-            chatData,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            )
-      
-          } catch (error) {
-            console.error('Post Chat Error:', error);
-          }
-        };
-        
-        postChat();
+      postChat(chatData);
+
+      const data = {
+        roomId: id,
+        chatState: "sale",
+      }
+
+      patchChatState(data)
     } else {
       console.log("Sell Confirmed Error")
     }
@@ -325,6 +288,45 @@ function ChatRoom({ user }) {
     socket.on("sellConfirmed", sellConfirmed);
     return () => socket.off("sellConfirmed", sellConfirmed);
   }, [sellConfirmed])
+
+  useEffect(() => {
+    if (chatState == "sale") {
+      socket.emit("canBuy", {chatState: chatState});
+    }
+  }, [chatState])
+
+  const buyConfirmed = useCallback((res) => {
+    const data = {
+      roomId: id,
+      chatState: res.chatState,
+    }
+    patchChatState(data)
+  }, [id]);
+
+  useEffect(() => {
+    socket.on("buy", buyConfirmed);
+  }, [chatState])
+
+  useEffect(() => {
+    if (chatState == "done") {
+      socket.emit("done", {chatState: chatState});
+    }
+  }, [chatState])
+
+  const check = useCallback((res) => {
+    const data = {
+      roomId: id,
+      chatState: res.chatState,
+    }
+    patchChatState(data)
+  }, [id]);
+
+  useEffect(() => {
+    socket.on("check", check);
+  }, [chatState])
+
+
+
 
   const sendSellBuyMsg = (msg, myMemberId) => {
     const newChatList = [
@@ -342,42 +344,32 @@ function ChatRoom({ user }) {
       memberId: myMemberId,
       chatText: msg,
     };
-
-    const postChat = async() => {
-        try {
-          await axios.post(
-            `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
-          chatData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-    
-        } catch (error) {
-          console.error('Sell Buy Msg Error:', error);
-        }
-      };
-      
-      postChat();
+  
+    postChat(chatData);
   }
 
   const sellCancel = () => {
     const msg = "판매자가 판매를 취소하였습니다."
     sendSellBuyMsg(msg, memberId)
+
+    const data = {
+      roomId: id,
+      chatState: "ready",
+    }
+
+    patchChatState(data)
   }
 
   const sellCheck = () => {
     const patchBuyerInfo = async() => {
-      const data = {
+      const sellData = {
         roomId: id,
       }
 
         try {
           const response = await axios.patch(
             `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchBuyerInfo`,
-          data,
+            sellData,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -389,10 +381,15 @@ function ChatRoom({ user }) {
           } else {
             sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
           }
-
+          const data = {
+            roomId: id,
+            chatState: "ready",
+          }
+      
+          patchChatState(data)
     
         } catch (error) {
-          console.error('Patch Buyer Info Error:', error);
+          console.error("Patch Buyer Info Error:", error);
         }
       };
       
@@ -400,16 +397,76 @@ function ChatRoom({ user }) {
   }
 
   const buy = () => {
-    setIsDone(true)
     const msg = "구매자가 결제를 완료하였습니다. 입금내역을 확인 후 확인 완료를 눌러주세요."
     sendSellBuyMsg(msg, memberId)
+
+    const data = {
+      roomId: id,
+      chatState: "done",
+    }
+
+    patchChatState(data)
   }
 
   const buyCancel = () => {
     const msg = "구매자가 구매를 취소하였습니다."
     sendSellBuyMsg(msg, memberId)
+
+    const data = {
+      roomId: id,
+      chatState: "ready",
+    }
+
+    patchChatState(data)
   }
 
+
+  useEffect(()=>{
+    console.log(chatState)
+  }, [chatState])
+
+  // var SelectedFile;
+  // function FileChosen(event) {
+  //   SelectedFile = event.target.files[0];
+  //   document.getElementById('NameBox').value = SelectedFile.name;
+  // }
+  // var fileReader;
+  // var Name;
+  // function StartUpload(){
+  //   if(document.getElementById('FileBox').value != "") {
+  //     fileReader = new FileReader();
+  //     console.log(SelectedFile.type);
+  //     Name = document.getElementById('NameBox').value;
+  //     var Content = "<span id='NameArea'>Uploading " + SelectedFile.name + " as " + Name + "</span>";
+  //     Content += "<span id='Uploaded'> - <span id='MB'>0</span>/" + Math.round(SelectedFile.size / 1048576) + "MB</span>";
+  //     document.getElementById('UploadArea').innerHTML = Content;
+  //     fileReader.onload = function(event){
+  //       if (!event) {
+  //         var data = fileReader.content;
+  //       }
+  //       else {
+  //         var data = event.target.result;
+  //       }
+  //       socket.emit('Upload', { 'Name' : Name, Data : data });
+  //     }
+  //     socket.emit('Start', { 'Name' : Name, 'Size' : SelectedFile.size });
+  //   }
+  //   else {
+  //     alert("Please Select A File");
+  //   }
+  // }
+
+  // window.addEventListener("load", Ready);
+  // function Ready(){
+  //   if(window.File && window.FileReader){
+  //     document.getElementById('UploadButton').addEventListener('click', StartUpload);
+  //     document.getElementById('FileBox').addEventListener('change', FileChosen);
+  //   }
+  //   else
+  //   {
+  //     document.getElementById('UploadArea').innerHTML = "지원되지 않는 브라우저입니다. 브라우저를 업데이트하거나 IE나 Chrome을 사용하세요.";
+  //   }
+  // }
 
   return (
     <>
@@ -437,37 +494,31 @@ function ChatRoom({ user }) {
             else if (chat.type === "confirmed") return <Confirmed key={i} chat={chat} />;
             else return <Chat key={i} chat={chat} />;
           })}
-          {/* <div>
-            {userDo === "판매" ? (
-              <div>
-                <button onClick={sell}>판매 확정</button>
-                <button onClick={sellCancel}>판매 취소</button>
-              </div>
-            ) : (
-              <div>
-                <button onClick={buy}>구매 확정</button>
-                <button onClick={buyCancel}>구매 취소</button>
-              </div>
-            )}
-          </div> */}
           <div>
             {userDo === "판매" ? (
-              isDone ? (
-                <div>
-                  <button onClick={sellCheck}>확인 완료</button>
-                </div>
-              ) : (
+              chatState === "ready" ? (
                 <div>
                   <button onClick={sell}>판매 확정</button>
                   <button onClick={sellCancel}>판매 취소</button>
-                  <button onClick={sellCheck}>확인 완료</button>
                 </div>
+              ) : (
+                chatState === "sale" ? (
+                  <></>
+                ) : (
+                  <div>
+                    <button onClick={sellCheck}>확인 완료</button>
+                  </div>
+                )
               )
             ) : (
-              <div>
-                <button onClick={buy}>구매 확정</button>
-                <button onClick={buyCancel}>구매 취소</button>
-              </div>
+              chatState === "sale" ? (
+                <div>
+                    <button onClick={buy}>구매 확정</button>
+                    <button onClick={buyCancel}>구매 취소</button>
+                  </div>
+              ) : (
+                <></>
+              )
             )}
           </div>
             
@@ -484,6 +535,17 @@ function ChatRoom({ user }) {
             }}
           />
           <button onClick={sendMsg}>전송</button>
+          {/* <div id="UploadBox">
+            <h2>Video Uploader</h2>
+            <span id='UploadArea'>
+              <label for="FileBox">Choose A File: </label>
+              <input type="file" id="FileBox" />
+              <br />
+              <label for="NameBox">Name: </label>
+              <input type="text" id="NameBox" />
+              <br />
+            </span>
+          </div> */}
         </div>
       </div>
     </>

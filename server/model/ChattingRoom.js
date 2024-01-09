@@ -19,6 +19,11 @@ function ChattingRoom(sequelize, DataTypes){
                 type: DataTypes.STRING(100),
                 allowNull: false
               },
+              chatState: {
+                type: DataTypes.ENUM("ready", "sale", "done"),
+                allowNull: false,
+                defaultValue: "ready",
+              },
               canRedCard: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

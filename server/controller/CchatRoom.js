@@ -29,6 +29,7 @@ exports.getBoardInfo = async (req, res) => {
     price: chattingroom['Board.price'],
     sellerNickname: chattingroom['Board.Member.nickname'],
     buyerNickname: chattingroom['Member.nickname'],
+    chatState: chattingroom.chatState,
   };
   res.send(data)
 };
@@ -86,7 +87,6 @@ exports.getAccountNumber = (req, res) => {
     }
   })
   .then((result) => {
-    console.log("result!!!!!!!!!!!!!!!", result.bankName, result.accountNum)
     if (result.bankName == "NULL" || result.accountNum == "NULL") {
       res.send(false)
     } else if (result.bankName !== "NULL" && result.accountNum !== "NULL") {
@@ -104,7 +104,6 @@ exports.getAccountNumber = (req, res) => {
 };
 
 exports.patchBuyerInfo = (req, res) => {
-  console.log("req!!!!!!!!!!!!!!!!", req.body.roomId)
   // res.send(req)
   ChattingRoom.findOne({
     where: {
@@ -112,12 +111,10 @@ exports.patchBuyerInfo = (req, res) => {
     },
   })
   .then((result) => {
-    console.log(result.dataValues.canRedCard, result.dataValues.canReview)
     const data = {
       canRedCard: result.dataValues.canRedCard + 1,
       canReview: result.dataValues.canReview + 1,
     };
-    console.log(data)
     ChattingRoom.update(data, {
       where: {
         roomId: req.body.roomId,
@@ -141,5 +138,26 @@ exports.patchBuyerInfo = (req, res) => {
   .catch((error) => {
     console.log(error);
     res.status(500).send("Patch Buyer Info Error");
+  });
+};
+
+exports.patchChatState = (req, res) => {
+  ChattingRoom.update(req.body, {
+    where: {
+      roomId: req.body.roomId,
+    },
+  })
+  .then((result) => {
+    if (result == 1) {
+      res.send(true);
+    } else if (result == 0) {
+      res.send(false);
+    } else {
+      res.status(500).send("Patch Chat State Error");
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).send("Patch Chat State Error");
   });
 };
