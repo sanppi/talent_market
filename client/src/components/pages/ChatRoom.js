@@ -23,12 +23,14 @@ function ChatRoom({ user }) {
   const [roomName, setRoomName] = useState(null);
   const [userDo, setUserDo] = useState(null);
   const [otherDo, setOtherrDo] = useState("");
-
   const [msgInput, setMsgInput] = useState("");
   const [chatList, setChatList] = useState([]);
   const [price, setPrice] = useState("");
 
-  const [chatState, setChatState] = useState("");
+  const [msgInput, setMsgInput] = useState('');
+  const [chatList, setChatList] = useState([]);
+  const [price, setPrice] = useState('');
+  const [chatState, setChatState] = useState('');
 
   useEffect(() => {
     getBoardInfo();
@@ -54,8 +56,8 @@ function ChatRoom({ user }) {
       setPrice(response.data.price);
       setChatState(response.data.chatState);
 
-      const sell = "판매";
-      const buy = "구매";
+      const sell = '판매';
+      const buy = '구매';
       if (memberId == response.data.sellerMemberId) {
         setUserDo(sell);
         setOtherrDo(buy);
@@ -67,11 +69,11 @@ function ChatRoom({ user }) {
         setOtherNickname(response.data.sellerNickname);
         setOtherMemberId(response.data.sellerMemberId);
       } else {
-        console.log("잘못된 접근입니다.");
+        console.log('잘못된 접근입니다.');
         return;
       }
     } catch (error) {
-      console.error("Get Board Info Error:", error);
+      console.error('Get Board Info Error:', error);
     }
   };
 
@@ -157,7 +159,7 @@ function ChatRoom({ user }) {
 
       setChatList(newChatList);
     } catch (error) {
-      console.error("Get Chat Text Error:", error);
+      console.error('Get Chat Text Error:', error);
     }
   };
 
@@ -172,12 +174,12 @@ function ChatRoom({ user }) {
         chatData,
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
     } catch (error) {
-      console.error("Post Chat Error:", error);
+      console.error('Post Chat Error:', error);
     }
   };
 
@@ -188,13 +190,13 @@ function ChatRoom({ user }) {
         data,
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
       setChatState(data.chatState);
     } catch (error) {
-      console.error("Patch Chat State Error:", error);
+      console.error('Patch Chat State Error:', error);
     }
   };
 
@@ -211,7 +213,7 @@ function ChatRoom({ user }) {
 
       const chatData = {};
 
-      if (type === "my") {
+      if (type === 'my') {
         chatData.roomId = id;
         chatData.memberId = memberId;
         chatData.chatText = content;
@@ -228,7 +230,7 @@ function ChatRoom({ user }) {
   }, [addChatList]);
 
   const exitRoom = () => {
-    socket.emit("disconnection", { roomName: roomName, userDo: userDo });
+    socket.emit('disconnection', { roomName: roomName, userDo: userDo });
     window.history.back(); // 이전 페이지로 이동
   };
 
@@ -250,7 +252,7 @@ function ChatRoom({ user }) {
         const confirmed = window.confirm(
           `${response.data.bankName} ${response.data.accountNum} 이 계좌번호가 맞습니까?`
         );
-        if (confirmed) {
+        if (confirmed) {=
           socket.emit("sell", {
             roomName: roomName,
             memberId: memberId,
@@ -263,7 +265,7 @@ function ChatRoom({ user }) {
         }
       }
     } catch (error) {
-      console.error("Get Account Number Error:", error);
+      console.error('Get Account Number Error:', error);
     }
   };
 
@@ -362,7 +364,7 @@ function ChatRoom({ user }) {
     const newChatList = [
       ...chatList,
       {
-        type: "notice",
+        type: 'notice',
         content: msg,
       },
     ];
@@ -499,67 +501,77 @@ function ChatRoom({ user }) {
 
   return (
     <>
-      <div
-        className="container text-center"
-        style={{ backgroundColor: "lightyellow", marginBottom: "10px" }}
-      >
-        <div className="row">
-          <div className="col">
-            <button onClick={exitRoom}>뒤로가기</button>
-          </div>
-          <div className="col">{boardInfo.image}</div>
-          <div className="col-6">
-            <div>{boardInfo.title}</div>
-            <div>{boardInfo.price}</div>
-            <div>{boardInfo.starAvg}</div>
-          </div>
-          <div className="col">
-            <div>{boardInfo.sellerNickname}</div>
-          </div>
-        </div>
-        <div className="chat-container">
-          {chatList.map((chat, i) => {
-            if (chat.type === "notice") return <Notice key={i} chat={chat} />;
-            else if (chat.type === "confirmed")
-              return <Confirmed key={i} chat={chat} />;
-            else return <Chat key={i} chat={chat} />;
-          })}
-          <div>
-            {userDo === "판매" ? (
-              chatState === "ready" ? (
-                <div>
-                  <button onClick={sell}>판매 확정</button>
-                  <button onClick={sellCancel}>판매 취소</button>
-                </div>
-              ) : chatState === "sale" ? (
-                <></>
-              ) : (
-                <div>
-                  <button onClick={sellCheck}>확인 완료</button>
-                </div>
-              )
-            ) : chatState === "sale" ? (
-              <div>
-                <button onClick={buy}>구매 확정</button>
-                <button onClick={buyCancel}>구매 취소</button>
+      <div className="chatingContainer">
+        <div className="chattingBox">
+          <div className="chattingBoardBox">
+            <div className="chattngBoardInfo">
+              <div className="chattingBoardOne">
+                <button className="chattingBoardBtn" onClick={exitRoom}>
+                  &#60;
+                </button>
               </div>
-            ) : (
-              <></>
-            )}
+              <div className="chattingBoardOne">{boardInfo.image}</div>
+              <div className="chattingBoardOne">
+                <div>{boardInfo.title}</div>
+                <div>{boardInfo.price}</div>
+                <div>{boardInfo.starAvg}</div>
+              </div>
+              <div className="chattingBoardOne">
+                <div>{boardInfo.sellerNickname}</div>
+              </div>
+            </div>
+
+            <div className="chatting">
+              <div className="chattingTextList">
+                {chatList.map((chat, i) => {
+                  if (chat.type === 'notice')
+                    return <Notice key={i} chat={chat} />;
+                  else if (chat.type === 'confirmed')
+                    return <Confirmed key={i} chat={chat} />;
+                  else return <Chat key={i} chat={chat} />;
+                })}
+              </div>
+              <div>
+                {userDo === '판매' ? (
+                  chatState === 'ready' ? (
+                    <div>
+                      <button onClick={sell}>판매 확정</button>
+                      <button onClick={sellCancel}>판매 취소</button>
+                    </div>
+                  ) : chatState === 'sale' ? (
+                    <></>
+                  ) : (
+                    <div>
+                      <button onClick={sellCheck}>확인 완료</button>
+                    </div>
+                  )
+                ) : chatState === 'sale' ? (
+                  <div>
+                    <button onClick={buy}>구매 확정</button>
+                    <button onClick={buyCancel}>구매 취소</button>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="input-container">
-          <input
-            type="text"
-            value={msgInput}
-            onChange={(e) => setMsgInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMsg();
-              }
-            }}
-          />
-          <button onClick={sendMsg}>전송</button>
+          <div className="chattingInputContainer">
+            <input
+              type="text"
+              className="chattingInput"
+              value={msgInput}
+              onChange={(e) => setMsgInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  sendMsg();
+                }
+              }}
+            />
+            <button className="chattingBtn" onClick={sendMsg}>
+              ✉︀
+            </button>
+          </div>
           {/* <div id="UploadBox">
             <h2>Video Uploader</h2>
             <span id='UploadArea'>

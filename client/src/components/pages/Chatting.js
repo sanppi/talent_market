@@ -3,6 +3,7 @@ import ChattingRoomList from './ChattingRoomList';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import Footer from './Footer';
+import '../../styles/chat.scss';
 
 function Chatting({ user }) {
   const { memberId, nickname } = user;
@@ -55,25 +56,26 @@ function Chatting({ user }) {
   return (
     <>
       {memberId ? (
-        <>
-          <div> {nickname}님의 채팅방</div>
-          <div>
-            <div>
+        <div className="chatContainer">
+          <div className="chatListBox">
+            <div className="chatTitle"> {nickname}님의 채팅 목록</div>
+            <div className="chatList">
               {chattingRoomList.map((chattingRoom, i) => (
-                <div>
+                <>
+                  <div className="hiddenLine"></div>
                   <ChattingRoomList
                     key={i}
                     chattingRoom={chattingRoom}
                     setChattingRoomList={setChattingRoomList}
                     removeChattingRoom={() => removeChattingRoom(i)} // 특정 목록 제거 함수 전달
                   />
-                </div>
+                </>
               ))}
             </div>
           </div>
-        </>
+        </div>
       ) : (
-        <div>로그인인이 필요한 서비스입니다.</div>
+        <div>로그인이 필요한 서비스입니다.</div>
       )}
       <Footer />
     </>
