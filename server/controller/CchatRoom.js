@@ -174,7 +174,7 @@ exports.sendFile = async (req, res) => {
   })
   .then((result) => {
     if (result == 1) {
-      res.send(true);
+      res.send(req.file.path);
     } else if (result == 0) {
       res.send(false);
     } else {
