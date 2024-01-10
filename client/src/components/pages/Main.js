@@ -105,14 +105,11 @@ function Main() {
               <ProductCard key={product.boardId} product={product} />
             ))}
           <Footer />
-          <button className="chattingBtn">
+          <button className="chattingBtn" onClick={handleChattingButtonClick}>
             <Link to="/chatting">⌨️</Link>
           </button>
         </div>
       </div>
-      <button className="chattingBtn" onClick={handleChattingButtonClick}>
-        <Link to="/chatting">⌨️</Link>
-      </button>
     </>
   );
 }
