@@ -155,9 +155,9 @@ export default function SalePost() {
           <button type="submit" className="submitButton">
             상품 등록하기
           </button>
+          <Footer />
         </form>
       </div>
-      <Footer />
     </>
   );
 }

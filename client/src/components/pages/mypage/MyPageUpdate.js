@@ -88,9 +88,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
         data: data,
         withCredentials: true,
       });
-      if (response.data.result) {
-        // TODO : 성공하면..
-      }
     } catch (err) {
       console.error('비번 수정 err: ', err.message);
     }
@@ -204,6 +201,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                       handleInputChange={handleInputChange}
                       watchObj={watchObj}
                       errors={errors}
+                      setValue={setValue}
+                      onPwToggle={onPwToggle}
                     />
                   </div>
                 </>
