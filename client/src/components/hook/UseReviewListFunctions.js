@@ -12,6 +12,8 @@ const useReviewListFunctions = (boardId) => {
   const [reviewRating, setReviewRating] = useState(5);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [toggleForm, onToggleForm] = useToggle(false);
+  const [editToggle, onEditToggle] = useToggle(false);
+  const [doneMsg, setDoneMsg] = useState('');
 
   const memberId = useSelector((state) => state.auth.memberId);
 
@@ -63,7 +65,8 @@ const useReviewListFunctions = (boardId) => {
         });
       }
     } catch (error) {
-      alert('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      onEditToggle();
+      setDoneMsg('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -79,13 +82,15 @@ const useReviewListFunctions = (boardId) => {
       );
 
       if (response.status === 200) {
-        alert('리뷰가 성공적으로 수정되었습니다.');
+        onEditToggle();
+        setDoneMsg('리뷰가 성공적으로 수정되었습니다.');
         setReviews(reviewData);
         onToggleForm();
         return true;
       }
     } catch (error) {
-      alert('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      onEditToggle();
+      setDoneMsg('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
       console.log(error);
     }
   };
@@ -96,11 +101,13 @@ const useReviewListFunctions = (boardId) => {
         `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
       );
       if (response.status === 200) {
-        alert('리뷰가 성공적으로 삭제되었습니다.');
+        onEditToggle();
+        setDoneMsg('리뷰가 성공적으로 삭제되었습니다.');
         await getReviews();
       }
     } catch (error) {
-      alert('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      onEditToggle();
+      setDoneMsg('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -129,6 +136,10 @@ const useReviewListFunctions = (boardId) => {
     isAnonymous,
     toggleForm,
     onToggleForm,
+    editToggle,
+    onEditToggle,
+    doneMsg,
+    setDoneMsg,
   };
 };
 

@@ -20,7 +20,7 @@ function ChattingRoom(sequelize, DataTypes){
                 allowNull: false
               },
               chatState: {
-                type: DataTypes.ENUM("ready", "sale", "done"),
+                type: DataTypes.ENUM("ready", "want", "sale", "done", "check"),
                 allowNull: false,
                 defaultValue: "ready",
               },
@@ -33,6 +33,10 @@ function ChattingRoom(sequelize, DataTypes){
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
+              },
+              image: {
+                type: DataTypes.TEXT,
+                allowNull: true,
               },
             }, {
               tableName: 'ChattingRoom',
