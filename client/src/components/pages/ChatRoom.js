@@ -1,6 +1,6 @@
 import '../../styles/chat.scss';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Chat from './Chat';
@@ -39,6 +39,7 @@ function ChatRoom({ user }) {
   const [modalToggle, onModalToggle] = useToggle(false);
   const [modalType, setModalType] = useState('');
   const chatScrollRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getBoardInfo();
@@ -567,162 +568,176 @@ function ChatRoom({ user }) {
   }, [imagePath]);
 
   useEffect(() => {
-    chatScrollRef.current.scrollIntoView({ bahavior: 'smooth' });
+    if (memberId) {
+      chatScrollRef.current.scrollIntoView({ bahavior: 'smooth' });
+    }
   }, [chatList]);
+
+  useEffect(() => {
+    if (!memberId) navigate('/member/signin');
+  }, [memberId]);
 
   return (
     <>
-      <div className="chattingContainer">
-        <div className="chattingBox">
-          <div className="chattingBoardBox">
-            <div className="chattngBoardInfo">
-              <button className="chattingBoardBtn" onClick={exitRoom}>
-                &#60;
-              </button>
-              <div className="chattingBoardOne">
-                <img
-                  src={`${
-                    process.env.REACT_APP_DB_HOST
-                  }static/userImg/${encodeURIComponent(boardInfo.image)}`}
-                  alt="board img"
-                />
-              </div>
-              <div className="chattingBoardOne">
-                <div className="chattingBoardTitle">{boardInfo.title}</div>
-                <div className="chattingBoardPrice">{boardInfo.price}원</div>
-                {/* <div>{boardInfo.starAvg}</div> */}
-              </div>
-              <div className="chattingBoardOne">{boardInfo.sellerNickname}</div>
-            </div>
-            <div className="chatting">
-              <div className="chattingTextList">
-                {chatList.map((chat, i) => {
-                  if (chat.type === 'notice')
-                    return <Notice key={i} chat={chat} />;
-                  else if (chat.type === 'confirmed')
-                    return <Confirmed key={i} chat={chat} />;
-                  else return <Chat key={i} chat={chat} />;
-                })}
-              </div>
-              <div ref={chatScrollRef}></div>
-            </div>
-          </div>
-          <div className="bottomBtnBox">
-            {chatState === 'ready' ? (
-              userDo === '구매' ? (
-                <div className="bottomBtns">
-                  <button onClick={wantBuy}>구매 요청</button>
+      {memberId && (
+        <>
+          <div className="chattingContainer">
+            <div className="chattingBox">
+              <div className="chattingBoardBox">
+                <div className="chattngBoardInfo">
+                  <button className="chattingBoardBtn" onClick={exitRoom}>
+                    &#60;
+                  </button>
+                  <div className="chattingBoardOne">
+                    <img
+                      src={`${
+                        process.env.REACT_APP_DB_HOST
+                      }static/userImg/${encodeURIComponent(boardInfo.image)}`}
+                      alt="board img"
+                    />
+                  </div>
+                  <div className="chattingBoardOne">
+                    <div className="chattingBoardTitle">{boardInfo.title}</div>
+                    <div className="chattingBoardPrice">
+                      {boardInfo.price}원
+                    </div>
+                    {/* <div>{boardInfo.starAvg}</div> */}
+                  </div>
+                  <div className="chattingBoardOne">
+                    {boardInfo.sellerNickname}
+                  </div>
                 </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === 'want' ? (
-              userDo === '판매' ? (
-                <div className="bottomBtns">
-                  <button onClick={sell}>판매 확정</button>
-                  <button onClick={sellCancel}>판매 취소</button>
+                <div className="chatting">
+                  <div className="chattingTextList">
+                    {chatList.map((chat, i) => {
+                      if (chat.type === 'notice')
+                        return <Notice key={i} chat={chat} />;
+                      else if (chat.type === 'confirmed')
+                        return <Confirmed key={i} chat={chat} />;
+                      else return <Chat key={i} chat={chat} />;
+                    })}
+                  </div>
+                  <div ref={chatScrollRef}></div>
                 </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === 'sale' ? (
-              userDo === '구매' ? (
-                <div className="bottomBtns">
-                  <button onClick={buy}>구매 확정</button>
-                  <button onClick={buyCancel}>구매 취소</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === 'done' ? (
-              userDo === '판매' ? (
-                <div className="fileFormBox">
-                  <form className="fileForm" onSubmit={handleSubmit}>
-                    <label htmlFor="fileInput">
-                      {!image && (
-                        <div className="fileExImage">
-                          <img
-                            src="/static/camera.png"
-                            alt="img example"
-                            className="exImage"
-                            style={{ width: '65px', height: '50px' }}
+              </div>
+              <div className="bottomBtnBox">
+                {chatState === 'ready' ? (
+                  userDo === '구매' ? (
+                    <div className="bottomBtns">
+                      <button onClick={wantBuy}>구매 요청</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === 'want' ? (
+                  userDo === '판매' ? (
+                    <div className="bottomBtns">
+                      <button onClick={sell}>판매 확정</button>
+                      <button onClick={sellCancel}>판매 취소</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === 'sale' ? (
+                  userDo === '구매' ? (
+                    <div className="bottomBtns">
+                      <button onClick={buy}>구매 확정</button>
+                      <button onClick={buyCancel}>구매 취소</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === 'done' ? (
+                  userDo === '판매' ? (
+                    <div className="fileFormBox">
+                      <form className="fileForm" onSubmit={handleSubmit}>
+                        <label htmlFor="fileInput">
+                          {!image && (
+                            <div className="fileExImage">
+                              <img
+                                src="/static/camera.png"
+                                alt="img example"
+                                className="exImage"
+                                style={{ width: '65px', height: '50px' }}
+                              />
+                            </div>
+                          )}
+                          <input
+                            id="fileInput"
+                            type="file"
+                            onChange={handleImageUpload}
+                            style={{ display: 'none' }}
                           />
-                        </div>
-                      )}
-                      <input
-                        id="fileInput"
-                        type="file"
-                        onChange={handleImageUpload}
-                        style={{ display: 'none' }}
-                      />
-                      {image && (
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt="preview"
-                          className="exImage"
-                          style={{ width: '150px' }}
-                        />
-                      )}
-                    </label>
-                    <button type="submit" className="submitButton">
-                      상품 보내기
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === 'check' ? (
-              userDo === '구매' ? (
-                <div className="bottomBtns">
-                  <button onClick={downloadFile}>상품 받기</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
+                          {image && (
+                            <img
+                              src={URL.createObjectURL(image)}
+                              alt="preview"
+                              className="exImage"
+                              style={{ width: '150px' }}
+                            />
+                          )}
+                        </label>
+                        <button type="submit" className="submitButton">
+                          상품 보내기
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === 'check' ? (
+                  userDo === '구매' ? (
+                    <div className="bottomBtns">
+                      <button onClick={downloadFile}>상품 받기</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div className="chattingInputContainer">
+                <input
+                  type="text"
+                  className="chattingInput"
+                  value={msgInput}
+                  onChange={(e) => setMsgInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      sendMsg();
+                    }
+                  }}
+                />
+                <button className="chattingBtn" onClick={sendMsg}>
+                  ✉︀
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="chattingInputContainer">
-            <input
-              type="text"
-              className="chattingInput"
-              value={msgInput}
-              onChange={(e) => setMsgInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  sendMsg();
-                }
-              }}
+          {modalToggle && (
+            <ModalBasic
+              type="check"
+              content={modalType}
+              toggleState={true}
+              setToggleState={onModalToggle}
             />
-            <button className="chattingBtn" onClick={sendMsg}>
-              ✉︀
-            </button>
-          </div>
-        </div>
-      </div>
-      {modalToggle && (
-        <ModalBasic
-          type="check"
-          content={modalType}
-          toggleState={true}
-          setToggleState={onModalToggle}
-        />
+          )}
+          <Footer />
+        </>
       )}
-      <Footer />
     </>
   );
 }
