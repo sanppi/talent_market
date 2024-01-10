@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import useReviewListFunctions from './hook/UseReviewListFunctions';
 import '../styles/mypage.scss';
 import axios from 'axios';
+import ModalBasic from './ModalBasic';
 
 const ReviewList = ({ boardId, reviews }) => {
   const {
@@ -17,10 +18,13 @@ const ReviewList = ({ boardId, reviews }) => {
     setSelectedReview,
     setEditingReview,
     handleReviewSubmit,
-    handleReviewDelete,
     isAnonymous,
     toggleForm,
     onToggleForm,
+    editToggle,
+    onEditToggle,
+    doneMsg,
+    setDoneMsg,
   } = useReviewListFunctions(boardId);
 
   const [reviewData, setReviewData] = useState(reviews);
@@ -36,6 +40,31 @@ const ReviewList = ({ boardId, reviews }) => {
 
     if (response.data.result) {
       setReviewData(response.data.userData);
+    }
+  };
+
+  const reviewDelete = async (commentId) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
+      );
+      if (response.status === 200) {
+        const response = await axios({
+          url: `${process.env.REACT_APP_DB_HOST}member/mypage/review`,
+          method: 'get',
+          withCredentials: true,
+        });
+
+        if (response.data.result) {
+          setReviewData(response.data.userData);
+        }
+
+        onEditToggle();
+        setDoneMsg('리뷰가 성공적으로 삭제되었습니다.');
+      }
+    } catch (error) {
+      onEditToggle();
+      setDoneMsg('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -83,7 +112,7 @@ const ReviewList = ({ boardId, reviews }) => {
                       className="deleteButton"
                       onClick={(event) => {
                         event.stopPropagation();
-                        handleReviewDelete(review.commentId);
+                        reviewDelete(review.commentId);
                       }}
                     >
                       삭제
@@ -102,7 +131,8 @@ const ReviewList = ({ boardId, reviews }) => {
       )}
 
       {toggleForm && (
-        <form className="reviewForm" onSubmit={reviewEdit}>
+        <form className="editReviewForm slideIn" onSubmit={reviewEdit}>
+          <span className="editReviewTitleS">댓글 수정</span>
           <input
             type="text"
             placeholder="한 줄 리뷰 제목"
@@ -119,26 +149,9 @@ const ReviewList = ({ boardId, reviews }) => {
             }}
             maxLength="15"
             required
+            className="editReviewInput"
           />
-          <label>
-            <input
-              type="checkbox"
-              checked={editingReview ? editingReview.isAnonymous : isAnonymous}
-              onChange={(event) => {
-                const newValue = event.target.checked;
-                if (editingReview) {
-                  setEditingReview((prev) => ({
-                    ...prev,
-                    isAnonymous: newValue,
-                  }));
-                } else {
-                  setIsAnonymous(newValue);
-                }
-              }}
-            />
-            익명
-          </label>
-          <div>
+          <div className="editReviewStar">
             {[5, 4, 3, 2, 1].map((rating) => (
               <label key={rating}>
                 <input
@@ -166,26 +179,57 @@ const ReviewList = ({ boardId, reviews }) => {
               </label>
             ))}
           </div>
-          <textarea
-            placeholder="한 줄 리뷰 내용"
-            value={editingReview ? editingReview.review : reviewContent}
-            onChange={(event) => {
-              const newValue = event.target.value;
-              if (editingReview) {
-                setEditingReview((prev) => ({ ...prev, review: newValue }));
-              } else {
-                setReviewContent(newValue);
-              }
-            }}
-            maxLength="50"
-            required
-          />
+          <div className="editContents">
+            <textarea
+              placeholder="한 줄 리뷰 내용"
+              value={editingReview ? editingReview.review : reviewContent}
+              onChange={(event) => {
+                const newValue = event.target.value;
+                if (editingReview) {
+                  setEditingReview((prev) => ({ ...prev, review: newValue }));
+                } else {
+                  setReviewContent(newValue);
+                }
+              }}
+              maxLength="50"
+              required
+              className="editReviewContent"
+            />
+            <label className="editAn">
+              <input
+                type="checkbox"
+                checked={
+                  editingReview ? editingReview.isAnonymous : isAnonymous
+                }
+                onChange={(event) => {
+                  const newValue = event.target.checked;
+                  if (editingReview) {
+                    setEditingReview((prev) => ({
+                      ...prev,
+                      isAnonymous: newValue,
+                    }));
+                  } else {
+                    setIsAnonymous(newValue);
+                  }
+                }}
+              />
+              익명
+            </label>
+          </div>
           <button type="submit" className="reviewSumbitButton">
             수정하기
           </button>
         </form>
       )}
-      {/* </div> */}
+
+      {editToggle && (
+        <ModalBasic
+          type="confirmFast"
+          content={doneMsg}
+          toggleState={true}
+          setToggleState={onEditToggle}
+        />
+      )}
     </>
   );
 };
