@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import '../../styles/navbar.scss';
 import '../../styles/main.scss';
+import ModalBasic from '../ModalBasic';
+import useToggle from '../hook/UseToggle';
 
 export default function NavBar() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -11,14 +13,16 @@ export default function NavBar() {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [logoutToggle, onLogoutToggle] = useToggle(false);
 
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    if (window.confirm('로그아웃 하시겠습니까?')) {
+    onLogoutToggle();
+    setTimeout(() => {
       dispatch({ type: 'LOGOUT' });
-    }
+    }, 2000);
   };
 
   const handleHamburgerClick = () => {
@@ -114,7 +118,7 @@ export default function NavBar() {
             placeholder="검색어를 입력하세요"
             value={searchTermLocal}
             onChange={handleSearchTermChange}
-            onKeyPress={handleOnKeyPress}
+            onKeyDown={handleOnKeyPress}
           />
           <button className="searchButton" onClick={handleSearchButtonClick}>
             🔍
@@ -125,19 +129,27 @@ export default function NavBar() {
           {isLoggedIn ? (
             <div>
               <Link to="/member/mypage">
-                <button className="mypageButton">MY</button>
+                <button className="mypageButton slideIn">MY</button>
               </Link>
-              <button className="logoutButton" onClick={handleLogout}>
+              <button className="logoutButton slideIn" onClick={handleLogout}>
                 OUT
               </button>
             </div>
           ) : (
-            <button className="loginButton">
+            <button className="loginButton slideIn">
               <Link to="/member/signin">IN</Link>
             </button>
           )}
         </div>
       </div>
+      {logoutToggle && (
+        <ModalBasic
+          type="confirmFast"
+          content="로그아웃 되었습니다."
+          toggleState={true}
+          setToggleState={onLogoutToggle}
+        />
+      )}
     </>
   );
 }
