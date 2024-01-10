@@ -5,6 +5,8 @@ import Footer from './Footer';
 import '../../styles/salepost.scss';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function SalePost() {
   const [title, setTitle] = useState('');
@@ -16,6 +18,9 @@ export default function SalePost() {
   const nickname = useSelector((state) => state.auth.nickname);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
+
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   useEffect(() => {
     // 이 부분 추가
@@ -33,7 +38,8 @@ export default function SalePost() {
     e.preventDefault();
 
     if (category === '') {
-      alert('카테고리를 선택해주세요.');
+      onModalToggle();
+      setModalType('카테고리를 선택해주세요.');
       return;
     }
 
@@ -62,7 +68,8 @@ export default function SalePost() {
         navigate(`/product/${response.data.boardId}`);
       }
     } catch (error) {
-      alert('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
+      onModalToggle();
+      setModalType('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
     }
   };
 
@@ -158,6 +165,14 @@ export default function SalePost() {
           <Footer />
         </form>
       </div>
+      {modalToggle && (
+        <ModalBasic
+          type="check"
+          content={modalType}
+          toggleState={true}
+          setToggleState={onModalToggle}
+        />
+      )}
     </>
   );
 }
