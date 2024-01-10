@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
 import ReviewList from '../../ReviewList';
 import Footer from '../Footer';
-import ChattingRoomList from '../ChattingRoomList';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
 import Pattern from '../../Pattern';

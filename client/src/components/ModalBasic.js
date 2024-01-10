@@ -32,7 +32,6 @@ export default function ModalBasic({
 
   return (
     <>
-      {console.log(content)}
       {toggleState && (
         <>
           <div className="modalContainer slideIn">
