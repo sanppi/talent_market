@@ -171,7 +171,6 @@ function ChatRoom({ user }) {
   }, [otherMemberId]);
 
   const postChat = async (chatData) => {
-    console.log("postChat!!!!!!!!", chatData)
     try {
       await axios.post(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
@@ -189,7 +188,6 @@ function ChatRoom({ user }) {
 
   const addChatList = useCallback(
     (res) => {
-      console.log("addChatList!!!!!!!!", res.msg)
       const type = res.memberId === memberId ? 'my' : 'other';
       const nick = res.memberId === memberId ? '' : otherNickname;
       const content = `${res.msg}`;
@@ -208,14 +206,6 @@ function ChatRoom({ user }) {
         chatData.chatType = "chat";
         postChat(chatData);
       }
-      // else if (type === 'other') {
-      //   chatData.roomId = id;
-      //   chatData.memberId = otherMemberId;
-      //   chatData.chatText = content;
-      // } else {
-      //   console.log(type)
-      // }
-      
     },
     [chatList]
   );
@@ -296,9 +286,8 @@ function ChatRoom({ user }) {
   }, [chatState])
 
   const wantBuy = () => {
-    const msg = "상품 구매 요청을 받았습니다. 판매 하시겠습니까?"
+    const msg = "상품 구매 요청을 받았습니다!"
     socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
 
     const data = {
       roomId: id,
@@ -318,6 +307,7 @@ function ChatRoom({ user }) {
       if (!response.data) {
         alert('판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.');
       } else {
+        // 윤혜님 alret 아니고 confirmed입니다...
         const confirmed = window.confirm(
           `${response.data.bankName} ${response.data.accountNum} 이 계좌번호가 맞습니까?`
         );
@@ -334,30 +324,9 @@ function ChatRoom({ user }) {
     }
   };
 
-  // const sendSellBuyMsg = (msg, myMemberId) => {
-  //   const newChatList = [
-  //     ...chatList,
-  //     {
-  //       type: "notice",
-  //       content: msg,
-  //     },
-  //   ];
-
-  //   setChatList(newChatList);
-
-  //   const chatData = {
-  //     roomId: id,
-  //     memberId: myMemberId,
-  //     chatText: msg,
-  //   };
-  
-  //   postChat(chatData);
-  // }
-
   const sellCancel = () => {
     const msg = "판매자가 판매를 취소하였습니다."
     socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
 
     const data = {
       roomId: id,
@@ -369,9 +338,8 @@ function ChatRoom({ user }) {
   }
 
   const buy = () => {
-    const msg = "구매자가 결제를 완료하였습니다. 입금 확인 후 상품을 보내주세요."
+    const msg = "구매자가 결제를 완료하였습니다."
     socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
 
     const data = {
       roomId: id,
@@ -385,7 +353,6 @@ function ChatRoom({ user }) {
   const buyCancel = () => {
     const msg = "구매자가 구매를 취소하였습니다."
     socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
 
     const data = {
       roomId: id,
@@ -433,46 +400,9 @@ function ChatRoom({ user }) {
   );
 
   useEffect(() => {
-    // *
     socket.on('sellConfirmed', sellConfirmed);
     return () => socket.off('sellConfirmed', sellConfirmed);
   }, [sellConfirmed]);
-
-  // useEffect(() => {
-  //   if (chatState == "sale") {
-  //     socket.emit("canBuy", {chatState: chatState});
-  //   }
-  // }, [chatState])
-
-  // const buyConfirmed = useCallback((res) => {
-  //   const data = {
-  //     roomId: id,
-  //     chatState: res.chatState,
-  //   }
-  //   patchChatState(data)
-  // }, [id]);
-
-  // useEffect(() => {
-  //   socket.on("buy", buyConfirmed);
-  // }, [chatState])
-
-  // useEffect(() => {
-  //   if (chatState == "done") {
-  //     socket.emit("done", {chatState: chatState});
-  //   }
-  // }, [chatState])
-
-  // const check = useCallback((res) => {
-  //   const data = {
-  //     roomId: id,
-  //     chatState: res.chatState,
-  //   }
-  //   patchChatState(data)
-  // }, [id]);
-
-  // useEffect(() => {
-  //   socket.on("check", check);
-  // }, [chatState])
 
   const patchBuyerInfo = async () => {
     const sellData = {
@@ -489,13 +419,11 @@ function ChatRoom({ user }) {
           }
         )
         if (response.data) {
-          const msg = "구매하신 상품이 도착했습니다. 상품을 확인해주세요."
+          const msg = "구매하신 상품이 도착했습니다!"
           socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-          // sendSellBuyMsg("거래가 완료되었습니다.", memberId)
         } else {
           const msg = "구매 정보 업데이트 에러입니다."
           socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-          // sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
         }
     } catch (error) {
       console.error('Patch Buyer Info Error:', error);
@@ -523,7 +451,6 @@ function ChatRoom({ user }) {
     formData.append('roomId', id);
 
     try {
-      console.log(formData);
       const response = await axios.post(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/sendFile`,
         formData,
@@ -570,9 +497,7 @@ function ChatRoom({ user }) {
       getFile();
 
     } else {
-      console.log("imagePath?????????????????", imagePath)
       const fileUrl = `${process.env.REACT_APP_DB_HOST}${imagePath}`; // 다운로드할 파일의 URL
-      console.log("fileUrl?????????????????", fileUrl)
       const newWindow = window.open(fileUrl); // 새 창 열기
 
       setTimeout(() => {
@@ -581,7 +506,6 @@ function ChatRoom({ user }) {
 
       const msg = "거래가 완료되었습니다"
       socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-      // sendSellBuyMsg(msg, memberId)
 
       const data = {
         roomId: id,
@@ -694,7 +618,6 @@ function ChatRoom({ user }) {
                           />
                         )}
                       </label>
-                        {/* <button onClick={uploadFile}>상품 ㄱㄱ</button> */}
                       <button type="submit" className="submitButton">상품 보내기</button>
                     </form>
                   </div>
