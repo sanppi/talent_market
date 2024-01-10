@@ -204,15 +204,17 @@ body {
 
             .reviewTableContents {
               font-size: 12px;
-              tr {
+              .reviewInfo {
                 height: 50px;
+
+                td {
+                  text-align: center;
+                }
                 &:last-child {
                   text-align: left;
                 }
 
                 .editButtonBox {
-                  width: 185px;
-                  text-align: left;
                   padding: 15px;
                   display: flex;
                   justify-content: space-around;
