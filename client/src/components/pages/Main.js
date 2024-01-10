@@ -19,9 +19,9 @@ export function ProductCard({ product }) {
           />
         </div>
         <h4>{product.title}</h4>
-        {product.isOnMarket === 'stop' ? (
+        {product.isOnMarket === "stop" ? (
           <p>판매 중단</p>
-        ) : product.isOnMarket === 'ends' ? (
+        ) : product.isOnMarket === "ends" ? (
           <p>판매 종료</p>
         ) : (
           <p>{product.price}원</p>
@@ -51,6 +51,13 @@ function Main() {
   };
 
   const handleWriteButtonClick = (e) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      alert("로그인이 필요한 기능입니다.");
+    }
+  };
+
+  const handleChattingButtonClick = (e) => {
     if (!isLoggedIn) {
       e.preventDefault();
       alert("로그인이 필요한 기능입니다.");
@@ -98,7 +105,7 @@ function Main() {
             ))}
         </div>
       </div>
-      <button className="chattingBtn">
+      <button className="chattingBtn" onClick={handleChattingButtonClick}>
         <Link to="/chatting">⌨️</Link>
       </button>
     </>
