@@ -433,40 +433,6 @@ function ChatRoom({ user }) {
   //   socket.on("check", check);
   // }, [chatState])
 
-  const uploadFile = () => {
-    const msg = "구매하신 상품이 도착했습니다. 상품을 확인해주세요."
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
-
-    const data = {
-      roomId: id,
-      chatState: "check",
-    }
-
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
-  };
-
-  const downloadFile = () => {
-    const msg = "거래가 완료되었습니다"
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
-
-    const data = {
-      roomId: id,
-      chatState: 'ready',
-    };
-
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
-
-    // const fileUrl = `${process.env.REACT_APP_DB_HOST}${imagePath}`; // 다운로드할 파일의 URL
-    // const link = document.createElement('a');
-    // link.href = fileUrl;
-    // link.download = `${imagePath}`; // 다운로드될 파일의 이름
-    // link.click();
-  };
-
   const patchBuyerInfo = async () => {
     const sellData = {
       roomId: id,
@@ -482,11 +448,11 @@ function ChatRoom({ user }) {
           }
         )
         if (response.data) {
-          let msg = "거래가 완료되었습니다."
+          let msg = "구매하신 상품이 도착했습니다. 상품을 확인해주세요."
           socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
           // sendSellBuyMsg("거래가 완료되었습니다.", memberId)
         } else {
-          let msg = "거래가 성사되지 않았습니다."
+          let msg = "구매 정보 업데이트 에러입니다."
           socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
           // sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
         }
@@ -500,14 +466,12 @@ function ChatRoom({ user }) {
 
     const data = {
       roomId: id,
-      chatState: "ready",
+      chatState: "check",
     }
+
     patchChatState(data);
+    socket.emit("stateGive", { chatState: data.chatState });
   };
-
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -528,20 +492,25 @@ function ChatRoom({ user }) {
           },
         }
       );
-
-      // sellCheck();
+      setImagePath(response.data);
+      socket.emit("fileGive", { imagePath: response.data });
+      sellCheck();
     } catch (error) {
       alert('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
     }
   };
 
+  const fileReceive = useCallback((res) => {
+    setImagePath(res.imagePath);
+  }, []);
+
+  useEffect(() => {
+    socket.on("fileReceive", fileReceive);
+  }, [fileReceive])
+
   const handleImageUpload = (e) => {
     setImage(e.target.files[0]);
   };
-
-  // useEffect(()=>{
-  //   console.log("image!!!!!!!!!!!!!!!!", image)
-  // },[image])
 
   const getFile = async() => {
     try {
@@ -555,8 +524,33 @@ function ChatRoom({ user }) {
     }
   }
 
+  const downloadFile = () => {
+    if (imagePath == "") {
+      getFile();
+    } else {
+      const fileUrl = `${process.env.REACT_APP_DB_HOST}${imagePath}`; // 다운로드할 파일의 URL
+      const newWindow = window.open(fileUrl); // 새 창 열기
+      newWindow.focus(); // 새 창에 포커스 설정
+    }
+    
+    const msg = "거래가 완료되었습니다"
+    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
+    // sendSellBuyMsg(msg, memberId)
+
+    const data = {
+      roomId: id,
+      chatState: 'ready',
+    };
+
+    patchChatState(data)
+    socket.emit("stateGive", { chatState: data.chatState });
+  };
+
   useEffect(()=>{
-    console.log("image!!!!!!!!!!!!!!!!", imagePath)
+    if (imagePath !== "") {
+      downloadFile();
+    }
+    console.log("imagePath!!!!!!!!!!!!!!!!", imagePath)
   },[imagePath])
 
 
@@ -592,7 +586,6 @@ function ChatRoom({ user }) {
               </div>
               <div className="chattingBoardOne">{boardInfo.sellerNickname}</div>
             </div>
-
             <div className="chatting">
               <div className="chattingTextList">
                 {chatList.map((chat, i) => {
@@ -641,30 +634,30 @@ function ChatRoom({ user }) {
                 )}
                 {chatState === "done" ? (
                   userDo === "판매" ? (
-                    // <form onSubmit={handleSubmit}>
-                    // <label htmlFor="fileInput">
-                    //   {!image && ( 
-                    //     <img src="/static/img.png" alt="img example" className="exImage" />
-                    //   )}
-                    //   <input
-                    //     id="fileInput"
-                    //     type="file"
-                    //     onChange={handleImageUpload}
-                    //     style={{ display: 'none' }}
-                    //   />
-                    //   {image && (
-                    //     <img
-                    //       src={URL.createObjectURL(image)}
-                    //       alt="preview"
-                    //       className="exImage"
-                    //     />
-                    //   )}
-                    // </label>
                     <div className="bottomBtns">
-                      <button onClick={uploadFile}>상품 ㄱㄱ</button>
-                    </div>
-                  //   <button type="submit" className="submitButton">상품 보내기</button>
-                  // </form>
+                    <form onSubmit={handleSubmit}>
+                      <label htmlFor="fileInput">
+                        {!image && ( 
+                          <img src="/static/img.png" alt="img example" className="exImage" style={{ width: '150px' }} />
+                        )}
+                        <input
+                          id="fileInput"
+                          type="file"
+                          onChange={handleImageUpload}
+                          style={{ display: 'none' }}
+                        />
+                        {image && (
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="preview"
+                            className="exImage"
+                          />
+                        )}
+                      </label>
+                        {/* <button onClick={uploadFile}>상품 ㄱㄱ</button> */}
+                      <button type="submit" className="submitButton">상품 보내기</button>
+                    </form>
+                  </div>
                   ) : (
                     <></>
                   )

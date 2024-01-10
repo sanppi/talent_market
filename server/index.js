@@ -96,6 +96,10 @@ io.on("connection", (socket) => {
     io.emit("stateReceive", { chatState: res.chatState });
   });
 
+  socket.on("fileGive", (res) => {
+    io.emit("fileReceive", { imagePath: res.imagePath });
+  });
+
   // socket.on("canBuy", (res) => {
   //   io.emit("buy", { chatState: res.chatState });
   // });
