@@ -59,12 +59,7 @@ app.get("*", function (req, res) {
 const userDoArr = {};
 const roomArr = {};
 
-// 리더님 코드가 전체적으로 좀 늦게 실행되는 느낌이에요...
 io.on("connection", (socket) => {
-  socket.onAny((event) => {
-    console.log(`Socket Event:${event}`);
-  });
-
   socket.on("entry", (res) => {
     if (!roomArr[socket.id]) {
       roomArr[socket.id] = [];
@@ -80,12 +75,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    console.log(res)
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 
   socket.on("sendNotice", (res) => {
-    io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
+    io.to(res.roomName).emit("transactionNotice", { memberId: res.memberId, msg: res.msg });
   });
 
   socket.on("sell", (res) => {
@@ -99,14 +93,6 @@ io.on("connection", (socket) => {
   socket.on("fileGive", (res) => {
     io.emit("fileReceive", { imagePath: res.imagePath });
   });
-
-  // socket.on("canBuy", (res) => {
-  //   io.emit("buy", { chatState: res.chatState });
-  // });
-
-  // socket.on("done", (res) => {
-  //   io.emit("check", { chatState: res.chatState });
-  // });
 
   socket.on("disconnection", (res) => {
     socket.leave(res.roomName);

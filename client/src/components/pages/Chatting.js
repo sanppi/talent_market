@@ -5,12 +5,17 @@ import { connect } from 'react-redux';
 import Footer from './Footer';
 import '../../styles/chat.scss';
 import { useNavigate } from 'react-router-dom';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 function Chatting({ user }) {
   const { memberId, nickname } = user;
   const navigate = useNavigate();
 
   const [chattingRoomList, setChattingRoomList] = useState([]);
+
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   const getAllRoomList = async () => {
     try {
@@ -24,7 +29,8 @@ function Chatting({ user }) {
 
       // 채팅방이 없는 경우에 대한 처리 추가
       if (buyResponse.data.length === 0 && sellResponse.data.length === 0) {
-        alert('현재 사용하는 채팅방이 없습니다.');
+        onModalToggle();
+        setModalType('현재 사용하는 채팅방이 없습니다.');
         return;
       }
 
@@ -78,6 +84,13 @@ function Chatting({ user }) {
             </div>
           </div>
         </div>
+      )}
+      {modalToggle && (
+        <ModalBasic
+          content={modalType}
+          toggleState={true}
+          setToggleState={onModalToggle}
+        />
       )}
       <Footer />
     </>

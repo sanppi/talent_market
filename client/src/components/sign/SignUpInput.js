@@ -11,6 +11,7 @@ export default function SignUpInput({
   onButtonClick,
   validation,
   placeholder,
+  failMsg,
 }) {
   return (
     <div className="signInput">
@@ -38,6 +39,7 @@ export default function SignUpInput({
         ''
       )}
       {error && <small role="alert">{error.message}</small>}
+      {failMsg && <small role="alert">{failMsg}</small>}
     </div>
   );
 }

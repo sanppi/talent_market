@@ -51,6 +51,7 @@ exports.getChatText = (req, res) => {
         {
         memberId: result.dataValues.memberId,
         chatText: result.dataValues.chatText,
+        chatType: result.dataValues.chatType,
         createdAt: result.dataValues.createdAt,
       }
       ));
@@ -69,7 +70,8 @@ exports.postChat = (req, res) => {
   const data = {
     roomId: req.body.roomId,
     memberId: req.body.memberId,
-    chatText: req.body.chatText
+    chatText: req.body.chatText,
+    chatType: req.body.chatType
   };
   // SB: data를 DB에 업로드합니다.
   ChattingText.create(data).then(() => {
@@ -188,14 +190,12 @@ exports.sendFile = async (req, res) => {
 };
 
 exports.getFile = (req, res) => {
-  console.log("req.query.roomId!!!!!!!!!", req.query.roomId)
   ChattingRoom.findOne({
     where: {
       roomId: req.query.roomId,
     }
   })
   .then((result) => {
-    console.log("result.image!!!!!!!!!!!!!!!!!!!!!!!!!", result.image)
     res.send(result.image)
   })
   .catch((error) => {

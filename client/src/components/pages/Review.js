@@ -102,10 +102,10 @@ export default function Review({ boardId, productMemberId }) {
     }
   };
 
-  const handleReviewButtonClick = async() => {
+  const handleReviewButtonClick = async () => {
     if (!memberId) {
-      // 윤혜님 여기요
-      alert("로그인이 필요한 서비스입니다.");
+      onEditToggle();
+      setModalType('로그인이 필요한 서비스입니다.');
       return;
     }
     try {
@@ -114,18 +114,19 @@ export default function Review({ boardId, productMemberId }) {
         `${process.env.REACT_APP_DB_HOST}review/check_authority`,
         { params: { memberId: memberId, boardId: boardId } }
       );
+      console.log('dddd');
 
       if (response.status === 200) {
         // 권한이 있으면 리뷰 작성 폼 표시
         setIsReviewFormVisible(!isReviewFormVisible);
       } else if (response.status === 403) {
-        // 윤혜님 여기요
-        alert(response.data);
+        onEditToggle();
+        setModalType(response.data);
       }
     } catch (error) {
-      // 윤혜님 여기요
-      alert(error.response.data);
-      console.log(error);
+      setModalType(error.response.data);
+      onEditToggle();
+      // console.log(error);
     }
   };
 
@@ -142,13 +143,14 @@ export default function Review({ boardId, productMemberId }) {
       }
     } catch (error) {
       setModalType('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
-      console.log(error);
+      // console.log(error);
     }
   };
 
   const handleReviewDelete = async (commentId) => {
-    // 윤혜님 여기요
-    if (window.confirm('후기를 삭제하면 다시 작성할 수 없습니다.')) {
+    onEditToggle();
+    setModalType('후기를 삭제하면 다시 작성할 수 없습니다.');
+    if (modalType === '후기를 삭제하면 다시 작성할 수 없습니다.') {
       try {
         const response = await axios.delete(
           `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
@@ -164,7 +166,7 @@ export default function Review({ boardId, productMemberId }) {
     }
   };
 
-  console.log('review: ', modalType);
+  // console.log('review: ', modalType);
 
   return (
     <>
@@ -346,7 +348,7 @@ export default function Review({ boardId, productMemberId }) {
       </div>
       {editToggle && (
         <ModalBasic
-          type="confirmFast"
+          type="confirm"
           content={modalType}
           toggleState={true}
           setToggleState={onEditToggle}

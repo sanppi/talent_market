@@ -423,8 +423,6 @@ exports.updateUserInfo = async (req, res) => {
           where: { pw: userData.oldPw },
         });
 
-        console.log('pw ex', existingPw);
-
         if (existingPw) {
           const pwUser = await Member.update(
             {
@@ -433,13 +431,14 @@ exports.updateUserInfo = async (req, res) => {
             { where: { memberId: targetMemberId } }
           );
 
-          console.log('dd', pwUser);
-
           if (pwUser) {
             return res.send({ result: true, message: '비밀번호 수정 완료' });
-          } else {
-            return res.send({ result: false, message: '정보 수정 실패' });
           }
+        } else {
+          return res.send({
+            result: false,
+            message: '기존 비밀번호가 일치하지 않습니다.',
+          });
         }
       }
     }

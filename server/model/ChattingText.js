@@ -19,10 +19,15 @@ function ChattingText(sequelize, DataTypes){
             type: DataTypes.TEXT,
             allowNull: false
           },
+          chatType: {
+            type: DataTypes.ENUM("chat", "notice"),
+            allowNull: false,
+            defaultValue: "chat",
+          },
           createdAt: {
             type: DataTypes.DATE,
             defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-        },
+          },
           updatedAt: {
               type: DataTypes.DATE,
               defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),

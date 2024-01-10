@@ -39,7 +39,9 @@ export default function ModalBasic({
               &times;
             </div>
             <div className="modalWrapper">
-              {type === 'confirm' || type === 'confirmFast' ? (
+              {type === 'confirm' ||
+              type === 'confirmFast' ||
+              type === 'check' ? (
                 <>
                   <p>{content}</p>
                   <button onClick={disableModal}>확인</button>
