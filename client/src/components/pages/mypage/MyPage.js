@@ -17,7 +17,7 @@ function MyPage({ user }) {
     '찜 목록': 'favorite',
     '판매 상품': 'selling',
     '내 리뷰': 'review',
-    '채팅 목록': 'chat',
+    '채팅 목록': 'chatting',
   };
   const [selectedData, setSelectedData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -33,20 +33,24 @@ function MyPage({ user }) {
 
   const handleData = async (endpoint) => {
     try {
-      const response = await axios({
-        url: `${process.env.REACT_APP_DB_HOST}member/mypage/${endpointMapping[endpoint]}`,
-        method: 'get',
-        withCredentials: true,
-      });
-
-      if (response.data.result) {
-        const resData = response.data.userData.map((data) => ({
-          ...data,
-          type: endpointMapping[endpoint],
-        }));
-        setSelectedData(resData);
+      if (endpoint === '채팅 목록') {
+        navigate('/chatting');
       } else {
-        console.error('result error:', response.data.message);
+        const response = await axios({
+          url: `${process.env.REACT_APP_DB_HOST}member/mypage/${endpointMapping[endpoint]}`,
+          method: 'get',
+          withCredentials: true,
+        });
+
+        if (response.data.result) {
+          const resData = response.data.userData.map((data) => ({
+            ...data,
+            type: endpointMapping[endpoint],
+          }));
+          setSelectedData(resData);
+        } else {
+          console.error('result error:', response.data.message);
+        }
       }
     } catch (err) {
       console.error('req error:', err);
@@ -93,7 +97,7 @@ function MyPage({ user }) {
             </ul>
             <div className="myListContent">
               <div className="pageWrapper">
-                {selectedData !== null &&
+                {selectedData &&
                   selectedData.map((data, i) => {
                     switch (data.type) {
                       case 'favorite':
@@ -110,8 +114,6 @@ function MyPage({ user }) {
                             boardId={data.boardId}
                           />
                         );
-                      case 'chat':
-                        return <ChattingRoomList />;
                       default:
                         return null;
                     }

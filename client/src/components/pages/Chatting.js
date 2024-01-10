@@ -4,9 +4,11 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import Footer from './Footer';
 import '../../styles/chat.scss';
+import { useNavigate } from 'react-router-dom';
 
 function Chatting({ user }) {
   const { memberId, nickname } = user;
+  const navigate = useNavigate();
 
   const [chattingRoomList, setChattingRoomList] = useState([]);
 
@@ -48,15 +50,17 @@ function Chatting({ user }) {
   };
 
   useEffect(() => {
-    if (memberId !== null) {
+    if (memberId) {
       getAllRoomList();
+    } else {
+      navigate('/member/signin');
     }
   }, [memberId]);
 
   return (
     <>
-      {memberId ? (
-        <div className="chatContainer">
+      {memberId && (
+        <div className="chatContainer slideIn">
           <div className="chatListBox">
             <div className="chatTitle"> {nickname}님의 채팅 목록</div>
             <div className="chatList">
@@ -74,8 +78,6 @@ function Chatting({ user }) {
             </div>
           </div>
         </div>
-      ) : (
-        <div>로그인이 필요한 서비스입니다.</div>
       )}
       <Footer />
     </>
