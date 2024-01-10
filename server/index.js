@@ -4,7 +4,6 @@ const app = express();
 const PORT = 8000;
 const server = http.createServer(app);
 const multer = require("multer");
-const path = require("path");
 const session = require("express-session");
 
 const cors = require("cors");
@@ -81,49 +80,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
+    console.log(res)
+    io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
+  });
+
+  socket.on("sendNotice", (res) => {
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 
   socket.on("sell", (res) => {
-    socket.emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
+    io.emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
   });
 
-  socket.on("canBuy", (res) => {
-    io.emit("buy", { chatState: res.chatState });
+  socket.on("stateGive", (res) => {
+    io.emit("stateReceive", { chatState: res.chatState });
   });
 
-  socket.on("done", (res) => {
-    io.emit("check", { chatState: res.chatState });
-  });
-
-
-
-  // socket.on('Start', function (data) {
-  //   console.log('socket start!!');
-  //   console.log(data);
-  //   var Name = data.Name;
-  //   Files[Name] = {
-  //     FileSize : data.Size,
-  //     Data : "",
-  //     Downloaded : 0
-  //   };
-  //   var Place = 0;
-  //   var Stat = fs.statSync('Temp/' + Name);
-  //   if ( Stat.isFile() ) {
-  //     Files[Name].Downloaded = Stat.size;
-  //     Place = Stat.size / 524288;
-  //   }
-  //   fs.open("Temp/" + Name, "a+", function (err, fd) {
-  //     if (err) console.log(err);
-  //     else {
-  //       Files[Name].Handler = fd;
-  //       socket.emit('MoreData', { 'Place' : Place, Percent : 0 });
-  //     }
-  //   });
+  // socket.on("canBuy", (res) => {
+  //   io.emit("buy", { chatState: res.chatState });
   // });
-  
 
-
+  // socket.on("done", (res) => {
+  //   io.emit("check", { chatState: res.chatState });
+  // });
 
   socket.on("disconnection", (res) => {
     socket.leave(res.roomName);

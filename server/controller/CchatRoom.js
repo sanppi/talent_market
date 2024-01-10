@@ -4,6 +4,7 @@ const { Member } = require("../model");
 const { Board } = require("../model");
 const { ChattingRoom } = require("../model");
 const { ChattingText } = require("../model");
+const path = require("path");
 
 exports.getBoardInfo = async (req, res) => {
   const chattingroom = await ChattingRoom.findOne({
@@ -159,5 +160,46 @@ exports.patchChatState = (req, res) => {
   .catch((error) => {
     console.log(error);
     res.status(500).send("Patch Chat State Error");
+  });
+};
+
+exports.sendFile = async (req, res) => {
+  const data = {
+    image : req.file.path,
+  }
+  ChattingRoom.update(data, {
+    where: {
+      roomId: req.body.roomId,
+    },
+  })
+  .then((result) => {
+    if (result == 1) {
+      res.send(true);
+    } else if (result == 0) {
+      res.send(false);
+    } else {
+      res.status(500).send("Send File Error");
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).send("Send File Error");
+  });
+};
+
+exports.getFile = (req, res) => {
+  console.log("req.query.roomId!!!!!!!!!", req.query.roomId)
+  ChattingRoom.findOne({
+    where: {
+      roomId: req.query.roomId,
+    }
+  })
+  .then((result) => {
+    console.log("result.image!!!!!!!!!!!!!!!!!!!!!!!!!", result.image)
+    res.send(result.image)
+  })
+  .catch((error) => {
+    console.log("Get File Error", error);
+    res.status(500).send("Get File Error");
   });
 };
