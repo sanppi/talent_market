@@ -3,13 +3,15 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ProductCard } from '../Main';
 import ReviewList from '../../ReviewList';
+import Footer from '../Footer';
+import ChattingRoomList from '../ChattingRoomList';
 import '../../../styles/mypage.scss';
 import axios from 'axios';
+import Pattern from '../../Pattern';
 
 function MyPage({ user }) {
   const { memberId, nickname, id, redCard } = user;
   const navigate = useNavigate();
-  // const location = useLocation();
   const myDataList = ['찜 목록', '판매 상품', '내 리뷰', '채팅 목록'];
   const endpointMapping = {
     '찜 목록': 'favorite',
@@ -54,10 +56,12 @@ function MyPage({ user }) {
   return (
     <>
       {memberId && (
-        <div className="myPage">
+        <div className="myPage slideIn">
           <div className="myProfileContainer">
             <div className="myProfileBox1">
-              <div className="myProfileImg">🦸</div>
+              <div className="myProfileImg">
+                <Pattern />
+              </div>
               <Link to={`/member/mypage/update/${memberId}`}>
                 <button className="myProfileUpdate">내 정보 변경</button>
               </Link>
@@ -103,9 +107,11 @@ function MyPage({ user }) {
                             reviews={selectedData.filter(
                               (data) => data.type === 'review'
                             )}
-                            key={data.boardId}
+                            boardId={data.boardId}
                           />
                         );
+                      case 'chat':
+                        return <ChattingRoomList />;
                       default:
                         return null;
                     }
@@ -115,6 +121,7 @@ function MyPage({ user }) {
           </div>
         </div>
       )}
+      <Footer />
     </>
   );
 }

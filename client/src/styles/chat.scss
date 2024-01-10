@@ -1,0 +1,281 @@
+@import './utilies';
+
+body {
+  margin-top: 130px;
+}
+
+.chatContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 180px;
+
+  .chatListBox {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    line-height: 100%;
+    box-shadow: 0px 4px 2px 5px var(--main-blue);
+    border-radius: 35px;
+
+    .chatTitle {
+      margin: 28px 0 20px;
+      width: 100%;
+      font-size: 23px;
+    }
+
+    .chatList {
+      padding: 10px 5px;
+
+      .chatRoomList {
+        width: 100%;
+        height: 7vw;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 15px;
+        padding-top: 20px;
+        transition: transform 0.2s ease-in-out;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+
+        .chatProfile {
+          @include size(20px, 20px);
+          background-color: black;
+          border-radius: 50%;
+
+          &.pattern {
+            background-repeat: repeat;
+            background-color: #c97b7b;
+            min-width: 35px;
+            min-height: 35px;
+            background-color: #ff7d9d;
+            background-size: 20px 20px;
+            background-position: 0px 2px, 2px 5px, 7px 4px, 8px 1px, 0px 6px,
+              2px 0px, 7px 1px, 8px 5px;
+            background-image: linear-gradient(
+                335deg,
+                #c90032 5px,
+                transparent 5px
+              ),
+              linear-gradient(155deg, #c90032 5px, transparent 5px),
+              linear-gradient(335deg, #c90032 5px, transparent 5px),
+              linear-gradient(155deg, #c90032 5px, transparent 5px),
+              linear-gradient(335deg, #c90032 2px, transparent 2px),
+              linear-gradient(155deg, #c90032 2px, transparent 2px),
+              linear-gradient(335deg, #c90032 2px, transparent 2px),
+              linear-gradient(155deg, #c90032 2px, transparent 2px);
+          }
+        }
+
+        .chatRoom {
+          display: block;
+          text-align: left;
+          width: 240px;
+          height: 40px;
+
+          .chatRoomTitle {
+            color: var(--bright-blue);
+          }
+
+          .chatRoomName {
+            margin-top: 5px;
+            font-size: 12px;
+            opacity: 0.7;
+          }
+        }
+
+        .chatRedCard {
+          @include button(15px, 8px);
+          background-color: transparent;
+          font-size: 20px;
+        }
+      }
+
+      .hiddenLine {
+        margin: auto;
+        width: 90%;
+        border-top: 2px solid var(--main-red);
+      }
+    }
+  }
+}
+
+.chattingContainer {
+  margin-top: 180px;
+  display: flex;
+  justify-content: center;
+
+  .chattingBox {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    min-height: 500px;
+    max-height: 600px;
+    background-color: var(--main-blue);
+    padding: 10px 15px 0;
+    border-radius: 10px;
+    box-shadow: 0px 4px 2px 2px rgba(0, 0, 0, 0.3);
+
+    .chattingBoardBox {
+      height: 500px;
+
+      .chattngBoardInfo {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: 14px;
+        width: 100%;
+        color: white;
+        padding: 10px;
+        box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, 0.3);
+        position: relative;
+
+        .chattingBoardOne {
+          &:nth-child(2) {
+            width: 70px;
+            height: 50px;
+            margin: 0 30px 0 40px;
+            overflow: hidden;
+            border-radius: 5px;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: fill;
+              object-position: center;
+            }
+          }
+
+          &:last-child {
+            margin-left: 70px;
+          }
+
+          .chattingBoardTitle {
+            width: 90px;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-break: break-all;
+            height: 20px;
+          }
+
+          .chattingBoardPrice {
+            font-size: 12px;
+          }
+        }
+
+        .chattingBoardBtn {
+          @include button(10px, 9px);
+          position: absolute;
+          top: auto;
+          left: 5px;
+        }
+      }
+    }
+
+    .chatting {
+      @include size(100%, 360px);
+      overflow-y: scroll;
+
+      &::-webkit-scrollbar {
+        background-color: var(--light-blue);
+        width: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+      }
+      &::-webkit-scrollbar-trac {
+        margin-right: 3px;
+        background-color: var(--main-blue);
+      }
+
+      .chattingTextList {
+        margin-top: 40px;
+        .chattingText {
+          margin-top: 8px;
+
+          &.chattingNotice {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-top: 6px;
+          }
+
+          .chatContent {
+            display: inline-block;
+            margin: 0 7px;
+            padding: 5px 10px;
+            border-radius: 10px;
+          }
+
+          &.otherChat {
+            text-align: left;
+
+            .chatContent {
+              background-color: white;
+            }
+          }
+
+          &.myChat {
+            text-align: right;
+
+            .chatContent {
+              background-color: rgb(255, 255, 170);
+            }
+          }
+        }
+      }
+
+      .bottomBtnBox {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-around;
+
+        .bottomBtns {
+          position: absolute;
+          bottom: 90px;
+
+          button {
+            @include button(10px, 10px);
+            margin: 10px 50px;
+            box-shadow: 0 1px 1px 1px black;
+            transition: all 0.2s ease-in;
+            background-color: var(--light-blue);
+
+            &:hover {
+              background-color: var(--main-red);
+              color: whitesmoke;
+            }
+          }
+        }
+      }
+    }
+
+    .chattingInputContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+
+      .chattingInput {
+        height: 35px;
+        border-radius: 20px;
+        flex-grow: 1;
+        border: none;
+        text-indent: 9px;
+      }
+
+      .chattingBtn {
+        background-color: transparent;
+        border: none;
+        font-size: 40px;
+        color: whitesmoke;
+        margin-left: 10px;
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ const {
   sequelize,
   ChattingRoom,
 } = require('../model');
+const { Op } = require('sequelize');
 
 // 회원가입
 exports.signUp = async (req, res) => {
@@ -123,7 +124,6 @@ exports.getFavorites = async (req, res) => {
   console.log(req.session);
   const targetMemberId = req.session.user;
 
-  // const targetMemberId = 8;
   const check = checkUser(targetMemberId);
 
   if (!check)
@@ -154,7 +154,12 @@ exports.getFavorites = async (req, res) => {
               attributes: [],
             },
           ],
+          where: { isDelete: false }, // 수정: isDelete가 false인 데이터만 가져오도록 추가
         },
+      ],
+      order: [
+        // 기준이 되는 컬럼과 정렬 방식 지정
+        [Board, 'createdAt', 'DESC'],
       ],
 
       group: [
@@ -211,7 +216,7 @@ exports.getSellingProducts = async (req, res) => {
   try {
     // Board와 Comment 테이블을 조인
     const sellingProducts = await Board.findAll({
-      where: { memberId: targetMemberId },
+      where: { memberId: targetMemberId, isDelete: false },
       attributes: [
         'boardId',
         'image',
@@ -227,6 +232,7 @@ exports.getSellingProducts = async (req, res) => {
         },
       ],
       group: ['boardId', 'commentId'], // 그룹화 설정
+      order: [['createdAt', 'DESC']],
     });
 
     const formattedSellingProducts = sellingProducts.map((product) => ({
@@ -265,6 +271,7 @@ exports.getMyReviews = async (req, res) => {
         'stars',
         'createdAt',
         'updatedAt',
+        'commentId',
       ],
       include: [
         {
@@ -287,10 +294,13 @@ exports.getMyReviews = async (req, res) => {
       memberId: review.Member.memberId,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
+      commentId: review.commentId,
       Member: {
         nickname: review.Member.nickname,
       },
     }));
+
+    console.log('update', formattedReviews);
 
     res.send({ result: true, userData: formattedReviews });
   } catch (error) {
@@ -365,71 +375,74 @@ exports.userInfo = async (req, res) => {
 exports.updateUserInfo = async (req, res) => {
   try {
     const targetMemberId = req.session.user;
-    const { nickname, email, currentPw, newPw } = req.body;
+    const type = req.body.type;
+    const userData = req.body.userData;
 
     const member = await Member.findOne({
       where: { memberId: targetMemberId },
     });
 
+    console.log('data', userData);
+
     if (!member) {
       return res
         .status(404)
         .send({ result: false, message: '회원을 찾을 수 없습니다.' });
-    }
-
-    // 이메일 변경
-    if (email) {
-      // 이메일 중복 확인
-      const existingEmailUser = await Member.findOne({
-        where: { email: email },
-      });
-
-      if (existingEmailUser) {
-        console.log({ error: '중복된 이메일입니다.' });
-        return res.send({ result: false, type: '이메일' });
-      } else {
-        member.email = email;
-        await member.save();
-        return res.send({ result: true, type: '이메일' });
-      }
-    }
-
-    // 닉네임 변경
-    if (nickname) {
-      // 닉네임 중복 확인
-      const existingNicknameUser = await Member.findOne({
-        where: { nickname: nickname },
-      });
-
-      if (existingNicknameUser) {
-        console.log({ error: '중복된 닉네임입니다.' });
-        return res.send({ result: false, type: '닉네임' });
-      } else {
-        member.nickname = nickname;
-        await member.save();
-        return res.send({ result: true, type: '닉네임' });
-      }
-    }
-    // 비밀번호 변경
-
-    if (currentPw === member.pw && newPw !== undefined) {
-      member.pw = newPw;
     } else {
-      return res.send({
-        result: false,
-        message:
-          currentPw !== member.pw
-            ? '기존 비밀번호가 올바르지 않습니다.'
-            : '비밀번호를 입력해주세요.',
-      });
+      // 닉네임 변경
+      if (type === 'nickname') {
+        const nicknameUser = await Member.update(
+          {
+            nickname: userData,
+          },
+          { where: { memberId: targetMemberId } }
+        );
+
+        if (nicknameUser) {
+          return res.send({ result: true, message: '닉네임 수정 완료' });
+        }
+      }
+
+      // 이메일 변경
+      if (type === 'email') {
+        const emailUser = await Member.update(
+          {
+            email: userData,
+          },
+          { where: { memberId: targetMemberId } }
+        );
+
+        if (emailUser) {
+          return res.send({ result: true, message: '이메일 수정 완료' });
+        }
+      }
+
+      // 비밀번호 변경
+      if (type === 'pw') {
+        const existingPw = await Member.findOne({
+          where: { pw: userData.oldPw },
+        });
+
+        console.log('pw ex', existingPw);
+
+        if (existingPw) {
+          const pwUser = await Member.update(
+            {
+              pw: userData.newPw,
+            },
+            { where: { memberId: targetMemberId } }
+          );
+
+          console.log('dd', pwUser);
+
+          if (pwUser) {
+            return res.send({ result: true, message: '비밀번호 수정 완료' });
+          } else {
+            return res.send({ result: false, message: '정보 수정 실패' });
+          }
+        }
+      }
     }
-
-    await member.save();
-
-    return res.send({
-      result: true,
-      message: '회원 정보가 성공적으로 업데이트되었습니다.',
-    });
   } catch (error) {
     console.error('Error updating user info', error);
     return res.status(500).send('Internal Server Error');

@@ -1,8 +1,6 @@
 const { upload } = require("../multer/multerConfig"); // Multer 설정 파일 import
 const { Board, LikeBoardTable, Comment, Member, ChattingRoom } = require("../model");
 
-// 클라이언트 product, 서버 board
-
 // SB: 클라이언트 등록하기 버튼과 연결된 부분입니다.
 // 미들웨어를 사용해야해서 양식이 다릅니다.
 // 게시글 작성
@@ -18,7 +16,6 @@ const boardCreateHandler = async (req, res) => {
     });
 
     res.send({ message: "Success", boardId: newBoard.boardId });
-    console.log("Success");
   } catch (error) {
     console.error("글 등록 오류 발생:", error);
     res.status(500).send("상품 게시글을 작성할 수 없습니다.");
@@ -116,8 +113,6 @@ const boardUpdateProcess = async (req, res) => {
       { title, price, category, content, isOnMarket, ...imageUpdate },
       { where: { boardId: req.params.boardId } }
     );
-
-    console.log("아이디 ", req.params.boardId);
     
     res.send({ message: "update Success" });
   } catch (error) {
@@ -126,42 +121,51 @@ const boardUpdateProcess = async (req, res) => {
   }
 };
 
-// 게시글 삭제
-const boardDeleteProcess = (req, res) => {
-  Board.destroy({
-    where: { boardId: req.params.boardId },
-  })
-  .then((result) => {
-    console.log("삭제 ", result);
-    res.send({ result: true });
-  })
-  .catch((error) => {
-    console.log("에러 메시지 ", error);
-    res.status(400).send;
-  });
-};
+// 게시글 삭제 처리
+const boardIsDeleted = async (req, res) => {
+  try{
+    const { isDelete } = req.body;
+
+    await Board.update({
+        isDelete
+      }, { 
+        where: { boardId: req.params.boardId } 
+      }
+    );    
+    res.send({ message: "delete Success" });
+  }
+  catch(error){
+    console.error("에러 메시지 ", error);
+    res.status(500).send("게시글을 삭제할 수 없습니다.");
+  }
+}
 
 // 채팅방 생성
 const createChatRoom = async (req, res) => {
   try {
     const { memberId, boardId } = req.body;
 
-    const nickname = await Member.findOne({
-      where: { memberId: req.body.memberId },
-    });
-
-    const title = await Board.findOne({
-      where: { boardId: req.body.boardId },
-    });
-
-    const chattingRoomName = `${title.title}/${nickname.nickname}`
-
     // 이미 존재하는 채팅방인지 확인
-    const existingRoom = await ChattingRoom.findOne({ where: { roomName: chattingRoomName } });
+    const existingRoom = await ChattingRoom.findOne({
+       where: { memberId: memberId, boardId: boardId } 
+      });
+
     if (existingRoom) {
       return res.send({ message: "채팅방이 이미 존재합니다.", roomId: existingRoom.roomId });
     }
 
+    // 채팅방 이름을 구성
+    const nickname = await Member.findOne({
+      where: { memberId: memberId }
+    });
+
+    const title = await Board.findOne({
+      where: { boardId: boardId }
+    });
+
+    const chattingRoomName = `${title.title}/${nickname.nickname}`;
+
+    // 새 채팅방 생성
     const newChatRoom = await ChattingRoom.create({
       memberId,
       boardId,
@@ -182,6 +186,6 @@ module.exports = {
   getLike: getLikeStatus,
   boardLike: toggleLike,
   boardUpdate: [upload.single("image"), boardUpdateProcess],
-  boardDelete: boardDeleteProcess,
+  boardDelete: boardIsDeleted,
   boardChat: createChatRoom,
 };

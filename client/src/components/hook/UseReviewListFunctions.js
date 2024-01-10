@@ -15,6 +15,10 @@ const useReviewListFunctions = (boardId) => {
 
   const memberId = useSelector((state) => state.auth.memberId);
 
+  useEffect(() => {
+    console.log('ee변경 review', reviews);
+  }, [reviews]);
+
   const getReviews = async () => {
     try {
       const response = await axios({
@@ -22,8 +26,6 @@ const useReviewListFunctions = (boardId) => {
         method: 'get',
         withCredentials: true,
       });
-
-      console.log('getReviews', response.data);
 
       if (response.data.result) {
         setReviews(response.data.userData);
@@ -65,8 +67,13 @@ const useReviewListFunctions = (boardId) => {
           isAnonymous: editingReview.isAnonymous,
         });
 
+        console.log(res);
+
         if (res) {
-          console.log('2 editingReview', editingReview);
+          await getReviews();
+          console.log('??', editingReview.title);
+          setReviewTitle(editingReview.title);
+          console.log(reviewTitle);
           setEditingReview(null); // 수정이 완료되면 상태를 초기화
         }
       }
@@ -87,7 +94,8 @@ const useReviewListFunctions = (boardId) => {
       );
 
       if (response.status === 200) {
-        console.log('서버 요청 완료');
+        alert('리뷰가 성공적으로 수정되었습니다.');
+        setReviews(reviewData);
         onToggleForm();
         return true;
       }
@@ -104,7 +112,7 @@ const useReviewListFunctions = (boardId) => {
       );
       if (response.status === 200) {
         alert('리뷰가 성공적으로 삭제되었습니다.');
-        getReviews();
+        await getReviews();
       }
     } catch (error) {
       alert('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');

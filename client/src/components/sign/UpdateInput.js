@@ -28,6 +28,8 @@ export default function UpdateInput({
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const memberId = useSelector((state) => state.auth.memberId);
+  const [doneMsg, setDoneMsg] = useState('');
 
   useEffect(() => {
     setInputValue(value);
@@ -40,17 +42,20 @@ export default function UpdateInput({
       onIsEditing();
       onChange(id, inputValue);
       onInfoChange(inputValue);
-      // 주석 처리한 서버와 연결
-      // const response = await axios({
-      //   url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
-      //   data: { type: id, userData: inputValue },
-      //   withCredentials: true,
-      // });
-      // if (response.data.result) {
-      //   onModal();
-      //   onIsEditing();
-      //   onChange(id, inputValue);
-      // }
+
+      const response = await axios({
+        url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
+        method: 'post',
+        data: { type: id, userData: inputValue },
+        withCredentials: true,
+      });
+
+      if (response.data.result) {
+        setDoneMsg(response.data.message);
+        onModal();
+        onIsEditing();
+        onChange(id, inputValue);
+      }
       dispatch(updateUser({ [id]: inputValue }));
     } else {
       setErrorMsg('유효하지 않은 값이 있습니다.');
@@ -137,7 +142,7 @@ export default function UpdateInput({
                   type="confirm"
                   toggleState={true}
                   setToggleState={onModal}
-                  content="수정"
+                  content={doneMsg}
                   onButtonClick={() => navigate('/member/mypage')}
                 />
               )}

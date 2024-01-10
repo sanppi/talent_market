@@ -1,5 +1,6 @@
 .SalePost {
   padding-bottom: 20px;
+  height: 120vh;
   form {
     position: absolute;
     top: 90px;
@@ -31,8 +32,8 @@
         }
       }
 
-      input[type="text"],
-      input[type="number"],
+      input[type='text'],
+      input[type='number'],
       select,
       textarea {
         width: 60%;
@@ -89,7 +90,7 @@
     .submitButton {
       background-color: #2095b9;
       display: block;
-      margin-left: auto;
+      margin: auto;
       width: 30%;
       font-size: 15px;
     }
@@ -107,12 +108,12 @@
     position: relative;
   }
 
-  .priceInput input[type="number"] {
+  .priceInput input[type='number'] {
     padding-right: 25px; /* '원' 텍스트를 수용할 만큼의 공간을 확보합니다. */
   }
 
   .priceInput::after {
-    content: "원";
+    content: '원';
     position: absolute;
     right: 155px;
     top: 50%;

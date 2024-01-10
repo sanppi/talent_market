@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Navbar from "./Navbar";
-import "../../styles/salepost.scss";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import '../../styles/salepost.scss';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function SalePost() {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
   const memberId = useSelector((state) => state.auth.memberId);
   const nickname = useSelector((state) => state.auth.nickname);
@@ -19,7 +20,7 @@ export default function SalePost() {
   useEffect(() => {
     // 이 부분 추가
     if (!isLoggedIn) {
-      navigate("/member/signin"); // 변경된 부분
+      navigate('/member/signin'); // 변경된 부분
     }
   }, [isLoggedIn, navigate]);
 
@@ -31,19 +32,19 @@ export default function SalePost() {
     // 페이지 새로고침 방지
     e.preventDefault();
 
-    if (category === "") {
-      alert("카테고리를 선택해주세요.");
+    if (category === '') {
+      alert('카테고리를 선택해주세요.');
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", image);
-    formData.append("title", title);
-    formData.append("price", price);
-    formData.append("category", category);
-    formData.append("content", content);
-    formData.append("memberId", memberId);
-    formData.append("nickname", nickname);
+    formData.append('image', image);
+    formData.append('title', title);
+    formData.append('price', price);
+    formData.append('category', category);
+    formData.append('content', content);
+    formData.append('memberId', memberId);
+    formData.append('nickname', nickname);
 
     // 데이터 받으십쇼~~!!
     try {
@@ -52,7 +53,7 @@ export default function SalePost() {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -61,7 +62,7 @@ export default function SalePost() {
         navigate(`/product/${response.data.boardId}`);
       }
     } catch (error) {
-      alert("상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요");
+      alert('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
     }
   };
 
@@ -71,14 +72,14 @@ export default function SalePost() {
       <div className="SalePost">
         <form
           onSubmit={handleSubmit}
-          style={{ top: "140px", position: "absolute" }}
+          style={{ top: '140px', position: 'absolute' }}
         >
           <div>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
               <div>상품이미지</div>
@@ -94,7 +95,7 @@ export default function SalePost() {
                   id="fileInput"
                   type="file"
                   onChange={handleImageUpload}
-                  style={{ display: "none" }}
+                  style={{ display: 'none' }}
                 />
                 {image && (
                   <img
@@ -154,6 +155,7 @@ export default function SalePost() {
           <button type="submit" className="submitButton">
             상품 등록하기
           </button>
+          <Footer />
         </form>
       </div>
     </>

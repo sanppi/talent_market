@@ -9,7 +9,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: var(--header-margin);
+    margin-top: 180px;
 
     .myProfileContainer {
       display: flex;
@@ -26,13 +26,12 @@ body {
         .myProfileImg {
           @include size(100%, 100%);
           margin-bottom: 10px;
-          border-radius: 50px;
-          // border: 3px solid var(--main-red);
+          border-radius: 50%;
           font-size: 180px;
           text-align: center;
           line-height: 140%;
           overflow: hidden;
-          box-shadow: 0px 2px 1px 3px var(--main-red);
+          box-shadow: 0px 1px 1px 3px var(--main-red);
         }
 
         .myProfileUpdate {
@@ -42,7 +41,7 @@ body {
           color: azure;
           box-shadow: 0px 2px 1px 1px #c1bfbf;
           transition-duration: 0.2s;
-          margin-top: 5px;
+          margin-top: 7px;
 
           &:active {
             box-shadow: none;
@@ -133,6 +132,7 @@ body {
       .myListContent {
         margin-top: 40px;
         max-width: 400px;
+        // @include leftToRight(0.5s);
 
         .pageWrapper {
           width: 100%;

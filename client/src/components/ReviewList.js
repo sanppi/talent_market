@@ -1,6 +1,7 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import useReviewListFunctions from './hook/UseReviewListFunctions';
 import '../styles/mypage.scss';
+import axios from 'axios';
 
 const ReviewList = ({ boardId, reviews }) => {
   const {
@@ -22,9 +23,29 @@ const ReviewList = ({ boardId, reviews }) => {
     onToggleForm,
   } = useReviewListFunctions(boardId);
 
+  const [reviewData, setReviewData] = useState(reviews);
+
+  useEffect(()=>{
+    console.log("reviewsreviews",reviews)
+  },[reviews])
+
+  const reviewEdit = async (event) => {
+    await handleReviewSubmit(event)
+
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/review`,
+      method: 'get',
+      withCredentials: true,
+    });
+
+    console.log(response.data)
+    if (response.data.result) {
+      setReviewData(response.data.userData)
+    }
+  }
+
   return (
     <>
-      {/* <div className="myReviewList"> */}
       {reviews.length === 0 ? (
         <div className="noReviewNotice">아직 작성된 리뷰가 없습니다.</div>
       ) : (
@@ -40,7 +61,7 @@ const ReviewList = ({ boardId, reviews }) => {
             </tr>
           </thead>
           <tbody className="reviewTableContents">
-            {reviews.map((review, index) => (
+            {reviewData.map((review, index) => (
               <Fragment key={review.commentId}>
                 <tr
                   onClick={() =>
@@ -91,7 +112,7 @@ const ReviewList = ({ boardId, reviews }) => {
       )}
 
       {toggleForm && (
-        <form className="reviewForm" onSubmit={handleReviewSubmit}>
+        <form className="reviewForm" onSubmit={reviewEdit}>
           <input
             type="text"
             placeholder="한 줄 리뷰 제목"

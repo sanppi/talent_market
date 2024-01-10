@@ -11,6 +11,7 @@ import axios from 'axios';
 import UpdateBasicInput from '../../sign/UpdateBasicInput';
 import UpdatePwInput from '../../sign/UpdatePwInput';
 import ModalAccount from '../../ModalAccount';
+import Footer from '../Footer';
 
 export function MyPageUpdate({ user, deleteSuccess }) {
   const { memberId, nickname, email } = user;
@@ -87,9 +88,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
         data: data,
         withCredentials: true,
       });
-      if (response.data.result) {
-        // TODO : 성공하면..
-      }
     } catch (err) {
       console.error('비번 수정 err: ', err.message);
     }
@@ -180,7 +178,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     <>
       {memberId && (
         <form name="myPageForm" onSubmit={handleSubmit(onSubmit)}>
-          <div className="signForm">
+          <div className="signForm slideIn">
             <div className="signInputForm">
               <div>기본정보</div>
               <UpdateBasicInput
@@ -203,16 +201,13 @@ export function MyPageUpdate({ user, deleteSuccess }) {
                       handleInputChange={handleInputChange}
                       watchObj={watchObj}
                       errors={errors}
+                      setValue={setValue}
+                      onPwToggle={onPwToggle}
                     />
                   </div>
                 </>
               )}
-              <div
-                className={`myAccount ${
-                  accountToggle ? 'slideIn' : 'slideOut'
-                }`}
-                onClick={hasAccountCk}
-              >
+              <div className="myAccount" onClick={hasAccountCk}>
                 결제정보 등록/확인 >
               </div>
               {accountToggle && (
@@ -225,6 +220,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
               <div className="userDelete" onClick={onDeleteToggle}>
                 회원 탈퇴
               </div>
+              <Footer />
+
               {deleteToggle && (
                 <ModalBasic
                   content="탈퇴"

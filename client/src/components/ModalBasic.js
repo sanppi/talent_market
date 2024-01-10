@@ -30,7 +30,7 @@ export default function ModalBasic({
     <>
       {toggleState && (
         <>
-          <div className="modalContainer">
+          <div className="modalContainer slideIn">
             <div className="modalExitWrapper" onClick={disableModal}>
               &times;
             </div>

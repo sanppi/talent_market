@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import "../../styles/productdetail.scss";
-import { useSelector } from "react-redux";
-import Review from "./Review";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import '../../styles/productdetail.scss';
+import { useSelector } from 'react-redux';
+import Review from './Review';
+import Footer from './Footer';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -24,17 +25,23 @@ export default function ProductDetailPage() {
   useEffect(() => {
     async function getProductDetail() {
       try {
-        console.log(`Requested boardId: ${boardId}`);
+        // console.log(`Requested boardId: ${boardId}`);
         const response = await axios.get(
           `${process.env.REACT_APP_DB_HOST}product/${boardId}`,
           { params: { isDetailView: true } }
         );
 
+        if (response.data.product.isDelete) {
+          alert('삭제된 게시글입니다.');
+          navigate('/');
+          return;
+        }
+
         setProduct(response.data.product);
-        console.log(response.data);
-        console.log(response.data.product);
+        // console.log(response.data);
+        // console.log(response.data.product);
       } catch (error) {
-        console.error("데이터를 불러오는데 실패하였습니다: ", error);
+        console.error('데이터를 불러오는데 실패하였습니다: ', error);
       }
     }
     getProductDetail();
@@ -48,7 +55,7 @@ export default function ProductDetailPage() {
         );
         setHeart(response.data.isLike);
       } catch (error) {
-        console.error("찜 정보를 불러오는데 실패하였습니다: ", error);
+        console.error('찜 정보를 불러오는데 실패하였습니다: ', error);
       }
     }
     fetchLikeStatus();
@@ -56,7 +63,7 @@ export default function ProductDetailPage() {
 
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
-      alert("로그인이 필요한 기능입니다.");
+      alert('로그인이 필요한 기능입니다.');
       return;
     }
 
@@ -69,14 +76,19 @@ export default function ProductDetailPage() {
         }
       );
 
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
-      console.error("찜 정보를 보내는데 실패하였습니다: ", error);
+      console.error('찜 정보를 보내는데 실패하였습니다: ', error);
     }
   };
 
   const handleContactClick = async () => {
     try {
+      if (!isLoggedIn) {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+      }
+      
       // 채팅방 생성
       const response = await axios.post(
         `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`, {
@@ -85,26 +97,26 @@ export default function ProductDetailPage() {
         }
       );
 
-      console.log("콘솔 로그 ", response.data)
-  
+      // console.log('콘솔 로그 ', response.data);
+
       // 채팅방 정보 업데이트 및 채팅방 ID 저장
-      if (response.data.message === "채팅방이 생성되었습니다.") {
+      if (response.data.message === '채팅방이 생성되었습니다.') {
         setRoomId(response.data.roomId);
         // 채팅방이 생성되면 해당 채팅방 라우트로 이동
         navigate(`/chatRoom/${response.data.roomId}`);
-      } else if (response.data.message === "채팅방이 이미 존재합니다.") {
+      } else if (response.data.message === '채팅방이 이미 존재합니다.') {
         // 이미 존재하는 채팅방이므로 roomId 저장
         setRoomId(response.data.roomId);
         navigate(`/chatRoom/${response.data.roomId}`);
       } else {
-        console.error("채팅방 생성에 실패하였습니다: ", response.data.message);
+        console.error('채팅방 생성에 실패하였습니다: ', response.data.message);
         // 서버로부터 받은 에러 메시지를 출력하거나, 적절한 에러 처리를 수행할 수 있습니다.
       }
     } catch (error) {
-      console.error("채팅방 생성에 실패하였습니다: ", error);
-      console.error("에러 응답 데이터: ", error.response?.data);
+      console.error('채팅방 생성에 실패하였습니다: ', error);
+      console.error('에러 응답 데이터: ', error.response?.data);
     }
-  };  
+  };
 
   return (
     <div className="productDetail">
@@ -117,7 +129,7 @@ export default function ProductDetailPage() {
           />
           {memberId !== product.memberId && (
             <div className="heart" onClick={handleHeartClick}>
-              {heart ? "❤️" : "🤍"}
+              {heart ? '❤️' : '🤍'}
             </div>
           )}
         </div>
@@ -147,28 +159,31 @@ export default function ProductDetailPage() {
               <>
                 <button
                   className="commonBtn"
-                  style={{ backgroundColor: "#2095b9" }}
+                  style={{ backgroundColor: '#2095b9' }}
                 >
                   <Link to={`/product/edit/${boardId}`}>수정 / 삭제</Link>
                 </button>
               </>
             ) : (
               <button
-                className={`commonBtn ${heart ? "heartClicked" : ""}`}
+                className={`commonBtn ${heart ? 'heartClicked' : ''}`}
                 onClick={handleHeartClick}
               >
                 찜하기
               </button>
             )}
-            { memberId !== product.memberId && (
-              chattingRoom ? (
+            {memberId !== product.memberId &&
+              (chattingRoom ? (
                 <button className="commonBtn">
-                  <Link to={`/chatRoom/${chattingRoom.roomId}`}>채팅방으로 이동</Link>
+                  <Link to={`/chatRoom/${chattingRoom.roomId}`}>
+                    채팅방으로 이동
+                  </Link>
                 </button>
               ) : (
-                <button className="commonBtn" onClick={handleContactClick}>연락하기</button>
-              )
-            )}
+                <button className="commonBtn" onClick={handleContactClick}>
+                  연락하기
+                </button>
+              ))}
           </div>
         </div>
       </div>
@@ -177,6 +192,7 @@ export default function ProductDetailPage() {
       </div>
       <hr />
       <Review boardId={boardId} productMemberId={product.memberId} />
+      <Footer />
     </div>
   );
 }

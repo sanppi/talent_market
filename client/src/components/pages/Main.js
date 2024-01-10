@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import "../../styles/main.scss";
 import { useSelector } from "react-redux";
+import Footer from "./Footer";
 
 // 상품 카드..?
 export function ProductCard({ product }) {
@@ -67,12 +68,12 @@ function Main() {
   useEffect(() => {
     async function getProduct() {
       try {
-        const response = await axios.get("http://localhost:8000/", {
+        const response = await axios.get(process.env.REACT_APP_DB_HOST, {
           withCredentials: true,
         }); // 수정된 부분
         setProducts(response.data.products);
-        console.log(response.data);
-        console.log(response.data.products);
+        // console.log(response.data);
+        // console.log(response.data.products);
       } catch (error) {
         console.error("데이터를 불러오는데 실패하였습니다: ", error);
       }
@@ -103,6 +104,10 @@ function Main() {
             searchProducts(products, searchTerm).map((product) => (
               <ProductCard key={product.boardId} product={product} />
             ))}
+          <Footer />
+          <button className="chattingBtn">
+            <Link to="/chatting">⌨️</Link>
+          </button>
         </div>
       </div>
       <button className="chattingBtn" onClick={handleChattingButtonClick}>

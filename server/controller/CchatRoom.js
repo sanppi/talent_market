@@ -29,6 +29,7 @@ exports.getBoardInfo = async (req, res) => {
     price: chattingroom['Board.price'],
     sellerNickname: chattingroom['Board.Member.nickname'],
     buyerNickname: chattingroom['Member.nickname'],
+    chatState: chattingroom.chatState,
   };
   res.send(data)
 };
@@ -63,7 +64,6 @@ exports.getChatText = (req, res) => {
   });
 };
 
-
 exports.postChat = (req, res) => {
   const data = {
     roomId: req.body.roomId,
@@ -80,4 +80,84 @@ exports.postChat = (req, res) => {
   });
 };
 
+exports.getAccountNumber = (req, res) => {
+  Member.findOne({
+    where: {
+      memberId: req.query.memberId,
+    }
+  })
+  .then((result) => {
+    if (result.bankName == "NULL" || result.accountNum == "NULL") {
+      res.send(false)
+    } else if (result.bankName !== "NULL" && result.accountNum !== "NULL") {
+      const data = {
+        bankName: result.bankName,
+        accountNum: result.accountNum
+      };
+      res.send(data);
+    }
+  })
+  .catch((error) => {
+    console.log("Get Account Number Error", error);
+    res.status(500).send("Get Account Number Error");
+  });
+};
 
+exports.patchBuyerInfo = (req, res) => {
+  // res.send(req)
+  ChattingRoom.findOne({
+    where: {
+      roomId: req.body.roomId,
+    },
+  })
+  .then((result) => {
+    const data = {
+      canRedCard: result.dataValues.canRedCard + 1,
+      canReview: result.dataValues.canReview + 1,
+    };
+    ChattingRoom.update(data, {
+      where: {
+        roomId: req.body.roomId,
+      },
+    })
+      .then((result) => {
+        // SB: 업데이트 성공의 결과로 나온 result를 이용한 조건문입니다.
+        if (result == 1) {
+          res.send(true);
+        } else if (result == 0) {
+          res.send(false);
+        } else {
+          res.status(500).send("Patch Buyer Info Error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send("Patch Buyer Info Error");
+      });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).send("Patch Buyer Info Error");
+  });
+};
+
+exports.patchChatState = (req, res) => {
+  ChattingRoom.update(req.body, {
+    where: {
+      roomId: req.body.roomId,
+    },
+  })
+  .then((result) => {
+    if (result == 1) {
+      res.send(true);
+    } else if (result == 0) {
+      res.send(false);
+    } else {
+      res.status(500).send("Patch Chat State Error");
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).send("Patch Chat State Error");
+  });
+};
