@@ -60,7 +60,7 @@ function Chatting({ user }) {
   return (
     <>
       {memberId && (
-        <div className="chatContainer">
+        <div className="chatContainer slideIn">
           <div className="chatListBox">
             <div className="chatTitle"> {nickname}님의 채팅 목록</div>
             <div className="chatList">
