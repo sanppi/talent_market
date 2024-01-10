@@ -15,10 +15,6 @@ const useReviewListFunctions = (boardId) => {
 
   const memberId = useSelector((state) => state.auth.memberId);
 
-  useEffect(() => {
-    console.log('ee변경 review', reviews);
-  }, [reviews]);
-
   const getReviews = async () => {
     try {
       const response = await axios({
@@ -56,9 +52,8 @@ const useReviewListFunctions = (boardId) => {
 
     try {
       if (editingReview) {
-        // 수정 중인 리뷰가 있다면
-        // 리뷰 업데이트
-        const res = await handleReviewUpdate(editingReview.commentId, {
+        // 수정 중인 리뷰가 있다면 리뷰 업데이트
+        await handleReviewUpdate(editingReview.commentId, {
           title: editingReview.title,
           memberId: memberId,
           review: editingReview.review,
@@ -66,16 +61,6 @@ const useReviewListFunctions = (boardId) => {
           boardId: boardId,
           isAnonymous: editingReview.isAnonymous,
         });
-
-        console.log(res);
-
-        if (res) {
-          await getReviews();
-          console.log('??', editingReview.title);
-          setReviewTitle(editingReview.title);
-          console.log(reviewTitle);
-          setEditingReview(null); // 수정이 완료되면 상태를 초기화
-        }
       }
     } catch (error) {
       alert('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
