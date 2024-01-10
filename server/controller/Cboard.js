@@ -163,22 +163,27 @@ const createChatRoom = async (req, res) => {
   try {
     const { memberId, boardId } = req.body;
 
-    const nickname = await Member.findOne({
-      where: { memberId: req.body.memberId },
-    });
-
-    const title = await Board.findOne({
-      where: { boardId: req.body.boardId },
-    });
-
-    const chattingRoomName = `${title.title}/${nickname.nickname}`
-
     // 이미 존재하는 채팅방인지 확인
-    const existingRoom = await ChattingRoom.findOne({ where: { roomName: chattingRoomName, boardId: boardId } });
+    const existingRoom = await ChattingRoom.findOne({
+       where: { memberId: memberId, boardId: boardId } 
+      });
+
     if (existingRoom) {
       return res.send({ message: "채팅방이 이미 존재합니다.", roomId: existingRoom.roomId });
     }
 
+    // 채팅방 이름을 구성
+    const nickname = await Member.findOne({
+      where: { memberId: memberId }
+    });
+
+    const title = await Board.findOne({
+      where: { boardId: boardId }
+    });
+
+    const chattingRoomName = `${title.title}/${nickname.nickname}`;
+
+    // 새 채팅방 생성
     const newChatRoom = await ChattingRoom.create({
       memberId,
       boardId,
