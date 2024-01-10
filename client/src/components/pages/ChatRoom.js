@@ -29,7 +29,7 @@ function ChatRoom({ user }) {
   const [chatList, setChatList] = useState([]);
   const [price, setPrice] = useState("");
 
-  const [chatState, setChatState] = useState("");
+  const [chatState, setChatState] = useState("ready");
 
   const [image, setImage] = useState("");
   const [imagePath, setImagePath] = useState("");
@@ -467,52 +467,42 @@ function ChatRoom({ user }) {
     // link.click();
   };
 
-  const sellCheck = () => {
-    const patchBuyerInfo = async () => {
-      const sellData = {
-        roomId: id,
-      };
-        try {
-          const response = await axios.patch(
-            `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchBuyerInfo`,
-            sellData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          if (response.data) {
-            let msg = "거래가 완료되었습니다."
-            socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-            // sendSellBuyMsg("거래가 완료되었습니다.", memberId)
-          } else {
-            let msg = "거래가 성사되지 않았습니다."
-            socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-            // sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
-          }
-          const data = {
-            roomId: id,
-            chatState: "ready",
-          }
-        );
-        if (response.data) {
-          sendSellBuyMsg('거래가 완료되었습니다.', memberId);
-        } else {
-          sendSellBuyMsg('거래가 성사되지 않았습니다.', memberId);
-        }
-        const data = {
-          roomId: id,
-          chatState: 'ready',
-        };
-
-        patchChatState(data);
-      } catch (error) {
-        console.error('Patch Buyer Info Error:', error);
-      }
+  const patchBuyerInfo = async () => {
+    const sellData = {
+      roomId: id,
     };
+      try {
+        const response = await axios.patch(
+          `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchBuyerInfo`,
+          sellData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        if (response.data) {
+          let msg = "거래가 완료되었습니다."
+          socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
+          // sendSellBuyMsg("거래가 완료되었습니다.", memberId)
+        } else {
+          let msg = "거래가 성사되지 않았습니다."
+          socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
+          // sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
+        }
+    } catch (error) {
+      console.error('Patch Buyer Info Error:', error);
+    }
+  };
 
+  const sellCheck = () => {
     patchBuyerInfo();
+
+    const data = {
+      roomId: id,
+      chatState: "ready",
+    }
+    patchChatState(data);
   };
 
 
@@ -574,6 +564,10 @@ function ChatRoom({ user }) {
     console.log(chatState);
   }, [chatState]);
 
+  useEffect(() => {
+    console.log(userDo);
+  }, [userDo]);
+
   return (
     <>
       <div className="chattingContainer">
@@ -610,84 +604,84 @@ function ChatRoom({ user }) {
                 })}
               </div>
               <div className="bottomBtnBox">
-                            {chatState === "ready" ? (
-              userDo === "구매" ? (
-                <div className="bottomBtns">
-                  <button onClick={wantBuy}>구매 요청</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === "want" ? (
-              userDo === "판매" ? (
-                <div className="bottomBtns">
-                  <button onClick={sell}>판매 확정</button>
-                  <button onClick={sellCancel}>판매 취소</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === "sale" ? (
-              userDo === "구매" ? (
-                <div className="bottomBtns">
-                  <button onClick={buy}>구매 확정</button>
-                  <button onClick={buyCancel}>구매 취소</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === "done" ? (
-              userDo === "판매" ? (
-                // <form onSubmit={handleSubmit}>
-                // <label htmlFor="fileInput">
-                //   {!image && ( 
-                //     <img src="/static/img.png" alt="img example" className="exImage" />
-                //   )}
-                //   <input
-                //     id="fileInput"
-                //     type="file"
-                //     onChange={handleImageUpload}
-                //     style={{ display: 'none' }}
-                //   />
-                //   {image && (
-                //     <img
-                //       src={URL.createObjectURL(image)}
-                //       alt="preview"
-                //       className="exImage"
-                //     />
-                //   )}
-                // </label>
-                <div className="bottomBtns">
-                  <button onClick={uploadFile}>상품 ㄱㄱ</button>
-                </div>
-              //   <button type="submit" className="submitButton">상품 보내기</button>
-              // </form>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-            {chatState === "check" ? (
-              userDo === "구매" ? (
-                <div className="bottomBtns">
-                  <button onClick={downloadFile}>상품 받기</button>
-                </div>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
+                {chatState === "ready" ? (
+                  userDo === "구매" ? (
+                    <div className="bottomBtns">
+                      <button onClick={wantBuy}>구매 요청</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === "want" ? (
+                  userDo === "판매" ? (
+                    <div className="bottomBtns">
+                      <button onClick={sell}>판매 확정</button>
+                      <button onClick={sellCancel}>판매 취소</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === "sale" ? (
+                  userDo === "구매" ? (
+                    <div className="bottomBtns">
+                      <button onClick={buy}>구매 확정</button>
+                      <button onClick={buyCancel}>구매 취소</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === "done" ? (
+                  userDo === "판매" ? (
+                    // <form onSubmit={handleSubmit}>
+                    // <label htmlFor="fileInput">
+                    //   {!image && ( 
+                    //     <img src="/static/img.png" alt="img example" className="exImage" />
+                    //   )}
+                    //   <input
+                    //     id="fileInput"
+                    //     type="file"
+                    //     onChange={handleImageUpload}
+                    //     style={{ display: 'none' }}
+                    //   />
+                    //   {image && (
+                    //     <img
+                    //       src={URL.createObjectURL(image)}
+                    //       alt="preview"
+                    //       className="exImage"
+                    //     />
+                    //   )}
+                    // </label>
+                    <div className="bottomBtns">
+                      <button onClick={uploadFile}>상품 ㄱㄱ</button>
+                    </div>
+                  //   <button type="submit" className="submitButton">상품 보내기</button>
+                  // </form>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
+                {chatState === "check" ? (
+                  userDo === "구매" ? (
+                    <div className="bottomBtns">
+                      <button onClick={downloadFile}>상품 받기</button>
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           </div>
