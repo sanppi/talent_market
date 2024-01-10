@@ -198,6 +198,7 @@
     font-size: 17px;
     border: none;
     border-radius: 5px;
+    transition: all 0.2s ease-in-out;
 
     @media screen and (max-width: 500px) {
       width: 30px;
@@ -239,6 +240,11 @@
     gap: 10px;
     width: 23vw;
     margin-left: auto;
+    transition: opacity 0.5s ease;
+
+    &.visible {
+      opacity: 1;
+    }
 
     @media screen and (max-width: 400px) {
       width: 80px;

@@ -3,6 +3,8 @@ import axios from 'axios';
 import '../../styles/productdetail.scss';
 import { useSelector } from 'react-redux';
 import '../../styles/review.scss';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function Review({ boardId, productMemberId }) {
   const [reviews, setReviews] = useState([]);
@@ -14,6 +16,8 @@ export default function Review({ boardId, productMemberId }) {
   const memberId = useSelector((state) => state.auth.memberId);
   const [selectedReview, setSelectedReview] = useState(null);
   const [editingReview, setEditingReview] = useState(null);
+  const [editToggle, onEditToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   const getReviews = async () => {
     try {
@@ -60,6 +64,10 @@ export default function Review({ boardId, productMemberId }) {
       isAnonymous: isAnonymous,
     };
 
+    onEditToggle();
+    setModalType('리뷰가 작성되었습니다.');
+    setIsReviewFormVisible(false);
+
     try {
       if (editingReview) {
         // 수정 중인 리뷰가 있다면
@@ -73,6 +81,8 @@ export default function Review({ boardId, productMemberId }) {
           isAnonymous: editingReview.isAnonymous,
         });
         setEditingReview(null); // 수정이 완료되면 상태를 초기화
+        onEditToggle();
+        setIsReviewFormVisible(false);
       } else {
         // 새 리뷰 작성
         const response = await axios.post(
@@ -81,14 +91,14 @@ export default function Review({ boardId, productMemberId }) {
         );
 
         if (response.status === 200) {
-          alert('리뷰가 성공적으로 작성되었습니다.');
+          onEditToggle();
           getReviews(); // 새 리뷰 작성 후 리뷰 목록을 갱신합니다.
         }
       }
       // 리뷰 작성 혹은 수정이 완료된 후, editingReview 상태를 초기화해줍니다.
       setEditingReview(null);
     } catch (error) {
-      alert('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      setModalType('리뷰 작성에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -104,11 +114,11 @@ export default function Review({ boardId, productMemberId }) {
       );
 
       if (response.status === 200) {
-        alert('리뷰가 성공적으로 수정되었습니다.');
+        setModalType('리뷰가 성공적으로 수정되었습니다.');
         getReviews(); // 리뷰 수정 후 리뷰 목록을 갱신합니다.
       }
     } catch (error) {
-      alert('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      setModalType('리뷰 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
       console.log(error);
     }
   };
@@ -119,15 +129,16 @@ export default function Review({ boardId, productMemberId }) {
         `${process.env.REACT_APP_DB_HOST}review/delete/${commentId}`
       );
       if (response.status === 200) {
-        alert('리뷰가 성공적으로 삭제되었습니다.');
+        setModalType('리뷰가 성공적으로 삭제되었습니다.');
+        onEditToggle();
         getReviews();
       }
     } catch (error) {
-      alert('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      setModalType('리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
-  // console.log("review: ", reviews);
+  console.log('review: ', modalType);
 
   return (
     <>
@@ -219,6 +230,7 @@ export default function Review({ boardId, productMemberId }) {
             리뷰 작성하기
           </button>
         )}
+
         {isReviewFormVisible && (
           <form className="reviewForm" onSubmit={handleReviewSubmit}>
             <input
@@ -306,6 +318,14 @@ export default function Review({ boardId, productMemberId }) {
           </form>
         )}
       </div>
+      {editToggle && (
+        <ModalBasic
+          type="confirmFast"
+          content={modalType}
+          toggleState={true}
+          setToggleState={onEditToggle}
+        />
+      )}
     </>
   );
 }
