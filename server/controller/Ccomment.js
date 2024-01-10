@@ -1,14 +1,53 @@
-const { Comment } = require("../model");
+const { Comment, ChattingRoom } = require("../model");
+
+// 후기 작성 권한 확인
+exports.checkAuthority = async (req, res) => {
+  try {
+    const { memberId, boardId } = req.query;
+
+    if (!memberId) {
+      return res.status(403).send("로그인하지 않았다면 리뷰를 작성할 수 없습니다.");
+    }
+
+    const chatRoom = await ChattingRoom.findOne({
+      where: { boardId: boardId, memberId: memberId },
+    });
+
+    if (chatRoom && chatRoom.canReview > 0) {
+      res.status(200).send("You can write a review");
+    } else {
+      res.status(403).send("상품을 구매하지 않았다면 리뷰를 작성할 수 없습니다.");
+    }
+  } catch (error) {
+    console.log("글 작성 권한 확인 오류 발생:", error);
+    res.status(500).send("글 작성 권한 확인에 실패했습니다.");
+  }
+};
 
 // 후기 작성
 exports.writeComment = async (req, res) => {
   try {
     const { review, stars, title, memberId, boardId, isAnonymous } = req.body;
 
-    await Comment.create({
-      review, stars, title, memberId, boardId, isAnonymous,
+     // 후기를 작성할 수 있는 권한이 있는지 확인
+    const chatRoom = await ChattingRoom.findOne({
+      where: { boardId: boardId, memberId: memberId },
     });
-    res.send("create review success");
+
+    if (chatRoom && chatRoom.canReview > 0) {
+      // 권한이 있다면 후기 작성
+      await Comment.create({
+        review, stars, title, memberId, boardId, isAnonymous,
+      });
+      // 후기 작성 후 canReview 차감
+      await ChattingRoom.update(
+        { canReview: chatRoom.canReview - 1 },
+        { where: { boardId: boardId, memberId: memberId } }
+      );
+      res.status(200).send("create review success");
+    } else {
+      res.status(403).send("상품을 구매하지 않았다면 리뷰를 작성할 수 없습니다.");
+    }
   } catch (error) {
     console.log("글 등록 오류 발생:", error);
     res.status(500).send("상품 후기를 작성할 수 없습니다.");
