@@ -1,7 +1,5 @@
 const { Comment } = require("../model");
 
-// 클라이언트 review, 서버 comment
-
 // 후기 작성
 exports.writeComment = async (req, res) => {
   try {

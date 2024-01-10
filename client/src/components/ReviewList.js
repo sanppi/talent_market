@@ -1,6 +1,7 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import useReviewListFunctions from './hook/UseReviewListFunctions';
 import '../styles/mypage.scss';
+import axios from 'axios';
 
 const ReviewList = ({ boardId, reviews }) => {
   const {
@@ -22,6 +23,22 @@ const ReviewList = ({ boardId, reviews }) => {
     onToggleForm,
   } = useReviewListFunctions(boardId);
 
+  const [reviewData, setReviewData] = useState(reviews);
+
+  const reviewEdit = async (event) => {
+    await handleReviewSubmit(event);
+
+    const response = await axios({
+      url: `${process.env.REACT_APP_DB_HOST}member/mypage/review`,
+      method: 'get',
+      withCredentials: true,
+    });
+
+    if (response.data.result) {
+      setReviewData(response.data.userData);
+    }
+  };
+
   return (
     <>
       {reviews.length === 0 ? (
@@ -32,27 +49,22 @@ const ReviewList = ({ boardId, reviews }) => {
             <tr>
               <th></th>
               <th>제목</th>
-              {/* <th>작성자</th> */}
               <th>작성일</th>
               <th>별점</th>
               <th>수정/삭제</th>
             </tr>
           </thead>
           <tbody className="reviewTableContents">
-            {reviews.map((review, index) => (
+            {reviewData.map((review, index) => (
               <Fragment key={review.commentId}>
                 <tr
+                  className="reviewInfo"
                   onClick={() =>
                     setSelectedReview(selectedReview !== index ? index : null)
                   }
                 >
                   <td>{index + 1}</td>
                   <td>{review.title}</td>
-                  {/* <td>
-                      {review.isAnonymous
-                        ? '익명'
-                        : review.Member.nickname || review.nickname}
-                    </td> */}
                   <td>{new Date(review.createdAt).toLocaleDateString()}</td>
                   <td>{'★'.repeat(review.stars)}</td>
                   <td className="editButtonBox">
@@ -90,7 +102,7 @@ const ReviewList = ({ boardId, reviews }) => {
       )}
 
       {toggleForm && (
-        <form className="reviewForm" onSubmit={handleReviewSubmit}>
+        <form className="reviewForm" onSubmit={reviewEdit}>
           <input
             type="text"
             placeholder="한 줄 리뷰 제목"

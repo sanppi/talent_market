@@ -11,6 +11,8 @@ export default function UpdatePwInput({
   handleInputChange,
   watchObj,
   errors,
+  setValue,
+  onPwToggle,
 }) {
   const [msg, setMsg] = useState('');
   const [modal, onModal] = useToggle(false);
@@ -33,6 +35,12 @@ export default function UpdatePwInput({
     if (response.data.result) {
       onModal();
       setDoneMsg(response.data.message);
+      setValue('oldPw', '');
+      setValue('newPw', '');
+      setValue('pwCk', '');
+      setTimeout(() => {
+        onPwToggle();
+      }, 3000);
     } else {
       setMsg(response.data.message);
     }

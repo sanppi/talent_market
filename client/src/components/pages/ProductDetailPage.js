@@ -32,10 +32,8 @@ export default function ProductDetailPage() {
         );
 
         if (response.data.product.isDelete) {
-          // 추가: 삭제된 게시글 알림을 alert로 변경
           alert('삭제된 게시글입니다.');
-          // 예를 들어, 삭제된 게시글을 알리고 사용자를 리다이렉트하거나 다른 동작을 수행할 수 있음
-          navigate('/'); // 예시: 홈페이지로 리다이렉트
+          navigate('/');
           return;
         }
 
@@ -73,8 +71,7 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`,
-        {
+        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`, {
           isLike: !heart,
         }
       );
@@ -87,10 +84,14 @@ export default function ProductDetailPage() {
 
   const handleContactClick = async () => {
     try {
+      if (!isLoggedIn) {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+      }
+      
       // 채팅방 생성
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`,
-        {
+        `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`, {
           memberId: memberId,
           boardId: boardId,
         }

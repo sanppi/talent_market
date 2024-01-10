@@ -19,15 +19,20 @@ export default function ModalBasic({
       timeoutId = setTimeout(() => {
         disableModal();
       }, 3000);
+    } else if (type === 'confirmFast') {
+      timeoutId = setTimeout(() => {
+        disableModal();
+      }, 1500);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [toggleState]);
+  }, [setToggleState, toggleState]);
 
   return (
     <>
+      {console.log(content)}
       {toggleState && (
         <>
           <div className="modalContainer slideIn">
@@ -35,7 +40,7 @@ export default function ModalBasic({
               &times;
             </div>
             <div className="modalWrapper">
-              {type === 'confirm' ? (
+              {type === 'confirm' || type === 'confirmFast' ? (
                 <>
                   <p>{content}</p>
                   <button onClick={disableModal}>확인</button>
