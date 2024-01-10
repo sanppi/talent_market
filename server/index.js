@@ -80,12 +80,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMsg", (res) => {
-    console.log(res)
+    console.log("sendMsg!!!!!!!!!!!!!!", res)
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 
   socket.on("sendNotice", (res) => {
-    io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
+    io.to(res.roomName).emit("transactionNotice", { memberId: res.memberId, msg: res.msg });
   });
 
   socket.on("sell", (res) => {

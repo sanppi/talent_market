@@ -15,7 +15,7 @@ const socket = io.connect(process.env.REACT_APP_DB_HOST, {
 
 function ChatRoom({ user }) {
   // memberId는 여기
-  const { memberId, nickname, redCard } = user;
+  const { memberId } = user;
 
   const { id } = useParams();
 
@@ -139,10 +139,17 @@ function ChatRoom({ user }) {
 
       let newChatList = []; // 빈 배열로 초기화
 
+      let type;
+      let nick;
       for (let i = 0; i < response.data.length; i++) {
-        const type = response.data[i].memberId === memberId ? 'my' : 'other';
-        const nick =
-          response.data[i].memberId === memberId ? '' : otherNickname;
+        console.log(response.data[i].chatType)
+        if (response.data[i].chatType == "notice" ) {
+          type = "transactionNotice";
+          nick = "";
+        } else {
+          type = response.data[i].memberId === memberId ? 'my' : 'other';
+          nick = response.data[i].memberId === memberId ? '' : otherNickname;
+        }
         const content = `${response.data[i].chatText}`;
         const newItem = {
           type: type,
@@ -164,8 +171,8 @@ function ChatRoom({ user }) {
   }, [otherMemberId]);
 
   const postChat = async (chatData) => {
+    console.log("postChat!!!!!!!!", chatData)
     try {
-      console.log("chatData!!!!!!!!!!!!!!", chatData)
       await axios.post(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
         chatData,
@@ -180,9 +187,9 @@ function ChatRoom({ user }) {
     }
   };
 
-  // +
   const addChatList = useCallback(
     (res) => {
+      console.log("addChatList!!!!!!!!", res.msg)
       const type = res.memberId === memberId ? 'my' : 'other';
       const nick = res.memberId === memberId ? '' : otherNickname;
       const content = `${res.msg}`;
@@ -198,24 +205,55 @@ function ChatRoom({ user }) {
         chatData.roomId = id;
         chatData.memberId = memberId;
         chatData.chatText = content;
-      } else if (type === 'other') {
-        chatData.roomId = id;
-        chatData.memberId = otherMemberId;
-        chatData.chatText = content;
-      } else {
-        console.log(type)
+        chatData.chatType = "chat";
+        postChat(chatData);
       }
-
-      postChat(chatData);
+      // else if (type === 'other') {
+      //   chatData.roomId = id;
+      //   chatData.memberId = otherMemberId;
+      //   chatData.chatText = content;
+      // } else {
+      //   console.log(type)
+      // }
+      
     },
     [chatList]
   );
 
   useEffect(() => {
-    // -
     socket.on('chat', addChatList);
     return () => socket.off('chat', addChatList);
   }, [addChatList]);
+
+
+  const addChatNotice = useCallback(
+    (res) => {
+      const type = "transactionNotice";
+      const content = `${res.msg}`;
+      const newChatList = [
+        ...chatList,
+        { type: type, content: content },
+      ];
+      setChatList(newChatList);
+
+      const chatData = {};
+
+      if (res.memberId === memberId) {
+        chatData.roomId = id;
+        chatData.memberId = memberId;
+        chatData.chatText = content;
+        chatData.chatType = "notice";
+
+        postChat(chatData);
+      }
+    },
+    [chatList]
+  );
+
+  useEffect(() => {
+    socket.on('transactionNotice', addChatNotice);
+    return () => socket.off('transactionNotice', addChatNotice);
+  }, [addChatNotice]);
 
   const exitRoom = () => {
     socket.emit('disconnection', { roomName: roomName, userDo: userDo });
@@ -359,21 +397,14 @@ function ChatRoom({ user }) {
   }
 
   const sellConfirmed = useCallback((res) => {
-    let resMemberId = res.memberId;
     let resBankName = res.bankName;
     let resAccountNum = res.accountNum;
     if (price !== "" && chatList !== null && chatList.length !== 0) {
-      const type = res.memberId === memberId ? "my" : "other";
-      const nick = resMemberId === memberId ? "" : otherNickname;
       const newChatList = [
         ...chatList,
         {
-          type: type,
-          subType: type,
-          nickname: nick,
-          content: `계좌번호: ${res.bankName} ${res.accountNum} 결제금액: ${price} 결제 후 구매 확정
-          버튼을 눌러주세요.`,
-          price: price,
+          type: "transactionNotice",
+          content: `계좌번호: ${res.bankName} ${res.accountNum}. 결제 후 구매 확정 버튼을 눌러주세요.`,
         },
       ];
   
@@ -382,17 +413,15 @@ function ChatRoom({ user }) {
         const chatData = {
           roomId: id,
           memberId: res.memberId,
-          chatText: `계좌번호: ${resBankName} ${resAccountNum}
-        결제금액: ${price}
-        결제 후 구매 확정 버튼을 눌러주세요.`,
+          chatText: `계좌번호: ${resBankName} ${resAccountNum}.
+            결제 후 구매 확정 버튼을 눌러주세요.`,
+          chatType: "notice",
         };
 
-        // ++
         postChat(chatData);
 
         const data = {
           roomId: id,
-          chatState: 'sale',
         };
 
         patchChatState(data);
@@ -705,17 +734,6 @@ function ChatRoom({ user }) {
               ✉︀
             </button>
           </div>
-          {/* <div id="UploadBox">
-            <h2>Video Uploader</h2>
-            <span id='UploadArea'>
-              <label for="FileBox">Choose A File: </label>
-              <input type="file" id="FileBox" />
-              <br />
-              <label for="NameBox">Name: </label>
-              <input type="text" id="NameBox" />
-              <br />
-            </span>
-          </div> */}
         </div>
       </div>
       <Footer />
