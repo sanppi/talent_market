@@ -31,6 +31,7 @@ export default function ProductEdit() {
 
         // 추가: 삭제된 게시글인 경우 처리
         if (response.data.product.isDelete) {
+          // 윤혜님 여기요!
           alert('삭제된 게시글입니다.');
           navigate('/'); // 삭제된 게시글이라면 홈페이지로 리다이렉트 또는 적절한 페이지로 이동
           return;
@@ -63,6 +64,7 @@ export default function ProductEdit() {
     e.preventDefault();
 
     if (category === '') {
+      // 윤혜님 여기요!
       alert('카테고리를 선택해주세요.');
       return;
     }
@@ -90,6 +92,7 @@ export default function ProductEdit() {
         navigate(`/product/${boardId}`);
       }
     } catch (error) {
+      // 윤혜님 여기요!
       alert('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
       // console.log(error);
     }
@@ -104,10 +107,12 @@ export default function ProductEdit() {
         );
 
         if (response.status === 200) {
+          // 윤혜님 여기요!
           alert('상품이 삭제되었습니다.');
           navigate('/'); // 홈 페이지 또는 적절한 페이지로 리다이렉션
         }
       } catch (error) {
+        // 윤혜님 여기요!
         alert('상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.');
         console.error(error);
       }

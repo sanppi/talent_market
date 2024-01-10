@@ -32,6 +32,7 @@ export default function ProductDetailPage() {
         );
 
         if (response.data.product.isDelete) {
+          // 윤혜님 여기요!
           alert('삭제된 게시글입니다.');
           navigate('/');
           return;
@@ -63,6 +64,7 @@ export default function ProductDetailPage() {
 
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
+      // 윤혜님 여기요!
       alert('로그인이 필요한 기능입니다.');
       return;
     }
@@ -85,6 +87,7 @@ export default function ProductDetailPage() {
   const handleContactClick = async () => {
     try {
       if (!isLoggedIn) {
+        // 윤혜님 여기요!
         alert('로그인이 필요한 기능입니다.');
         return;
       }
