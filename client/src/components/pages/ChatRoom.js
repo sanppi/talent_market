@@ -1,5 +1,5 @@
 import '../../styles/chat.scss';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -38,6 +38,7 @@ function ChatRoom({ user }) {
 
   const [modalToggle, onModalToggle] = useToggle(false);
   const [modalType, setModalType] = useState('');
+  const chatScrollRef = useRef(null);
 
   useEffect(() => {
     getBoardInfo();
@@ -320,9 +321,7 @@ function ChatRoom({ user }) {
         onModalToggle();
         setModalType('판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.');
       } else {
-        // 윤혜님 alret 아니고 confirmed입니다...
-        onModalToggle();
-        const confirmed = setModalType(
+        const confirmed = window.confirm(
           `${response.data.bankName} ${response.data.accountNum} 이 계좌번호가 맞습니까?`
         );
         if (confirmed) {
@@ -567,6 +566,10 @@ function ChatRoom({ user }) {
     }
   }, [imagePath]);
 
+  useEffect(() => {
+    chatScrollRef.current.scrollIntoView({ bahavior: 'smooth' });
+  }, [chatList]);
+
   return (
     <>
       <div className="chattingContainer">
@@ -601,94 +604,97 @@ function ChatRoom({ user }) {
                   else return <Chat key={i} chat={chat} />;
                 })}
               </div>
-              <div className="bottomBtnBox">
-                {chatState === 'ready' ? (
-                  userDo === '구매' ? (
-                    <div className="bottomBtns">
-                      <button onClick={wantBuy}>구매 요청</button>
-                    </div>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <></>
-                )}
-                {chatState === 'want' ? (
-                  userDo === '판매' ? (
-                    <div className="bottomBtns">
-                      <button onClick={sell}>판매 확정</button>
-                      <button onClick={sellCancel}>판매 취소</button>
-                    </div>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <></>
-                )}
-                {chatState === 'sale' ? (
-                  userDo === '구매' ? (
-                    <div className="bottomBtns">
-                      <button onClick={buy}>구매 확정</button>
-                      <button onClick={buyCancel}>구매 취소</button>
-                    </div>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <></>
-                )}
-                {chatState === 'done' ? (
-                  userDo === '판매' ? (
-                    <div className="bottomBtns">
-                      <form onSubmit={handleSubmit}>
-                        <label htmlFor="fileInput">
-                          {!image && (
-                            <img
-                              src="/static/img.png"
-                              alt="img example"
-                              className="exImage"
-                              style={{ width: '150px' }}
-                            />
-                          )}
-                          <input
-                            id="fileInput"
-                            type="file"
-                            onChange={handleImageUpload}
-                            style={{ display: 'none' }}
-                          />
-                          {image && (
-                            <img
-                              src={URL.createObjectURL(image)}
-                              alt="preview"
-                              className="exImage"
-                              style={{ width: '150px' }}
-                            />
-                          )}
-                        </label>
-                        <button type="submit" className="submitButton">
-                          상품 보내기
-                        </button>
-                      </form>
-                    </div>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <></>
-                )}
-                {chatState === 'check' ? (
-                  userDo === '구매' ? (
-                    <div className="bottomBtns">
-                      <button onClick={downloadFile}>상품 받기</button>
-                    </div>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <></>
-                )}
-              </div>
+              <div ref={chatScrollRef}></div>
             </div>
+          </div>
+          <div className="bottomBtnBox">
+            {chatState === 'ready' ? (
+              userDo === '구매' ? (
+                <div className="bottomBtns">
+                  <button onClick={wantBuy}>구매 요청</button>
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            {chatState === 'want' ? (
+              userDo === '판매' ? (
+                <div className="bottomBtns">
+                  <button onClick={sell}>판매 확정</button>
+                  <button onClick={sellCancel}>판매 취소</button>
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            {chatState === 'sale' ? (
+              userDo === '구매' ? (
+                <div className="bottomBtns">
+                  <button onClick={buy}>구매 확정</button>
+                  <button onClick={buyCancel}>구매 취소</button>
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            {chatState === 'done' ? (
+              userDo === '판매' ? (
+                <div className="fileFormBox">
+                  <form className="fileForm" onSubmit={handleSubmit}>
+                    <label htmlFor="fileInput">
+                      {!image && (
+                        <div className="fileExImage">
+                          <img
+                            src="/static/camera.png"
+                            alt="img example"
+                            className="exImage"
+                            style={{ width: '65px', height: '50px' }}
+                          />
+                        </div>
+                      )}
+                      <input
+                        id="fileInput"
+                        type="file"
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }}
+                      />
+                      {image && (
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt="preview"
+                          className="exImage"
+                          style={{ width: '150px' }}
+                        />
+                      )}
+                    </label>
+                    <button type="submit" className="submitButton">
+                      상품 보내기
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            {chatState === 'check' ? (
+              userDo === '구매' ? (
+                <div className="bottomBtns">
+                  <button onClick={downloadFile}>상품 받기</button>
+                </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
           </div>
           <div className="chattingInputContainer">
             <input
@@ -710,6 +716,7 @@ function ChatRoom({ user }) {
       </div>
       {modalToggle && (
         <ModalBasic
+          type="check"
           content={modalType}
           toggleState={true}
           setToggleState={onModalToggle}

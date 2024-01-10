@@ -87,6 +87,7 @@ function Chatting({ user }) {
       )}
       {modalToggle && (
         <ModalBasic
+          type="confirm"
           content={modalType}
           toggleState={true}
           setToggleState={onModalToggle}
