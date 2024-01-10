@@ -5,6 +5,8 @@ import '../../styles/productdetail.scss';
 import { useSelector } from 'react-redux';
 import Review from './Review';
 import Footer from './Footer';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -15,6 +17,8 @@ export default function ProductDetailPage() {
   const [chattingRoom, setChattingRoom] = useState(null);
   const [roomId, setRoomId] = useState(null);
   const navigate = useNavigate();
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,7 +36,7 @@ export default function ProductDetailPage() {
         );
 
         if (response.data.product.isDelete) {
-          // 윤혜님 여기요!
+          // 화면 상에선 안 보임
           alert('삭제된 게시글입니다.');
           navigate('/');
           return;
@@ -64,8 +68,8 @@ export default function ProductDetailPage() {
 
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
-      // 윤혜님 여기요!
-      alert('로그인이 필요한 기능입니다.');
+      onModalToggle();
+      setModalType('로그인이 필요한 기능입니다.');
       return;
     }
 
@@ -73,7 +77,8 @@ export default function ProductDetailPage() {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`, {
+        `${process.env.REACT_APP_DB_HOST}product/like/${boardId}/${memberId}`,
+        {
           isLike: !heart,
         }
       );
@@ -87,14 +92,15 @@ export default function ProductDetailPage() {
   const handleContactClick = async () => {
     try {
       if (!isLoggedIn) {
-        // 윤혜님 여기요!
-        alert('로그인이 필요한 기능입니다.');
+        onModalToggle();
+        setModalType('로그인이 필요한 기능입니다.');
         return;
       }
-      
+
       // 채팅방 생성
       const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`, {
+        `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`,
+        {
           memberId: memberId,
           boardId: boardId,
         }
@@ -194,6 +200,14 @@ export default function ProductDetailPage() {
         <p>상품설명 : {product.content}</p>
       </div>
       <hr />
+      {modalToggle && (
+        <ModalBasic
+          type="confirmFast"
+          content={modalType}
+          toggleState={true}
+          setToggleState={onModalToggle}
+        />
+      )}
       <Review boardId={boardId} productMemberId={product.memberId} />
       <Footer />
     </div>
