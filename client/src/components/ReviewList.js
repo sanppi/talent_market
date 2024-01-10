@@ -25,12 +25,8 @@ const ReviewList = ({ boardId, reviews }) => {
 
   const [reviewData, setReviewData] = useState(reviews);
 
-  useEffect(()=>{
-    console.log("reviewsreviews",reviews)
-  },[reviews])
-
   const reviewEdit = async (event) => {
-    await handleReviewSubmit(event)
+    await handleReviewSubmit(event);
 
     const response = await axios({
       url: `${process.env.REACT_APP_DB_HOST}member/mypage/review`,
@@ -38,11 +34,10 @@ const ReviewList = ({ boardId, reviews }) => {
       withCredentials: true,
     });
 
-    console.log(response.data)
     if (response.data.result) {
-      setReviewData(response.data.userData)
+      setReviewData(response.data.userData);
     }
-  }
+  };
 
   return (
     <>
@@ -54,7 +49,6 @@ const ReviewList = ({ boardId, reviews }) => {
             <tr>
               <th></th>
               <th>제목</th>
-              {/* <th>작성자</th> */}
               <th>작성일</th>
               <th>별점</th>
               <th>수정/삭제</th>
@@ -64,17 +58,13 @@ const ReviewList = ({ boardId, reviews }) => {
             {reviewData.map((review, index) => (
               <Fragment key={review.commentId}>
                 <tr
+                  className="reviewInfo"
                   onClick={() =>
                     setSelectedReview(selectedReview !== index ? index : null)
                   }
                 >
                   <td>{index + 1}</td>
                   <td>{review.title}</td>
-                  {/* <td>
-                      {review.isAnonymous
-                        ? '익명'
-                        : review.Member.nickname || review.nickname}
-                    </td> */}
                   <td>{new Date(review.createdAt).toLocaleDateString()}</td>
                   <td>{'★'.repeat(review.stars)}</td>
                   <td className="editButtonBox">
