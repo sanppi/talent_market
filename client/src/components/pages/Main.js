@@ -58,6 +58,13 @@ function Main() {
     }
   };
 
+  const handleChattingButtonClick = (e) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      alert("로그인이 필요한 기능입니다.");
+    }
+  };
+
   useEffect(() => {
     async function getProduct() {
       try {
@@ -103,6 +110,9 @@ function Main() {
           </button>
         </div>
       </div>
+      <button className="chattingBtn" onClick={handleChattingButtonClick}>
+        <Link to="/chatting">⌨️</Link>
+      </button>
     </>
   );
 }
