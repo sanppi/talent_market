@@ -228,7 +228,7 @@ export default function ProductEdit() {
       </div>
       {modalToggle && (
         <ModalBasic
-          type="confirm"
+          type="check"
           content={modalType}
           toggleState={true}
           setToggleState={onModalToggle}
