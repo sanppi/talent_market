@@ -33,7 +33,7 @@ function ChatRoom({ user }) {
 
   const [chatState, setChatState] = useState('ready');
 
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState();
   const [imagePath, setImagePath] = useState('');
 
   const [modalToggle, onModalToggle] = useToggle(false);
@@ -490,22 +490,28 @@ function ChatRoom({ user }) {
     formData.append('image', image);
     formData.append('roomId', id);
 
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/sendFile`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      setImagePath(response.data);
-      socket.emit('fileGive', { imagePath: response.data });
-      sellCheck();
-    } catch (error) {
+    if (!image) {
+      // 윤혜님
       onModalToggle();
-      setModalType('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
+      setModalType('파일을 업로드 해주세요!');
+    } else {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_DB_HOST}chatRoom/:id/sendFile`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        setImagePath(response.data);
+        socket.emit('fileGive', { imagePath: response.data });
+        sellCheck();
+      } catch (error) {
+        onModalToggle();
+        setModalType('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
+      }
     }
   };
 
