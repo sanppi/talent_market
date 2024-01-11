@@ -12,19 +12,21 @@ const initialState = {
   memberId: null,
   id: '',
   nickname: '',
+  email: '',
   redCard: 0,
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS: {
-      const { memberId, id, nickname } = action.payload;
+      const { memberId, id, nickname, email } = action.payload;
       return {
         ...state,
         isLoggedIn: true,
         memberId,
         id,
         nickname,
+        email,
       };
     }
     case UPDATE_USER: {
