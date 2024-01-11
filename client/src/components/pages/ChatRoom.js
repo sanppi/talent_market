@@ -492,7 +492,8 @@ function ChatRoom({ user }) {
 
     if (!image) {
       // 윤혜님
-      alert("파일을 업로드 해주세요!")
+      onModalToggle();
+      setModalType('파일을 업로드 해주세요!');
     } else {
       try {
         const response = await axios.post(
