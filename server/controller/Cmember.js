@@ -78,6 +78,7 @@ exports.signIn = async (req, res) => {
         id: result.id,
         nickname: result.nickname,
         redCard: result.redCard,
+        email: result.email,
         // bankName: result.bankName,
         // accountNum: result.accountNum
       };
@@ -382,8 +383,6 @@ exports.updateUserInfo = async (req, res) => {
       where: { memberId: targetMemberId },
     });
 
-    console.log('data', userData);
-
     if (!member) {
       return res
         .status(404)
@@ -391,29 +390,61 @@ exports.updateUserInfo = async (req, res) => {
     } else {
       // 닉네임 변경
       if (type === 'nickname') {
-        const nicknameUser = await Member.update(
-          {
+        const existingNickname = await Member.findOne({
+          where: {
             nickname: userData,
           },
-          { where: { memberId: targetMemberId } }
-        );
+        });
 
-        if (nicknameUser) {
-          return res.send({ result: true, message: '닉네임 수정 완료' });
+        if (existingNickname) {
+          res.send({
+            result: false,
+            message: '중복!',
+          });
+        } else {
+          const nicknameUser = await Member.update(
+            {
+              nickname: userData,
+            },
+            { where: { memberId: targetMemberId } }
+          );
+
+          if (nicknameUser) {
+            return res.send({
+              result: true,
+              message: '닉네임 수정 완료',
+            });
+          }
         }
       }
 
       // 이메일 변경
       if (type === 'email') {
-        const emailUser = await Member.update(
-          {
+        const existingEmail = await Member.findOne({
+          where: {
             email: userData,
           },
-          { where: { memberId: targetMemberId } }
-        );
+        });
 
-        if (emailUser) {
-          return res.send({ result: true, message: '이메일 수정 완료' });
+        if (existingEmail) {
+          res.send({
+            result: false,
+            message: '중복!',
+          });
+        } else {
+          const emailUser = await Member.update(
+            {
+              email: userData,
+            },
+            { where: { memberId: targetMemberId } }
+          );
+
+          if (emailUser) {
+            return res.send({
+              result: true,
+              message: '이메일 수정 완료',
+            });
+          }
         }
       }
 
