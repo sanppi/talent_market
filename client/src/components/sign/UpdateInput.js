@@ -28,8 +28,9 @@ export default function UpdateInput({
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const memberId = useSelector((state) => state.auth.memberId);
+  const { memberId, nickname, email } = useSelector((state) => state.auth);
   const [doneMsg, setDoneMsg] = useState('');
+  const [failMsg, setFailMsg] = useState('');
 
   useEffect(() => {
     setInputValue(value);
@@ -38,10 +39,10 @@ export default function UpdateInput({
   const handleBtnClick = async () => {
     const isValid = validateInput();
 
+    // 유효성검사 에러 없으면
     if (isValid === '') {
       onIsEditing();
       onChange(id, inputValue);
-      onInfoChange(inputValue);
 
       const response = await axios({
         url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
@@ -51,12 +52,17 @@ export default function UpdateInput({
       });
 
       if (response.data.result) {
+        onInfoChange(inputValue); // 이거!
+        setFailMsg('');
         setDoneMsg(response.data.message);
         onModal();
         onIsEditing();
         onChange(id, inputValue);
+        dispatch(updateUser({ [id]: inputValue }));
+      } else {
+        onInfoChange(inputValue);
+        setFailMsg(response.data.message);
       }
-      dispatch(updateUser({ [id]: inputValue }));
     } else {
       setErrorMsg('유효하지 않은 값이 있습니다.');
     }
@@ -127,6 +133,9 @@ export default function UpdateInput({
           <div className="profileNickname">
             {!value ? '정보 없음' : inputValue}
           </div>
+          <small role="alert" className="failLine">
+            {failMsg}
+          </small>
           <button className="editButton" onClick={onIsEditing}>
             수정
           </button>
