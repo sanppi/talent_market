@@ -174,6 +174,8 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     }
   };
 
+  console.log(email);
+
   return (
     <>
       {memberId && (

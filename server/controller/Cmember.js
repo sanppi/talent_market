@@ -78,6 +78,7 @@ exports.signIn = async (req, res) => {
         id: result.id,
         nickname: result.nickname,
         redCard: result.redCard,
+        email: result.email,
         // bankName: result.bankName,
         // accountNum: result.accountNum
       };

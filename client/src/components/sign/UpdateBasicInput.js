@@ -16,7 +16,7 @@ export default function UpdateBasicInput({
     nickname || watchObj?.nickname || ''
   );
   const [updatedEmail, setUpdatedEmail] = useState(
-    watchObj?.email || email || ''
+    email || watchObj?.email || ''
   );
 
   return (
