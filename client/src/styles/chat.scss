@@ -40,6 +40,10 @@ body {
           transform: scale(1.05);
         }
 
+        @media screen and (max-width: 450px) {
+          height: 60px;
+        }
+
         .chatProfile {
           @include size(20px, 20px);
           background-color: black;
