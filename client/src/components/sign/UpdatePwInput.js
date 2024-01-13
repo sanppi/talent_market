@@ -14,7 +14,6 @@ export default function UpdatePwInput({
   setValue,
   onPwToggle,
 }) {
-  const [msg, setMsg] = useState('');
   const [modal, onModal] = useToggle(false);
   const memberId = useSelector((state) => state.auth.memberId);
   const [doneMsg, setDoneMsg] = useState('');

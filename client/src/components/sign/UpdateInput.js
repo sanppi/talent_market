@@ -28,7 +28,7 @@ export default function UpdateInput({
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { memberId, nickname, email } = useSelector((state) => state.auth);
+  const { memberId } = useSelector((state) => state.auth);
   const [doneMsg, setDoneMsg] = useState('');
   const [failMsg, setFailMsg] = useState('');
 
@@ -52,7 +52,7 @@ export default function UpdateInput({
       });
 
       if (response.data.result) {
-        onInfoChange(inputValue); // 이거!
+        onInfoChange(inputValue);
         setFailMsg('');
         setDoneMsg(response.data.message);
         onModal();
