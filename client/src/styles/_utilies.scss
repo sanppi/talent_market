@@ -40,41 +40,10 @@
   animation-fill-mode: both;
 }
 
-@mixin slideOut($duration) {
-  @keyframes slideOutAnimation {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-5%);
-    }
-  }
-
-  animation: slideOutAnimation $duration ease-in-out;
-  animation-fill-mode: both;
-}
-
 @mixin responsiveText($size, $smaller) {
   font-size: $size;
 
   @media (max-width: 768px) {
     font-size: $smaller;
   }
-}
-
-// 임시
-@mixin leftToRight($duration) {
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-5%);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  animation: slideIn $duration ease-in-out;
 }

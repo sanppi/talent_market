@@ -46,10 +46,6 @@
     @include slideIn(0.6s);
   }
 
-  &.slideOut {
-    @include slideOut(0.6s);
-  }
-
   .modalExitWrapper {
     position: absolute;
     top: 8px;

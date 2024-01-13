@@ -1,12 +1,4 @@
-export default function SignInInput({
-  type,
-  id,
-  label,
-  register,
-  value,
-  isMsg,
-  msg,
-}) {
+export default function SignInInput({ type, id, label, register, value }) {
   return (
     <>
       <div className="signInput">
