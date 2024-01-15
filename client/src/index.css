@@ -34,10 +34,10 @@ code {
   font-family: 'KNUTRUTHTTF';
   box-sizing: border-box;
 }
+
 @import './styles/reset.css';
 
 :root {
-  --header-margin: 80px;
   --main-blue: #2095b9;
   --main-red: #db544b;
   --bright-blue: #00a6ed;

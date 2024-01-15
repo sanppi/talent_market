@@ -1,4 +1,3 @@
-// useAnimation.js
 import { useEffect, useState } from 'react';
 
 function useAnimation(condition) {

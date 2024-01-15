@@ -1,7 +1,7 @@
 import SignUpInput from './SignUpInput';
 import SignButton from './SignButton';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useToggle from '../hook/UseToggle';
 import ModalBasic from '../ModalBasic';
 import { useSelector } from 'react-redux';
@@ -14,10 +14,16 @@ export default function UpdatePwInput({
   setValue,
   onPwToggle,
 }) {
-  const [msg, setMsg] = useState('');
   const [modal, onModal] = useToggle(false);
   const memberId = useSelector((state) => state.auth.memberId);
   const [doneMsg, setDoneMsg] = useState('');
+  const [failMsg, setFailMsg] = useState('');
+
+  useEffect(() => {
+    if (watchObj.oldPw !== '') {
+      setFailMsg('');
+    }
+  }, [watchObj.oldPw]);
 
   const handlePwChange = async () => {
     const userData = {
@@ -42,7 +48,11 @@ export default function UpdatePwInput({
         onPwToggle();
       }, 3000);
     } else {
-      setMsg(response.data.message);
+      setFailMsg(response.data.message);
+      setValue('oldPw', '');
+      if (watchObj.oldPw === '') {
+        console.log('now');
+      }
     }
   };
 
@@ -59,6 +69,7 @@ export default function UpdatePwInput({
           required: true,
         }}
         isUpdate={true}
+        failMsg={failMsg}
       />
       <SignUpInput
         label="새 비밀번호"
@@ -105,7 +116,6 @@ export default function UpdatePwInput({
           setToggleState={onModal}
         />
       )}
-      <div>{msg}</div>
       <SignButton
         disabled={
           !watchObj.oldPw ||

@@ -1,6 +1,6 @@
 import '../../styles/chat.scss';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Chat from './Chat';
@@ -8,6 +8,8 @@ import Notice from './Notice';
 import Confirmed from './Confirmed';
 import io from 'socket.io-client';
 import Footer from '../pages/Footer';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 const socket = io.connect(process.env.REACT_APP_DB_HOST, {
   autoConnect: false,
@@ -24,15 +26,20 @@ function ChatRoom({ user }) {
   const [boardInfo, setBoardInfo] = useState({});
   const [roomName, setRoomName] = useState(null);
   const [userDo, setUserDo] = useState(null);
-  
-  const [msgInput, setMsgInput] = useState("");
+
+  const [msgInput, setMsgInput] = useState('');
   const [chatList, setChatList] = useState([]);
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState('');
 
-  const [chatState, setChatState] = useState("ready");
+  const [chatState, setChatState] = useState('ready');
 
-  const [image, setImage] = useState("");
-  const [imagePath, setImagePath] = useState("");
+  const [image, setImage] = useState();
+  const [imagePath, setImagePath] = useState('');
+
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
+  const chatScrollRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getBoardInfo();
@@ -54,9 +61,9 @@ function ChatRoom({ user }) {
         price: response.data.price,
       });
 
-      setRoomName(response.data.title)
-      setPrice(response.data.price)
-      setChatState(response.data.chatState)
+      setRoomName(response.data.title);
+      setPrice(response.data.price);
+      setChatState(response.data.chatState);
 
       const sell = '판매';
       const buy = '구매';
@@ -125,9 +132,13 @@ function ChatRoom({ user }) {
   }, [notice]);
 
   const sendMsg = () => {
-    if (msgInput !== "") {
-      socket.emit("sendMsg", { memberId: memberId, msg: msgInput, roomName: roomName });
-      setMsgInput("");
+    if (msgInput !== '') {
+      socket.emit('sendMsg', {
+        memberId: memberId,
+        msg: msgInput,
+        roomName: roomName,
+      });
+      setMsgInput('');
     }
   };
 
@@ -142,10 +153,10 @@ function ChatRoom({ user }) {
       let type;
       let nick;
       for (let i = 0; i < response.data.length; i++) {
-        console.log(response.data[i].chatType)
-        if (response.data[i].chatType == "notice" ) {
-          type = "transactionNotice";
-          nick = "";
+        console.log(response.data[i].chatType);
+        if (response.data[i].chatType == 'notice') {
+          type = 'transactionNotice';
+          nick = '';
         } else {
           type = response.data[i].memberId === memberId ? 'my' : 'other';
           nick = response.data[i].memberId === memberId ? '' : otherNickname;
@@ -171,7 +182,6 @@ function ChatRoom({ user }) {
   }, [otherMemberId]);
 
   const postChat = async (chatData) => {
-    console.log("postChat!!!!!!!!", chatData)
     try {
       await axios.post(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/postChat`,
@@ -189,7 +199,6 @@ function ChatRoom({ user }) {
 
   const addChatList = useCallback(
     (res) => {
-      console.log("addChatList!!!!!!!!", res.msg)
       const type = res.memberId === memberId ? 'my' : 'other';
       const nick = res.memberId === memberId ? '' : otherNickname;
       const content = `${res.msg}`;
@@ -205,17 +214,9 @@ function ChatRoom({ user }) {
         chatData.roomId = id;
         chatData.memberId = memberId;
         chatData.chatText = content;
-        chatData.chatType = "chat";
+        chatData.chatType = 'chat';
         postChat(chatData);
       }
-      // else if (type === 'other') {
-      //   chatData.roomId = id;
-      //   chatData.memberId = otherMemberId;
-      //   chatData.chatText = content;
-      // } else {
-      //   console.log(type)
-      // }
-      
     },
     [chatList]
   );
@@ -225,15 +226,11 @@ function ChatRoom({ user }) {
     return () => socket.off('chat', addChatList);
   }, [addChatList]);
 
-
   const addChatNotice = useCallback(
     (res) => {
-      const type = "transactionNotice";
+      const type = 'transactionNotice';
       const content = `${res.msg}`;
-      const newChatList = [
-        ...chatList,
-        { type: type, content: content },
-      ];
+      const newChatList = [...chatList, { type: type, content: content }];
       setChatList(newChatList);
 
       const chatData = {};
@@ -242,7 +239,7 @@ function ChatRoom({ user }) {
         chatData.roomId = id;
         chatData.memberId = memberId;
         chatData.chatText = content;
-        chatData.chatType = "notice";
+        chatData.chatType = 'notice';
 
         postChat(chatData);
       }
@@ -266,47 +263,53 @@ function ChatRoom({ user }) {
     };
   }, []);
 
-  const patchChatState = async(data) => {
+  const patchChatState = async (data) => {
     try {
       await axios.patch(
         `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchChatState`,
         data,
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
-      )
-      setChatState(data.chatState)
+      );
+      setChatState(data.chatState);
     } catch (error) {
-      console.error("Patch Chat State Error:", error);
+      console.error('Patch Chat State Error:', error);
     }
   };
 
-  const stateReceive = useCallback((res) => {
-    const data = {
-      roomId: id,
-      chatState: res.chatState,
-    }
-    patchChatState(data)
-  }, [id]);
+  const stateReceive = useCallback(
+    (res) => {
+      const data = {
+        roomId: id,
+        chatState: res.chatState,
+      };
+      patchChatState(data);
+    },
+    [id]
+  );
 
   useEffect(() => {
-    socket.on("stateReceive", stateReceive);
-  }, [chatState])
+    socket.on('stateReceive', stateReceive);
+  }, [chatState]);
 
   const wantBuy = () => {
-    const msg = "상품 구매 요청을 받았습니다. 판매 하시겠습니까?"
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
+    const msg = '상품 구매 요청을 받았습니다!';
+    socket.emit('sendNotice', {
+      memberId: memberId,
+      msg: msg,
+      roomName: roomName,
+    });
 
     const data = {
       roomId: id,
-      chatState: "want",
-    }
+      chatState: 'want',
+    };
 
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
+    patchChatState(data);
+    socket.emit('stateGive', { chatState: data.chatState });
   };
 
   const sell = async () => {
@@ -316,14 +319,20 @@ function ChatRoom({ user }) {
       );
 
       if (!response.data) {
-        alert('판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.');
+        onModalToggle();
+        setModalType('판매 확정이 불가능 합니다. 계좌번호를 확인해주세요.');
       } else {
         const confirmed = window.confirm(
           `${response.data.bankName} ${response.data.accountNum} 이 계좌번호가 맞습니까?`
         );
         if (confirmed) {
-          socket.emit("sell", { roomName: roomName, memberId: memberId, bankName: response.data.bankName, accountNum: response.data.accountNum });
-          socket.emit("stateGive", { chatState: "sale" });
+          socket.emit('sell', {
+            roomName: roomName,
+            memberId: memberId,
+            bankName: response.data.bankName,
+            accountNum: response.data.accountNum,
+          });
+          socket.emit('stateGive', { chatState: 'sale' });
         } else {
           sellCancel();
           console.log('sellCancel');
@@ -334,88 +343,78 @@ function ChatRoom({ user }) {
     }
   };
 
-  // const sendSellBuyMsg = (msg, myMemberId) => {
-  //   const newChatList = [
-  //     ...chatList,
-  //     {
-  //       type: "notice",
-  //       content: msg,
-  //     },
-  //   ];
-
-  //   setChatList(newChatList);
-
-  //   const chatData = {
-  //     roomId: id,
-  //     memberId: myMemberId,
-  //     chatText: msg,
-  //   };
-  
-  //   postChat(chatData);
-  // }
-
   const sellCancel = () => {
-    const msg = "판매자가 판매를 취소하였습니다."
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
+    const msg = '판매자가 판매를 취소하였습니다.';
+    socket.emit('sendNotice', {
+      memberId: memberId,
+      msg: msg,
+      roomName: roomName,
+    });
 
     const data = {
       roomId: id,
-      chatState: "ready",
-    }
+      chatState: 'ready',
+    };
 
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
-  }
+    patchChatState(data);
+    socket.emit('stateGive', { chatState: data.chatState });
+  };
 
   const buy = () => {
-    const msg = "구매자가 결제를 완료하였습니다. 입금 확인 후 상품을 보내주세요."
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
+    const msg = '구매자가 결제를 완료하였습니다.';
+    socket.emit('sendNotice', {
+      memberId: memberId,
+      msg: msg,
+      roomName: roomName,
+    });
 
     const data = {
       roomId: id,
-      chatState: "done",
-    }
+      chatState: 'done',
+    };
 
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
-  }
+    patchChatState(data);
+    socket.emit('stateGive', { chatState: data.chatState });
+  };
 
   const buyCancel = () => {
-    const msg = "구매자가 구매를 취소하였습니다."
-    socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-    // sendSellBuyMsg(msg, memberId)
+    const msg = '구매자가 구매를 취소하였습니다.';
+    socket.emit('sendNotice', {
+      memberId: memberId,
+      msg: msg,
+      roomName: roomName,
+    });
 
     const data = {
       roomId: id,
-      chatState: "ready",
-    }
+      chatState: 'ready',
+    };
 
-    patchChatState(data)
-    socket.emit("stateGive", { chatState: data.chatState });
-  }
+    patchChatState(data);
+    socket.emit('stateGive', { chatState: data.chatState });
+  };
 
-  const sellConfirmed = useCallback((res) => {
-    let resBankName = res.bankName;
-    let resAccountNum = res.accountNum;
-    if (price !== "" && chatList !== null && chatList.length !== 0) {
-      const newChatList = [
-        ...chatList,
-        {
-          type: "transactionNotice",
-          content: `계좌번호: ${res.bankName} ${res.accountNum}. 결제 후 구매 확정 버튼을 눌러주세요.`,
-        },
-      ];
-  
-      setChatList(newChatList);
+  const sellConfirmed = useCallback(
+    (res) => {
+      let resBankName = res.bankName;
+      let resAccountNum = res.accountNum;
+      if (price !== '' && chatList !== null && chatList.length !== 0) {
+        const newChatList = [
+          ...chatList,
+          {
+            type: 'transactionNotice',
+            content: `계좌번호: ${res.bankName} ${res.accountNum}. 결제 후 구매 확정 버튼을 눌러주세요.`,
+          },
+        ];
+
+        setChatList(newChatList);
 
         const chatData = {
           roomId: id,
           memberId: res.memberId,
           chatText: `계좌번호: ${resBankName} ${resAccountNum}.
             결제 후 구매 확정 버튼을 눌러주세요.`,
-          chatType: "notice",
+          chatType: 'notice',
         };
 
         postChat(chatData);
@@ -433,70 +432,39 @@ function ChatRoom({ user }) {
   );
 
   useEffect(() => {
-    // *
     socket.on('sellConfirmed', sellConfirmed);
     return () => socket.off('sellConfirmed', sellConfirmed);
   }, [sellConfirmed]);
-
-  // useEffect(() => {
-  //   if (chatState == "sale") {
-  //     socket.emit("canBuy", {chatState: chatState});
-  //   }
-  // }, [chatState])
-
-  // const buyConfirmed = useCallback((res) => {
-  //   const data = {
-  //     roomId: id,
-  //     chatState: res.chatState,
-  //   }
-  //   patchChatState(data)
-  // }, [id]);
-
-  // useEffect(() => {
-  //   socket.on("buy", buyConfirmed);
-  // }, [chatState])
-
-  // useEffect(() => {
-  //   if (chatState == "done") {
-  //     socket.emit("done", {chatState: chatState});
-  //   }
-  // }, [chatState])
-
-  // const check = useCallback((res) => {
-  //   const data = {
-  //     roomId: id,
-  //     chatState: res.chatState,
-  //   }
-  //   patchChatState(data)
-  // }, [id]);
-
-  // useEffect(() => {
-  //   socket.on("check", check);
-  // }, [chatState])
 
   const patchBuyerInfo = async () => {
     const sellData = {
       roomId: id,
     };
-      try {
-        const response = await axios.patch(
-          `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchBuyerInfo`,
-          sellData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        if (response.data) {
-          const msg = "구매하신 상품이 도착했습니다. 상품을 확인해주세요."
-          socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-          // sendSellBuyMsg("거래가 완료되었습니다.", memberId)
-        } else {
-          const msg = "구매 정보 업데이트 에러입니다."
-          socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-          // sendSellBuyMsg("거래가 성사되지 않았습니다.", memberId)
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/patchBuyerInfo`,
+        sellData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
+      );
+      if (response.data) {
+        const msg = '구매하신 상품이 도착했습니다!';
+        socket.emit('sendNotice', {
+          memberId: memberId,
+          msg: msg,
+          roomName: roomName,
+        });
+      } else {
+        const msg = '구매 정보 업데이트 에러입니다.';
+        socket.emit('sendNotice', {
+          memberId: memberId,
+          msg: msg,
+          roomName: roomName,
+        });
+      }
     } catch (error) {
       console.error('Patch Buyer Info Error:', error);
     }
@@ -507,11 +475,11 @@ function ChatRoom({ user }) {
 
     const data = {
       roomId: id,
-      chatState: "check",
-    }
+      chatState: 'check',
+    };
 
     patchChatState(data);
-    socket.emit("stateGive", { chatState: data.chatState });
+    socket.emit('stateGive', { chatState: data.chatState });
   };
 
   const handleSubmit = async (e) => {
@@ -522,22 +490,28 @@ function ChatRoom({ user }) {
     formData.append('image', image);
     formData.append('roomId', id);
 
-    try {
-      console.log(formData);
-      const response = await axios.post(
-        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/sendFile`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      setImagePath(response.data);
-      socket.emit("fileGive", { imagePath: response.data });
-      sellCheck();
-    } catch (error) {
-      alert('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
+    if (!image) {
+      // 윤혜님
+      onModalToggle();
+      setModalType('파일을 업로드 해주세요!');
+    } else {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_DB_HOST}chatRoom/:id/sendFile`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        setImagePath(response.data);
+        socket.emit('fileGive', { imagePath: response.data });
+        sellCheck();
+      } catch (error) {
+        onModalToggle();
+        setModalType('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
+      }
     }
   };
 
@@ -546,98 +520,115 @@ function ChatRoom({ user }) {
   }, []);
 
   useEffect(() => {
-    socket.on("fileReceive", fileReceive);
-  }, [fileReceive])
+    socket.on('fileReceive', fileReceive);
+  }, [fileReceive]);
 
   const handleImageUpload = (e) => {
     setImage(e.target.files[0]);
   };
 
-  const getFile = async() => {
+  const getFile = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getFile?roomId=${id}`,
+        `${process.env.REACT_APP_DB_HOST}chatRoom/:id/getFile?roomId=${id}`
       );
 
       setImagePath(response.data);
     } catch (error) {
-      console.error("Get File Error:", error);
+      console.error('Get File Error:', error);
     }
-  }
+  };
 
   const downloadFile = () => {
-    if (imagePath === "") {
+    if (imagePath === '') {
       getFile();
-
     } else {
-      console.log("imagePath?????????????????", imagePath)
       const fileUrl = `${process.env.REACT_APP_DB_HOST}${imagePath}`; // 다운로드할 파일의 URL
-      console.log("fileUrl?????????????????", fileUrl)
       const newWindow = window.open(fileUrl); // 새 창 열기
 
       setTimeout(() => {
         newWindow.focus(); // 새 창에 포커스 설정
       }, 2000); // 1초 후에 포커스 설정
 
-      const msg = "거래가 완료되었습니다"
-      socket.emit("sendNotice", { memberId: memberId, msg: msg, roomName: roomName });
-      // sendSellBuyMsg(msg, memberId)
+      const msg = '거래가 완료되었습니다';
+      socket.emit('sendNotice', {
+        memberId: memberId,
+        msg: msg,
+        roomName: roomName,
+      });
 
       const data = {
         roomId: id,
         chatState: 'ready',
       };
 
-      patchChatState(data)
-      socket.emit("stateGive", { chatState: data.chatState });
+      patchChatState(data);
+      socket.emit('stateGive', { chatState: data.chatState });
     }
-    
-    
   };
 
-  useEffect(()=>{
-    if (imagePath !== "" && userDo === "구매" ) {
+  useEffect(() => {
+    if (imagePath !== '' && userDo === '구매') {
       getFile();
     }
-  },[imagePath])
+  }, [imagePath]);
+
+  useEffect(() => {
+    if (memberId) {
+      chatScrollRef.current.scrollIntoView({ bahavior: 'smooth' });
+    }
+  }, [chatList]);
+
+  useEffect(() => {
+    if (!memberId) navigate('/member/signin');
+  }, [memberId]);
 
   return (
     <>
-      <div className="chattingContainer">
-        <div className="chattingBox">
-          <div className="chattingBoardBox">
-            <div className="chattngBoardInfo">
-              <button className="chattingBoardBtn" onClick={exitRoom}>
-                &#60;
-              </button>
-              <div className="chattingBoardOne">
-                <img
-                  src={`${
-                    process.env.REACT_APP_DB_HOST
-                  }static/userImg/${encodeURIComponent(boardInfo.image)}`}
-                  alt="board img"
-                />
-              </div>
-              <div className="chattingBoardOne">
-                <div className="chattingBoardTitle">{boardInfo.title}</div>
-                <div className="chattingBoardPrice">{boardInfo.price}원</div>
-                {/* <div>{boardInfo.starAvg}</div> */}
-              </div>
-              <div className="chattingBoardOne">{boardInfo.sellerNickname}</div>
-            </div>
-            <div className="chatting">
-              <div className="chattingTextList">
-                {chatList.map((chat, i) => {
-                  if (chat.type === 'notice')
-                    return <Notice key={i} chat={chat} />;
-                  else if (chat.type === 'confirmed')
-                    return <Confirmed key={i} chat={chat} />;
-                  else return <Chat key={i} chat={chat} />;
-                })}
+      {memberId && (
+        <>
+          <div className="chattingContainer">
+            <div className="chattingBox">
+              <div className="chattingBoardBox">
+                <div className="chattngBoardInfo">
+                  <button className="chattingBoardBtn" onClick={exitRoom}>
+                    &#60;
+                  </button>
+                  <div className="chattingBoardOne">
+                    <img
+                      src={`${
+                        process.env.REACT_APP_DB_HOST
+                      }static/userImg/${encodeURIComponent(boardInfo.image)}`}
+                      alt="board img"
+                    />
+                  </div>
+                  <div className="chattingBoardOne">
+                    <div className="chattingBoardTitle">{boardInfo.title}</div>
+                    <div className="chattingBoardPrice">
+                      {boardInfo.price}원
+                    </div>
+                    {/* <div>{boardInfo.starAvg}</div> */}
+                  </div>
+                  <div className="chattingBoardOne">
+                    {boardInfo.sellerNickname}
+                  </div>
+                </div>
+                <div className="chatting">
+                  <div className="chattingTextList">
+                    {chatList.map((chat, i) => {
+                      if (chat.type === 'notice')
+                        return <Notice key={i} chat={chat} />;
+                      else if (chat.type === 'confirmed')
+                        return <Confirmed key={i} chat={chat} />;
+                      else return <Chat key={i} chat={chat} />;
+                    })}
+                  </div>
+                  <div ref={chatScrollRef}></div>
+                </div>
               </div>
               <div className="bottomBtnBox">
-                {chatState === "ready" ? (
-                  userDo === "구매" ? (
+                {chatState === 'ready' ? (
+                  userDo === '구매' ? (
                     <div className="bottomBtns">
                       <button onClick={wantBuy}>구매 요청</button>
                     </div>
@@ -647,8 +638,8 @@ function ChatRoom({ user }) {
                 ) : (
                   <></>
                 )}
-                {chatState === "want" ? (
-                  userDo === "판매" ? (
+                {chatState === 'want' ? (
+                  userDo === '판매' ? (
                     <div className="bottomBtns">
                       <button onClick={sell}>판매 확정</button>
                       <button onClick={sellCancel}>판매 취소</button>
@@ -659,8 +650,8 @@ function ChatRoom({ user }) {
                 ) : (
                   <></>
                 )}
-                {chatState === "sale" ? (
-                  userDo === "구매" ? (
+                {chatState === 'sale' ? (
+                  userDo === '구매' ? (
                     <div className="bottomBtns">
                       <button onClick={buy}>구매 확정</button>
                       <button onClick={buyCancel}>구매 취소</button>
@@ -671,41 +662,49 @@ function ChatRoom({ user }) {
                 ) : (
                   <></>
                 )}
-                {chatState === "done" ? (
-                  userDo === "판매" ? (
-                    <div className="bottomBtns">
-                    <form onSubmit={handleSubmit}>
-                      <label htmlFor="fileInput">
-                        {!image && ( 
-                          <img src="/static/img.png" alt="img example" className="exImage" style={{ width: '150px' }} />
-                        )}
-                        <input
-                          id="fileInput"
-                          type="file"
-                          onChange={handleImageUpload}
-                          style={{ display: 'none' }}
-                        />
-                        {image && (
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt="preview"
-                            className="exImage"
-                            style={{ width: '150px' }}
+                {chatState === 'done' ? (
+                  userDo === '판매' ? (
+                    <div className="fileFormBox">
+                      <form className="fileForm" onSubmit={handleSubmit}>
+                        <label htmlFor="fileInput">
+                          {!image && (
+                            <div className="fileExImage">
+                              <img
+                                src="/static/camera.png"
+                                alt="img example"
+                                className="exImage"
+                                style={{ width: '65px', height: '50px' }}
+                              />
+                            </div>
+                          )}
+                          <input
+                            id="fileInput"
+                            type="file"
+                            onChange={handleImageUpload}
+                            style={{ display: 'none' }}
                           />
-                        )}
-                      </label>
-                        {/* <button onClick={uploadFile}>상품 ㄱㄱ</button> */}
-                      <button type="submit" className="submitButton">상품 보내기</button>
-                    </form>
-                  </div>
+                          {image && (
+                            <img
+                              src={URL.createObjectURL(image)}
+                              alt="preview"
+                              className="exImage"
+                              style={{ width: '150px' }}
+                            />
+                          )}
+                        </label>
+                        <button type="submit" className="submitButton">
+                          상품 보내기
+                        </button>
+                      </form>
+                    </div>
                   ) : (
                     <></>
                   )
                 ) : (
                   <></>
                 )}
-                {chatState === "check" ? (
-                  userDo === "구매" ? (
+                {chatState === 'check' ? (
+                  userDo === '구매' ? (
                     <div className="bottomBtns">
                       <button onClick={downloadFile}>상품 받기</button>
                     </div>
@@ -716,27 +715,35 @@ function ChatRoom({ user }) {
                   <></>
                 )}
               </div>
+              <div className="chattingInputContainer">
+                <input
+                  type="text"
+                  className="chattingInput"
+                  value={msgInput}
+                  onChange={(e) => setMsgInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      sendMsg();
+                    }
+                  }}
+                />
+                <button className="chattingBtn" onClick={sendMsg}>
+                  ✉︀
+                </button>
+              </div>
             </div>
           </div>
-          <div className="chattingInputContainer">
-            <input
-              type="text"
-              className="chattingInput"
-              value={msgInput}
-              onChange={(e) => setMsgInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  sendMsg();
-                }
-              }}
+          {modalToggle && (
+            <ModalBasic
+              type="check"
+              content={modalType}
+              toggleState={true}
+              setToggleState={onModalToggle}
             />
-            <button className="chattingBtn" onClick={sendMsg}>
-              ✉︀
-            </button>
-          </div>
-        </div>
-      </div>
-      <Footer />
+          )}
+          <Footer />
+        </>
+      )}
     </>
   );
 }

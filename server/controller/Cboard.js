@@ -173,7 +173,6 @@ const createChatRoom = async (req, res) => {
     });
 
     res.send({ message: "채팅방이 생성되었습니다.", roomId: newChatRoom.roomId });
-    console.log("ChatRoom created successfully");
   } catch (error) {
     console.error("ChatRoom creation error:", error);
     res.status(500).send("Cannot create chat room.");

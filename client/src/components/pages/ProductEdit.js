@@ -4,6 +4,8 @@ import Navbar from './Navbar';
 import '../../styles/salepost.scss';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function ProductEdit() {
   const [title, setTitle] = useState('');
@@ -17,6 +19,8 @@ export default function ProductEdit() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const { boardId } = useParams();
   const navigate = useNavigate();
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -31,6 +35,7 @@ export default function ProductEdit() {
 
         // 추가: 삭제된 게시글인 경우 처리
         if (response.data.product.isDelete) {
+          // 화면 상에선 안 보임
           alert('삭제된 게시글입니다.');
           navigate('/'); // 삭제된 게시글이라면 홈페이지로 리다이렉트 또는 적절한 페이지로 이동
           return;
@@ -63,7 +68,8 @@ export default function ProductEdit() {
     e.preventDefault();
 
     if (category === '') {
-      alert('카테고리를 선택해주세요.');
+      onModalToggle();
+      setModalType('카테고리를 선택해주세요.');
       return;
     }
 
@@ -90,7 +96,8 @@ export default function ProductEdit() {
         navigate(`/product/${boardId}`);
       }
     } catch (error) {
-      alert('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
+      onModalToggle();
+      setModalType('상품 등록에 실패했습니다. 잠시 후 다시 시도해주세요');
       // console.log(error);
     }
   };
@@ -104,11 +111,15 @@ export default function ProductEdit() {
         );
 
         if (response.status === 200) {
-          alert('상품이 삭제되었습니다.');
-          navigate('/'); // 홈 페이지 또는 적절한 페이지로 리다이렉션
+          onModalToggle();
+          setModalType('상품이 삭제되었습니다.');
+          setTimeout(() => {
+            navigate('/'); // 홈 페이지 또는 적절한 페이지로 리다이렉션
+          }, 3000);
         }
       } catch (error) {
-        alert('상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.');
+        onModalToggle();
+        setModalType('상품 삭제에 실패했습니다. 나중에 다시 시도해주세요.');
         console.error(error);
       }
     }
@@ -215,6 +226,14 @@ export default function ProductEdit() {
           </button>
         </form>
       </div>
+      {modalToggle && (
+        <ModalBasic
+          type="check"
+          content={modalType}
+          toggleState={true}
+          setToggleState={onModalToggle}
+        />
+      )}
     </>
   );
 }

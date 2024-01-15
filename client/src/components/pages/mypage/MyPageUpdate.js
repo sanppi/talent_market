@@ -44,16 +44,6 @@ export function MyPageUpdate({ user, deleteSuccess }) {
 
   const watchObj = watch();
 
-  // 중복 체크 미통과 시 메시지 초기화
-  // useEffect(() => {
-  //   if (!signUpCk.id || !signUpCk.nickname) {
-  //     setMsg((prev) => ({
-  //       ...prev,
-  //       validPw: '',
-  //     }));
-  //   }
-  // }, [signUpCk.id, signUpCk.nickname]);
-
   // 사용자가 폼 필드 값을 변경할 때 메시지 초기화
   useEffect(() => {
     setMsg((prev) => ({
@@ -82,14 +72,14 @@ export function MyPageUpdate({ user, deleteSuccess }) {
   // 비밀번호 변경
   const onSubmit = async (data) => {
     try {
-      const response = await axios({
+      await axios({
         url: `${process.env.REACT_APP_DB_HOST}member/mypage/update/${memberId}`,
         method: 'POST',
         data: data,
         withCredentials: true,
       });
     } catch (err) {
-      console.error('비번 수정 err: ', err.message);
+      console.error('err: ', err.message);
     }
     // 중복 체크 미통과
     setMsg((prev) => ({
@@ -98,7 +88,7 @@ export function MyPageUpdate({ user, deleteSuccess }) {
     }));
   };
 
-  // 중복 체크 안 해도?
+  // 중복 체크
   const handleCheck = useCallback(
     async (type, value) => {
       try {

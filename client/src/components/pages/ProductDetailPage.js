@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import "../../styles/productdetail.scss";
-import { useSelector } from "react-redux";
-import Review from "./Review";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import '../../styles/productdetail.scss';
+import { useSelector } from 'react-redux';
+import Review from './Review';
+import Footer from './Footer';
+import useToggle from '../hook/UseToggle';
+import ModalBasic from '../ModalBasic';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState({});
@@ -14,6 +17,8 @@ export default function ProductDetailPage() {
   const [chattingRoom, setChattingRoom] = useState(null);
   const [roomId, setRoomId] = useState(null);
   const navigate = useNavigate();
+  const [modalToggle, onModalToggle] = useToggle(false);
+  const [modalType, setModalType] = useState('');
 
   useEffect(() => {
     setTimeout(() => {
@@ -29,7 +34,6 @@ export default function ProductDetailPage() {
           `${process.env.REACT_APP_DB_HOST}product/${boardId}`,
           { params: { isDetailView: true } }
         );
-
         setProduct(response.data.product);
         console.log(response.data);
         console.log(response.data.product);
@@ -56,7 +60,8 @@ export default function ProductDetailPage() {
 
   const handleHeartClick = async () => {
     if (!isLoggedIn) {
-      alert("로그인이 필요한 기능입니다.");
+      onModalToggle();
+      setModalType('로그인이 필요한 기능입니다.');
       return;
     }
 
@@ -78,6 +83,12 @@ export default function ProductDetailPage() {
 
   const handleContactClick = async () => {
     try {
+      if (!isLoggedIn) {
+        onModalToggle();
+        setModalType('로그인이 필요한 기능입니다.');
+        return;
+      }
+
       // 채팅방 생성
       const response = await axios.post(
         `${process.env.REACT_APP_DB_HOST}product/chatRoom/create`,
@@ -181,6 +192,14 @@ export default function ProductDetailPage() {
         <p>상품설명 : {product.content}</p>
       </div>
       <hr />
+      {modalToggle && (
+        <ModalBasic
+          type="confirmFast"
+          content={modalType}
+          toggleState={true}
+          setToggleState={onModalToggle}
+        />
+      )}
       <Review boardId={boardId} productMemberId={product.memberId} />
     </div>
   );
