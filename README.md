@@ -38,42 +38,48 @@
 ![erd](https://github.com/sanppi/talent_market/assets/77149171/712fdc3d-3136-4aad-b757-0a9526d1dfaf)
 
 # 화면 구조도 및 기능
-## 메인페이지
-![image](https://github.com/sanppi/talent_market/assets/77149171/312786df-25ca-4a7b-af61-4a685ee8cd44)
+## 💎 메인페이지
+![메인](https://github.com/sanppi/talent_market/assets/77149171/6e541236-d4fc-454c-bc05-1c65cd4712a1)
 
-## 상세페이지
-![image](https://github.com/sanppi/talent_market/assets/77149171/dffafd29-432b-4e0a-a95d-a9cca6150f5b)
+## 💎 상세페이지
+![상세](https://github.com/sanppi/talent_market/assets/77149171/f1abb9da-c081-4e7b-8e93-6a396560e675)
+
 - 게시글 정보(조회수, 찜 횟수)
 
-## 판매글 작성
-![image](https://github.com/sanppi/talent_market/assets/77149171/fcb97991-fcef-46e8-b582-cf0e57335665)
+## 💎 판매글 작성
+![판매글](https://github.com/sanppi/talent_market/assets/77149171/e04d58a6-0419-41d3-8b5f-69eeb42281a8)
 
-## 회원가입
-![image](https://github.com/sanppi/talent_market/assets/77149171/60f8ab3a-2f86-4f14-8833-8754c60cd4f7)
+## 💎 회원가입
+![signup](https://github.com/sanppi/talent_market/assets/77149171/e30af7f8-5a7c-4762-a295-7bf2e5850179)
+
 - 이이디/닉네임 중복 확인
 - 유효성 검사
 - 유효성 검사 통과 후 버튼 활성화
 
-## 로그인
-![image](https://github.com/sanppi/talent_market/assets/77149171/f83b004c-f5dd-47ee-9130-ccaeb3c171c7)
+## 💎 로그인
+![signin](https://github.com/sanppi/talent_market/assets/77149171/ee267882-bffc-4133-ac09-5853a07b7bcb)
 - 빈값일 시 버튼 비활성화
 
 ## 💎 마이페이지
-![image](https://github.com/sanppi/talent_market/assets/77149171/85f389f3-f7a8-4abe-83f5-1e118d1c24c9)
+![mypage](https://github.com/sanppi/talent_market/assets/77149171/14a7053f-2b49-449c-8431-cff51608a372)
 - 찜 목록, 판매글 목록, 내 리뷰, 채팅 목록 확인
 
 ## 💎 회원정보 수정/탈퇴
-![image](https://github.com/sanppi/talent_market/assets/77149171/8f11fdde-3672-4dca-862a-f78e3bc9024e)
+![update](https://github.com/sanppi/talent_market/assets/77149171/c51a8612-19cb-4a36-be16-df57c32e0f42)
 - 닉네임, 이메일, 비밀번호, 결제정보 각각 변경
 - 회원 탈퇴
 
 ## 💎 채팅
-![image](https://github.com/sanppi/talent_market/assets/77149171/c8aca97d-6872-4ecc-95e9-a4f2e19ba3a6)
-![image](https://github.com/sanppi/talent_market/assets/77149171/c207bdb5-8735-4636-ae99-4f2a6048d688)
+![chat1](https://github.com/sanppi/talent_market/assets/77149171/2e7e21d2-5975-4340-8bb1-d30786bf561e)
+![chat2](https://github.com/sanppi/talent_market/assets/77149171/f5dd84f7-bb94-4284-8478-a0b90baad2f7)
+
 - 판매자와 구매자 간 1:1 채팅방
 
 ## 💎 반응형
 ![image](https://github.com/sanppi/talent_market/assets/77149171/06f85d68-3491-491c-b8ac-f5f2c8478811)
 ![image](https://github.com/sanppi/talent_market/assets/77149171/323d1da9-2d5e-40ae-a332-8f3c64592be0)
 ![image](https://github.com/sanppi/talent_market/assets/77149171/ceb036b4-0fd4-4939-a2d3-47f9200f0783)
-![image](https://github.com/sanppi/talent_market/assets/77149171/232857d8-6a97-4e4b-8e40-b72993984ca9)
+
+# 시연 영상
+[시연](https://github.com/sanppi/talent_market/assets/77149171/7af7ab1f-8561-48c7-b3dd-fb864bb3ea6f)
+
