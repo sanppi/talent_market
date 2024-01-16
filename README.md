@@ -80,6 +80,12 @@
 ![image](https://github.com/sanppi/talent_market/assets/77149171/323d1da9-2d5e-40ae-a332-8f3c64592be0)
 ![image](https://github.com/sanppi/talent_market/assets/77149171/ceb036b4-0fd4-4939-a2d3-47f9200f0783)
 
+## 💎 리뷰
+<img src="https://github.com/sanppi/talent_market/assets/109943460/250681f7-86f5-456f-b0c5-8c1de35aa4ce" width="400">
+<img src="https://github.com/sanppi/talent_market/assets/109943460/52787f39-59e6-4df8-9fad-69657126ff86" width="400">
+
+- 구매 확정한 구매자가 상품 후기를 작성할 수 있도록 구성
+
 # 시연 영상
 [시연](https://github.com/sanppi/talent_market/assets/77149171/7af7ab1f-8561-48c7-b3dd-fb864bb3ea6f)
 
