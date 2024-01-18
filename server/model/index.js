@@ -1,25 +1,24 @@
-const Sequelize = require("sequelize");
-const config = require("../config/config.json")["development"];
+const Sequelize = require('sequelize');
+const config = require('../config/config.json')['development'];
 
 const db = {};
 const sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
+  config.database,
+  config.username,
+  config.password,
+  config
 );
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 // 테이블 불러오기
-db.Board = require("./board")(sequelize, Sequelize);
-db.ChattingList = require("./ChattingList")(sequelize, Sequelize);
-db.ChattingRoom = require("./ChattingRoom")(sequelize, Sequelize);
-db.ChattingText = require("./ChattingText")(sequelize, Sequelize);
-db.Comment = require("./comment")(sequelize, Sequelize);
-db.LikeBoardTable = require("./LikeBoardTable")(sequelize, Sequelize);
-db.Member = require("./Member")(sequelize, Sequelize);
+db.Board = require('./board')(sequelize, Sequelize);
+db.ChattingRoom = require('./ChattingRoom')(sequelize, Sequelize);
+db.ChattingText = require('./ChattingText')(sequelize, Sequelize);
+db.Comment = require('./comment')(sequelize, Sequelize);
+db.LikeBoardTable = require('./LikeBoardTable')(sequelize, Sequelize);
+db.Member = require('./Member')(sequelize, Sequelize);
 
 // Member와 Board 연결 (1대 다)
 db.Member.hasMany(db.Board, { foreignKey: 'memberId' });
@@ -46,12 +45,6 @@ db.ChattingRoom.belongsTo(db.Member, { foreignKey: 'memberId' });
 
 db.Board.hasMany(db.ChattingRoom, { foreignKey: 'boardId' });
 db.ChattingRoom.belongsTo(db.Board, { foreignKey: 'boardId' });
-
-db.Member.hasMany(db.ChattingList, { foreignKey: 'memberId' });
-db.ChattingList.belongsTo(db.Member, { foreignKey: 'memberId' });
-
-db.ChattingRoom.hasMany(db.ChattingList, { foreignKey: 'roomId' });
-db.ChattingList.belongsTo(db.ChattingRoom, { foreignKey: 'roomId' });
 
 db.ChattingRoom.hasMany(db.ChattingText, { foreignKey: 'roomId' });
 db.ChattingText.belongsTo(db.ChattingRoom, { foreignKey: 'roomId' });
