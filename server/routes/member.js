@@ -23,7 +23,6 @@ router.delete('/mypage/delete/:memberId', member.deleteUserInfo);
 router.get('/mypage/favorite', member.getFavorites);
 router.get('/mypage/selling', member.getSellingProducts);
 router.get('/mypage/review', member.getMyReviews);
-router.get('/mypage/chatting', member.getMyChattings);
 
 // 회원정보 결제정보 등록
 router.post('/mypage/update/payRegister/:memberId', member.payRegister);

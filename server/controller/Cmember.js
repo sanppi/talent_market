@@ -6,9 +6,9 @@ const {
   ChattingList,
   sequelize,
   ChattingRoom,
-} = require("../model");
+} = require('../model');
 
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 
 // 회원가입
 exports.signUp = async (req, res) => {
@@ -16,8 +16,8 @@ exports.signUp = async (req, res) => {
     const result = await Member.create(req.body);
     res.send({ result: true });
   } catch (error) {
-    console.error("회원가입 중 오류 발생:", error);
-    res.status(500).json({ error: "회원가입 중 오류 발생" });
+    console.error('회원가입 중 오류 발생:', error);
+    res.status(500).json({ error: '회원가입 중 오류 발생' });
   }
 };
 
@@ -33,10 +33,10 @@ exports.checkDuplicate = async (req, res) => {
       });
 
       if (existingIdUser) {
-        console.log({ error: "중복된 아이디입니다." });
-        res.send({ result: false, type: "아이디" });
+        console.log({ error: '중복된 아이디입니다.' });
+        res.send({ result: false, type: '아이디' });
       } else {
-        res.send({ result: true, type: "아이디" });
+        res.send({ result: true, type: '아이디' });
       }
     } else if (nickname) {
       // 닉네임 중복 확인
@@ -45,17 +45,17 @@ exports.checkDuplicate = async (req, res) => {
       });
 
       if (existingNicknameUser) {
-        console.log({ error: "중복된 닉네임입니다." });
-        res.send({ result: false, type: "닉네임" });
+        console.log({ error: '중복된 닉네임입니다.' });
+        res.send({ result: false, type: '닉네임' });
       } else {
-        res.send({ result: true, type: "닉네임" });
+        res.send({ result: true, type: '닉네임' });
       }
     } else {
-      res.status(400).json({ error: "잘못된 요청입니다." });
+      res.status(400).json({ error: '잘못된 요청입니다.' });
     }
   } catch (error) {
-    console.error("중복 확인 중 오류 발생:", error);
-    res.status(500).json({ error: "중복 확인 중 오류 발생" });
+    console.error('중복 확인 중 오류 발생:', error);
+    res.status(500).json({ error: '중복 확인 중 오류 발생' });
   }
 };
 
@@ -82,8 +82,8 @@ exports.signIn = async (req, res) => {
       res.send({ result: false });
     }
   } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -91,10 +91,10 @@ exports.signIn = async (req, res) => {
 exports.signOut = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("세션 삭제 중 에러:", err);
-      res.status(500).send("세션 삭제 중 에러 발생");
+      console.error('세션 삭제 중 에러:', err);
+      res.status(500).send('세션 삭제 중 에러 발생');
     } else {
-      res.redirect("/");
+      res.redirect('/');
     }
   });
 };
@@ -110,7 +110,7 @@ async function checkUser(targetMemberId) {
     if (!member) return false;
     return true;
   } catch (err) {
-    console.log("err", err);
+    console.log('err', err);
     return false;
   }
 }
@@ -125,22 +125,22 @@ exports.getFavorites = async (req, res) => {
   if (!check)
     return res
       .status(404)
-      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+      .send({ success: false, message: '회원을 찾을 수 없습니다.' });
 
   try {
     const favorites = await LikeBoardTable.findAll({
       where: { memberId: targetMemberId },
 
       attributes: [
-        [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
-        [sequelize.fn("COUNT", sequelize.col("commentId")), "reviewCount"],
+        [sequelize.fn('AVG', sequelize.col('stars')), 'averageStars'],
+        [sequelize.fn('COUNT', sequelize.col('commentId')), 'reviewCount'],
       ],
-      group: ["boardId", sequelize.col("LikeBoardTable.likeId")],
+      group: ['boardId', sequelize.col('LikeBoardTable.likeId')],
 
       include: [
         {
           model: Board,
-          attributes: ["image", "title", "price", "boardId"],
+          attributes: ['image', 'title', 'price', 'boardId'],
           include: [
             {
               model: Comment,
@@ -150,19 +150,19 @@ exports.getFavorites = async (req, res) => {
           where: { isDelete: false },
         },
       ],
-      order: [[Board, "createdAt", "DESC"]],
+      order: [[Board, 'createdAt', 'DESC']],
 
       group: [
-        "LikeBoardTable.likeId",
-        "Board.boardId",
-        "Board.image",
-        "Board.title",
-        "Board.price",
-        "Board->Comments.commentId",
+        'LikeBoardTable.likeId',
+        'Board.boardId',
+        'Board.image',
+        'Board.title',
+        'Board.price',
+        'Board->Comments.commentId',
       ],
     });
 
-    console.log("favorites", favorites);
+    console.log('favorites', favorites);
 
     const formattedFavorites = favorites.map((favorite) => {
       const formattedFavorite = {
@@ -188,8 +188,8 @@ exports.getFavorites = async (req, res) => {
 
     res.send({ result: true, userData: formattedFavorites });
   } catch (error) {
-    console.error("Error fetching favorites", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error fetching favorites', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -201,18 +201,18 @@ exports.getSellingProducts = async (req, res) => {
   if (!check)
     return res
       .status(404)
-      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+      .send({ success: false, message: '회원을 찾을 수 없습니다.' });
 
   try {
     const sellingProducts = await Board.findAll({
       where: { memberId: targetMemberId, isDelete: false },
       attributes: [
-        "boardId",
-        "image",
-        "title",
-        "price",
-        [sequelize.fn("AVG", sequelize.col("stars")), "averageStars"],
-        [sequelize.fn("COUNT", sequelize.col("commentId")), "reviewCount"],
+        'boardId',
+        'image',
+        'title',
+        'price',
+        [sequelize.fn('AVG', sequelize.col('stars')), 'averageStars'],
+        [sequelize.fn('COUNT', sequelize.col('commentId')), 'reviewCount'],
       ],
       include: [
         {
@@ -220,8 +220,8 @@ exports.getSellingProducts = async (req, res) => {
           attributes: [],
         },
       ],
-      group: ["boardId", "commentId"],
-      order: [["createdAt", "DESC"]],
+      group: ['boardId', 'commentId'],
+      order: [['createdAt', 'DESC']],
     });
 
     const formattedSellingProducts = sellingProducts.map((product) => ({
@@ -235,8 +235,8 @@ exports.getSellingProducts = async (req, res) => {
 
     res.send({ result: true, userData: formattedSellingProducts });
   } catch (error) {
-    console.error("Error fetching sellingProducts", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error fetching sellingProducts', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -248,28 +248,28 @@ exports.getMyReviews = async (req, res) => {
   if (!check)
     return res
       .status(404)
-      .send({ success: false, message: "회원을 찾을 수 없습니다." });
+      .send({ success: false, message: '회원을 찾을 수 없습니다.' });
 
   try {
     const reviews = await Comment.findAll({
       where: { memberId: targetMemberId },
       attributes: [
-        "review",
-        "title",
-        "isAnonymous",
-        "stars",
-        "createdAt",
-        "updatedAt",
-        "commentId",
+        'review',
+        'title',
+        'isAnonymous',
+        'stars',
+        'createdAt',
+        'updatedAt',
+        'commentId',
       ],
       include: [
         {
           model: Board,
-          attributes: ["boardId"],
+          attributes: ['boardId'],
         },
         {
           model: Member,
-          attributes: ["memberId", "nickname"],
+          attributes: ['memberId', 'nickname'],
         },
       ],
     });
@@ -289,52 +289,12 @@ exports.getMyReviews = async (req, res) => {
       },
     }));
 
-    console.log("update", formattedReviews);
+    console.log('update', formattedReviews);
 
     res.send({ result: true, userData: formattedReviews });
   } catch (error) {
-    console.error("Error fetching reviews", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-// 마이페이지 조회 > 채팅 목록
-exports.getMyChattings = async (req, res) => {
-  const targetMemberId = req.session.user;
-  const check = checkUser(targetMemberId);
-
-  if (!check)
-    return res
-      .status(404)
-      .send({ success: false, message: "회원을 찾을 수 없습니다." });
-
-  try {
-    const chattingList = await ChattingList.findAll({
-      where: { memberId: targetMemberId },
-      include: [
-        {
-          model: ChattingRoom,
-          attributes: ["roomId", "roomName"],
-          include: [
-            {
-              model: Board,
-              attributes: ["title"],
-            },
-          ],
-        },
-      ],
-    });
-
-    const formattedChatList = chattingList.map((chatting) => ({
-      roomId: chatting.ChattingRoom.roomId,
-      roomName: chatting.ChattingRoom.roomName,
-      title: chatting.ChattingRoom.Board.title,
-    }));
-
-    res.send({ result: true, userData: formattedChatList });
-  } catch (error) {
-    console.error("Error fetching chatting rooms", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error fetching reviews', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -350,13 +310,13 @@ exports.userInfo = async (req, res) => {
     if (!member) {
       return res
         .status(404)
-        .send({ result: false, message: "회원을 찾을 수 없습니다." });
+        .send({ result: false, message: '회원을 찾을 수 없습니다.' });
     }
 
     res.send({ result: true });
   } catch (error) {
-    console.error("Error fetching user info", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error fetching user info', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -374,10 +334,10 @@ exports.updateUserInfo = async (req, res) => {
     if (!member) {
       return res
         .status(404)
-        .send({ result: false, message: "회원을 찾을 수 없습니다." });
+        .send({ result: false, message: '회원을 찾을 수 없습니다.' });
     } else {
       // 닉네임 변경
-      if (type === "nickname") {
+      if (type === 'nickname') {
         const existingNickname = await Member.findOne({
           where: {
             nickname: userData,
@@ -387,7 +347,7 @@ exports.updateUserInfo = async (req, res) => {
         if (existingNickname) {
           res.send({
             result: false,
-            message: "중복!",
+            message: '중복!',
           });
         } else {
           const nicknameUser = await Member.update(
@@ -400,14 +360,14 @@ exports.updateUserInfo = async (req, res) => {
           if (nicknameUser) {
             return res.send({
               result: true,
-              message: "닉네임 수정 완료",
+              message: '닉네임 수정 완료',
             });
           }
         }
       }
 
       // 이메일 변경
-      if (type === "email") {
+      if (type === 'email') {
         const existingEmail = await Member.findOne({
           where: {
             email: userData,
@@ -417,7 +377,7 @@ exports.updateUserInfo = async (req, res) => {
         if (existingEmail) {
           res.send({
             result: false,
-            message: "중복!",
+            message: '중복!',
           });
         } else {
           const emailUser = await Member.update(
@@ -430,14 +390,14 @@ exports.updateUserInfo = async (req, res) => {
           if (emailUser) {
             return res.send({
               result: true,
-              message: "이메일 수정 완료",
+              message: '이메일 수정 완료',
             });
           }
         }
       }
 
       // 비밀번호 변경
-      if (type === "pw") {
+      if (type === 'pw') {
         const existingPw = await Member.findOne({
           where: { pw: userData.oldPw },
         });
@@ -451,19 +411,19 @@ exports.updateUserInfo = async (req, res) => {
           );
 
           if (pwUser) {
-            return res.send({ result: true, message: "비밀번호 수정 완료" });
+            return res.send({ result: true, message: '비밀번호 수정 완료' });
           }
         } else {
           return res.send({
             result: false,
-            message: "기존 비밀번호가 일치하지 않습니다.",
+            message: '기존 비밀번호가 일치하지 않습니다.',
           });
         }
       }
     }
   } catch (error) {
-    console.error("Error updating user info", error);
-    return res.status(500).send("Internal Server Error");
+    console.error('Error updating user info', error);
+    return res.status(500).send('Internal Server Error');
   }
 };
 
@@ -483,13 +443,13 @@ exports.payRegister = async (req, res) => {
         accountNum: accountNum,
       });
 
-      res.send({ result: true, message: "결제정보 등록 완료" });
+      res.send({ result: true, message: '결제정보 등록 완료' });
     } else {
-      res.status(404).send({ result: false, message: "결제정보 등록 불가" });
+      res.status(404).send({ result: false, message: '결제정보 등록 불가' });
     }
   } catch (error) {
-    console.error("Error registering account", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error registering account', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -504,15 +464,15 @@ exports.deleteUserInfo = async (req, res) => {
     if (member) {
       await member.destroy();
 
-      res.send({ result: true, message: "회원 탈퇴가 완료되었습니다." });
+      res.send({ result: true, message: '회원 탈퇴가 완료되었습니다.' });
     } else {
       res
         .status(404)
-        .send({ result: false, message: "회원을 찾을 수 없습니다." });
+        .send({ result: false, message: '회원을 찾을 수 없습니다.' });
     }
   } catch (error) {
-    console.error("Error deleting member", error);
-    res.status(500).send("Internal Server Error");
+    console.error('Error deleting member', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -524,10 +484,10 @@ exports.findAccount = async (req, res) => {
     });
 
     // 정보 없음
-    if (member.accountNum === "NULL" || member.bankName === "NULL") {
+    if (member.accountNum === 'NULL' || member.bankName === 'NULL') {
       return res.send({
         result: false,
-        userData: { accountNum: "등록 정보 없음", bankName: "등록 정보 없음" },
+        userData: { accountNum: '등록 정보 없음', bankName: '등록 정보 없음' },
       });
       // 정보 전달
     } else {
@@ -538,6 +498,6 @@ exports.findAccount = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send("서버 에러");
+    res.status(500).send('서버 에러');
   }
 };
