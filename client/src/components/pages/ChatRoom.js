@@ -7,7 +7,6 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import Chat from './Chat';
 import Notice from './Notice';
-import Confirmed from './Confirmed';
 import Footer from '../pages/Footer';
 import useToggle from '../hook/UseToggle';
 import ModalBasic from '../ModalBasic';
@@ -643,9 +642,6 @@ function ChatRoom({ user }) {
                     {chatList.map((chat, i) => {
                       if (chat.type === 'notice')
                         return <Notice key={i} chat={chat} />;
-                      else if (chat.type === 'confirmed')
-                      // SB: 삭제 예정 코드입니다.
-                        return <Confirmed key={i} chat={chat} />;
                       else return <Chat key={i} chat={chat} />;
                     })}
                   </div>

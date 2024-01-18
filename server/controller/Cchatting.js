@@ -121,23 +121,3 @@ exports.getSellRoomList = async (req, res) => {
     res.status(500).send("판매방 목록 조회 오류");
   }
 };
-
-// SB: 삭제 예정 코드입니다.
-exports.deleteRoom = (req, res) => {
-  ChattingRoom.destroy({
-    where: {
-      roomId: req.body.roomId,
-    },
-  })
-  .then((result) => {
-    if (result == 1) {
-      res.send("채팅방이 삭제되었습니다.");
-    } else {
-      res.send("이미 삭제된 채팅방입니다.");
-    }
-  })
-  .catch((error) => {
-    console.log(error);
-    res.status(500).send("Delete Room Error");
-  });
-};
