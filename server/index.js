@@ -56,10 +56,14 @@ app.get("*", function (req, res) {
 });
 
 
+// SB: 
 const userDoArr = {};
 const roomArr = {};
 
+// SB: 소켓 연결시 실행되는 함수입니다.
 io.on("connection", (socket) => {
+
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("entry", (res) => {
     if (!roomArr[socket.id]) {
       roomArr[socket.id] = [];
@@ -74,14 +78,17 @@ io.on("connection", (socket) => {
     roomArr[socket.id].push(res.roomName);
   });
 
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("sendMsg", (res) => {
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
 
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("sendNotice", (res) => {
     io.to(res.roomName).emit("transactionNotice", { memberId: res.memberId, msg: res.msg });
   });
 
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("sell", (res) => {
     io.emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
   });
@@ -90,16 +97,19 @@ io.on("connection", (socket) => {
     io.emit("stateReceive", { chatState: res.chatState });
   });
 
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("fileGive", (res) => {
     io.emit("fileReceive", { imagePath: res.imagePath });
   });
 
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("disconnection", (res) => {
     socket.leave(res.roomName);
     io.to(res.roomName).emit("notice", { msg: `${res.userDo}자님이 퇴장하셨습니다.` });
     delete userDoArr[socket.id];
   });
   
+  // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("disconnect", () => {
     io.to(roomArr[socket.id]).emit("notice", { msg: `${userDoArr[socket.id]}자님이 퇴장하셨습니다.` });
     delete userDoArr[socket.id];

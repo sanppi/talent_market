@@ -1,5 +1,6 @@
-const { ChattingRoom, ChattingText, Board, Member } = require("../model");
+const { ChattingRoom, ChattingText, Board } = require("../model");
 
+// SB: 구매자로 포함된 채팅방의 정보를 전부 가져옵니다.
 exports.getBuyRoomList = (req, res) => {
   ChattingRoom.findAll({
     where: {
@@ -50,6 +51,7 @@ exports.getBuyRoomList = (req, res) => {
   });
 };
 
+// SB: 판매자로 포함된 채팅방의 정보를 전부 가져옵니다.
 exports.getSellRoomList = async (req, res) => {
   try {
     const results = await Board.findAll({
@@ -120,6 +122,7 @@ exports.getSellRoomList = async (req, res) => {
   }
 };
 
+// SB: 삭제 예정 코드입니다.
 exports.deleteRoom = (req, res) => {
   ChattingRoom.destroy({
     where: {

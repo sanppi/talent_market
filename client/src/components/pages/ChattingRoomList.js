@@ -1,42 +1,7 @@
-import { useEffect, useState } from 'react';
+// SB: 채팅 목록칸을 보여주는 파일입니다.
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
-export default function ChattingRoomList({
-  chattingRoom,
-  setChattingRoomList,
-  removeChattingRoom,
-}) {
-  const [roomId, setRoomId] = useState(null);
-
-  const handleSetRoomId = () => {
-    setRoomId(chattingRoom.roomId);
-  };
-
-  useEffect(() => {
-    if (roomId !== null) {
-      deleteRoom();
-    }
-  }, [roomId]);
-
-  const deleteRoom = async () => {
-    try {
-      const data = { roomId: roomId };
-      const response = await axios.delete(
-        `${process.env.REACT_APP_DB_HOST}chatting/deleteRoom`,
-        {
-          data,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      removeChattingRoom(); // removeChattingRoom 함수 호출
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
+export default function ChattingRoomList({ chattingRoom}) {
   return (
     <div className="chatRoomList">
       <div className="chatProfile pattern"></div>
