@@ -6,6 +6,7 @@ const { ChattingRoom } = require("../model");
 const { ChattingText } = require("../model");
 const path = require("path");
 
+// SB: DB에서 게시글 정보를 조회합니다.
 exports.getBoardInfo = async (req, res) => {
   const chattingroom = await ChattingRoom.findOne({
     where: {
@@ -35,6 +36,7 @@ exports.getBoardInfo = async (req, res) => {
   res.send(data)
 };
 
+// SB: DB에서 채팅 내역을 조회합니다.
 exports.getChatText = (req, res) => {
   ChattingText.findAll({
     where: {
@@ -66,6 +68,7 @@ exports.getChatText = (req, res) => {
   });
 };
 
+// SB: DB에 채팅 내역을 업로드합니다.
 exports.postChat = (req, res) => {
   const data = {
     roomId: req.body.roomId,
@@ -83,6 +86,7 @@ exports.postChat = (req, res) => {
   });
 };
 
+// SB: DB에서 계좌 정보를 조회합니다.
 exports.getAccountNumber = (req, res) => {
   Member.findOne({
     where: {
@@ -106,6 +110,7 @@ exports.getAccountNumber = (req, res) => {
   });
 };
 
+// SB: DB에 구매자의 리뷰 작성, 신고 가능 횟수를 수정합니다.
 exports.patchBuyerInfo = (req, res) => {
   // res.send(req)
   ChattingRoom.findOne({
@@ -144,6 +149,7 @@ exports.patchBuyerInfo = (req, res) => {
   });
 };
 
+// SB: DB에 채팅 구매 상태를 업데이트합니다.
 exports.patchChatState = (req, res) => {
   ChattingRoom.update(req.body, {
     where: {
@@ -165,6 +171,7 @@ exports.patchChatState = (req, res) => {
   });
 };
 
+// SB: DB에 전송한 파일 url을 저장합니다.
 exports.sendFile = async (req, res) => {
   const data = {
     image : req.file.path,
@@ -189,6 +196,7 @@ exports.sendFile = async (req, res) => {
   });
 };
 
+// SB: DB에서 받은 파일 url을 조회합니다.
 exports.getFile = (req, res) => {
   ChattingRoom.findOne({
     where: {

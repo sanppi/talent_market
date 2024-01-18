@@ -1,3 +1,4 @@
+// SB: 채팅 목록칸을 보여주는 파일입니다.
 import { Link } from 'react-router-dom';
 
 export default function ChattingRoomList({ chattingRoom}) {

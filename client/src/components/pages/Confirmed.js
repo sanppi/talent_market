@@ -1,3 +1,4 @@
+// SB: 삭제 예정 파일입니다.
 export default function Confirmed({ chat }) {
   return (
     <>

@@ -1,3 +1,4 @@
+// SB: 채팅 목록을 보여주는 파일입니다.
 import '../../styles/chat.scss';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
