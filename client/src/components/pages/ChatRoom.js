@@ -16,9 +16,7 @@ const socket = io.connect(process.env.REACT_APP_DB_HOST, {
 });
 
 function ChatRoom({ user }) {
-  // memberId는 여기
   const { memberId } = user;
-
   const { id } = useParams();
 
   const [otherMemberId, setOtherMemberId] = useState(null);
@@ -43,11 +41,84 @@ function ChatRoom({ user }) {
 
   const ENV_URL = process.env.REACT_APP_DB_HOST;
 
-  // SB: 구매 관련 버튼을 누르면 구매 현황 정보를 DB에 저장하고 socket으로 전송하는 함수
+
+  // SB: 채팅방을 나가면 socket의 room도 나가게 하는 함수입니다.  뒤로가기( < ) 버튼에 걸려있습니다.
+  const exitRoom = () => {
+    socket.emit('disconnection', { roomName: roomName, userDo: userDo });
+    window.history.back(); // 이전 페이지로 이동
+  };
+
+  // SB: 채팅방 진행상황(구매 확정, 판매 확정 등등) 업데이트 함수
+  const patchChatState = async (data) => {
+    try {
+      await axios.patch(
+        `${ENV_URL}chatRoom/:id/patchChatState`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setChatState(data.chatState);
+    } catch (error) {
+      console.error('Patch Chat State Error:', error);
+    }
+  };
+
+  // SB: 상품 받기 버튼 함수
+  const getFile = async () => {
+    try {
+      const response = await axios.get(
+        `${ENV_URL}chatRoom/:id/getFile?roomId=${id}`
+      );
+
+      setImagePath(response.data);
+    } catch (error) {
+      console.error('Get File Error:', error);
+    }
+  };
+
+  // SB: 상품 확인에 걸린 함수. 게시글 정보와 함께 리뷰 작성, 신고 가능 횟수를 업데이트 합니다.
+  const patchBuyerInfo = async () => {
+    const sellData = {
+      roomId: id,
+    };
+    try {
+      const response = await axios.patch(
+        `${ENV_URL}chatRoom/:id/patchBuyerInfo`,
+        sellData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.data) {
+        const msg = '구매하신 상품이 도착했습니다!';
+        socket.emit('sendNotice', {
+          memberId: memberId,
+          msg: msg,
+          roomName: roomName,
+        });
+      } else {
+        const msg = '구매 정보 업데이트 에러입니다.';
+        socket.emit('sendNotice', {
+          memberId: memberId,
+          msg: msg,
+          roomName: roomName,
+        });
+      }
+    } catch (error) {
+      console.error('Patch Buyer Info Error:', error);
+    }
+  };
+
+  // SB: 구매 관련 버튼을 누르면 구매 현황 정보를 DB에 저장하고 socket으로 전송하는 함수입니다.
   const handleAction = async (actionType) => {
     try {
-      // Perform action based on actionType
       switch (actionType) {
+        // 구매 요청 버튼
         case 'wantBuy':
           socket.emit('sendNotice', {
             memberId: memberId,
@@ -64,6 +135,7 @@ function ChatRoom({ user }) {
           socket.emit('stateGive', { chatState: wantBuyData.chatState });
           break;
 
+        // 판매 확정 버튼
         case 'sell':
           try {
             const response = await axios.get(
@@ -94,6 +166,7 @@ function ChatRoom({ user }) {
           };
           break;
 
+        // 판매 취소 버튼
         case 'sellCancel':
           socket.emit('sendNotice', {
             memberId: memberId,
@@ -110,6 +183,7 @@ function ChatRoom({ user }) {
           socket.emit('stateGive', { chatState: sellCancelData.chatState });
           break;
 
+        // 구매 확정 버튼
         case 'buy':
           socket.emit('sendNotice', {
             memberId: memberId,
@@ -125,6 +199,8 @@ function ChatRoom({ user }) {
           patchChatState(buyData);
           socket.emit('stateGive', { chatState: buyData.chatState });
           break;
+        
+        // 구매 취소 버튼
         case 'buyCancel':
           socket.emit('sendNotice', {
             memberId: memberId,
@@ -140,6 +216,8 @@ function ChatRoom({ user }) {
           patchChatState(buyCancelData);
           socket.emit('stateGive', { chatState: buyCancelData.chatState });
           break;
+
+        // 상품 받기 버튼
         case 'downloadFile':
           if (imagePath === '') {
             getFile();
@@ -166,11 +244,61 @@ function ChatRoom({ user }) {
             patchChatState(data);
             socket.emit('stateGive', { chatState: data.chatState });
           }
-        break;
+          break;
+        
+        // 파일 다운로드시 실행되는 함수
+        case 'sellCheck':
+          patchBuyerInfo();
+
+          const data = {
+            roomId: id,
+            chatState: 'check',
+          };
+
+          patchChatState(data);
+          socket.emit('stateGive', { chatState: data.chatState });
+          break;
       }
     } catch (error) {
       console.error('Action Error:', error);
     }
+  };
+
+  // SB: 파일 전송 함수
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append('image', image);
+    formData.append('roomId', id);
+
+    if (!image) {
+      onModalToggle();
+      setModalType('파일을 업로드 해주세요!');
+    } else {
+      try {
+        const response = await axios.post(
+          `${ENV_URL}chatRoom/:id/sendFile`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        setImagePath(response.data);
+        socket.emit('fileGive', { imagePath: response.data });
+        handleAction('sellCheck')
+      } catch (error) {
+        onModalToggle();
+        setModalType('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
+      }
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    setImage(e.target.files[0]);
   };
 
   const initSocketConnect = () => {
@@ -223,20 +351,6 @@ function ChatRoom({ user }) {
     }
   };
 
-
-
-  // SB: socket을 이용한 메세지 전송 함수
-  const sendMsg = () => {
-    if (msgInput !== '') {
-      socket.emit('sendMsg', {
-        memberId: memberId,
-        msg: msgInput,
-        roomName: roomName,
-      });
-      setMsgInput('');
-    }
-  };
-
   // SB: 채팅 내역 조회 함수
   const getChatText = async () => {
     try {
@@ -273,6 +387,18 @@ function ChatRoom({ user }) {
     }
   };
 
+  // SB: socket을 이용한 메세지 전송 함수
+  const sendMsg = () => {
+    if (msgInput !== '') {
+      socket.emit('sendMsg', {
+        memberId: memberId,
+        msg: msgInput,
+        roomName: roomName,
+      });
+      setMsgInput('');
+    }
+  };
+
   // SB: 채팅 내역 업로드 함수
   const postChat = async (chatData) => {
     try {
@@ -290,40 +416,10 @@ function ChatRoom({ user }) {
     }
   };
 
-  // SB: 채팅 내역(DB X, useState O)에 새로운 채팅을 추가하는 함수
-  const addChatList = useCallback(
-    (res) => {
-      const type = res.memberId === memberId ? 'my' : 'other';
-      const nick = res.memberId === memberId ? '' : otherNickname;
-      const content = `${res.msg}`;
-      const newChatList = [
-        ...chatList,
-        { type: type, nickname: nick, content: content },
-      ];
-      setChatList(newChatList);
-
-      const chatData = {};
-
-      if (type === 'my') {
-        chatData.roomId = id;
-        chatData.memberId = memberId;
-        chatData.chatText = content;
-        chatData.chatType = 'chat';
-        postChat(chatData);
-      }
-    },
-    [chatList]
-  );
-
   // SB: 채팅 내역에 공지사항을 추가하는 함수
   const notice = useCallback(
     (res) => {
-      if (
-        userDo !== null &&         // userDo가 null이 아닌지 확인
-        chatList !== null &&       // chatList가 null이 아닌지 확인
-        chatList.length !== 0 &&   // chatList의 길이가 0이 아닌지 확인
-        roomName !== null          // roomName이 null이 아닌지 확인
-      ) {
+      if ( userDo !== null && chatList !== null && chatList.length !== 0 && roomName !== null ) {
         const newChatList = [      // 새로운 채팅 리스트를 생성하여
           ...chatList,             // chatList를 그대로 복사하고
           {                        // 새로운 공지사항을 추가합니다.
@@ -340,6 +436,31 @@ function ChatRoom({ user }) {
     },
     [userDo, chatList, roomName] // userDo, chatList, roomName이 변경될 때마다 함수를 갱신합니다.
   );
+
+    // SB: 채팅 내역(DB X, useState O)에 새로운 채팅을 추가하는 함수
+    const addChatList = useCallback(
+      (res) => {
+        const type = res.memberId === memberId ? 'my' : 'other';
+        const nick = res.memberId === memberId ? '' : otherNickname;
+        const content = `${res.msg}`;
+        const newChatList = [
+          ...chatList,
+          { type: type, nickname: nick, content: content },
+        ];
+        setChatList(newChatList);
+  
+        const chatData = {};
+  
+        if (type === 'my') {
+          chatData.roomId = id;
+          chatData.memberId = memberId;
+          chatData.chatText = content;
+          chatData.chatType = 'chat';
+          postChat(chatData);
+        }
+      },
+      [chatList]
+    );
 
   // SB: 채팅 내역에 거래 관련 공지사항을 추가하는 함수
   // 다른 공지사항(입장, 퇴장)과는 달리 DB에 저장해야할 필요성을 느껴 함수를 따로 만들었습니다
@@ -362,42 +483,6 @@ function ChatRoom({ user }) {
       }
     },
     [chatList]
-  );
-
-  // SB: 채팅방을 나가면 socket의 room도 나가게 하는 함수
-  const exitRoom = () => {
-    socket.emit('disconnection', { roomName: roomName, userDo: userDo });
-    window.history.back(); // 이전 페이지로 이동
-  };
-
-  // SB: 채팅방 진행상황(구매 확정, 판매 확정 등등) 업데이트 함수
-  const patchChatState = async (data) => {
-    try {
-      await axios.patch(
-        `${ENV_URL}chatRoom/:id/patchChatState`,
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      setChatState(data.chatState);
-    } catch (error) {
-      console.error('Patch Chat State Error:', error);
-    }
-  };
-
-  // SB: 채팅방 진행상황 공유 받기 함수
-  const stateReceive = useCallback(
-    (res) => {
-      const data = {
-        roomId: id,
-        chatState: res.chatState,
-      };
-      patchChatState(data);
-    },
-    [id]
   );
 
   // SB: 판매 확정에 걸린 함수
@@ -438,112 +523,36 @@ function ChatRoom({ user }) {
     [chatList]
   );
 
-  // SB: 상품 확인에 걸린 함수. 게시글 정보와 함께 리뷰 작성, 신고 가능 횟수를 업데이트 합니다.
-  const patchBuyerInfo = async () => {
-    const sellData = {
-      roomId: id,
-    };
-    try {
-      const response = await axios.patch(
-        `${ENV_URL}chatRoom/:id/patchBuyerInfo`,
-        sellData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (response.data) {
-        const msg = '구매하신 상품이 도착했습니다!';
-        socket.emit('sendNotice', {
-          memberId: memberId,
-          msg: msg,
-          roomName: roomName,
-        });
-      } else {
-        const msg = '구매 정보 업데이트 에러입니다.';
-        socket.emit('sendNotice', {
-          memberId: memberId,
-          msg: msg,
-          roomName: roomName,
-        });
-      }
-    } catch (error) {
-      console.error('Patch Buyer Info Error:', error);
-    }
-  };
+  // SB: 채팅방 진행상황 공유 받기 함수
+  const stateReceive = useCallback(
+    (res) => {
+      const data = {
+        roomId: id,
+        chatState: res.chatState,
+      };
+      patchChatState(data);
+    },
+    [id]
+  );
 
-
-  const sellCheck = () => {
-    patchBuyerInfo();
-
-    const data = {
-      roomId: id,
-      chatState: 'check',
-    };
-
-    patchChatState(data);
-    socket.emit('stateGive', { chatState: data.chatState });
-  };
-
-  // SB: 파일 전송 함수
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-
-    formData.append('image', image);
-    formData.append('roomId', id);
-
-    if (!image) {
-      onModalToggle();
-      setModalType('파일을 업로드 해주세요!');
-    } else {
-      try {
-        const response = await axios.post(
-          `${ENV_URL}chatRoom/:id/sendFile`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-        setImagePath(response.data);
-        socket.emit('fileGive', { imagePath: response.data });
-        sellCheck();
-      } catch (error) {
-        onModalToggle();
-        setModalType('파일 전송에 실패했습니다. 잠시 후 다시 시도해주세요');
-      }
-    }
-  };
-
-  // SB: socket으로 받은 파일 url을 useState로 저장하는 함수
+  // SB: socket으로 받은 파일 url을 useState로 저장하는 함수입니다.
   const fileReceive = useCallback((res) => {
     setImagePath(res.imagePath);
   }, []);
 
-  const handleImageUpload = (e) => {
-    setImage(e.target.files[0]);
-  };
-
-  // SB: 상품 받기 버튼 함수
-  const getFile = async () => {
-    try {
-      const response = await axios.get(
-        `${ENV_URL}chatRoom/:id/getFile?roomId=${id}`
-      );
-
-      setImagePath(response.data);
-    } catch (error) {
-      console.error('Get File Error:', error);
-    }
-  };
-
   useEffect(() => {
     getBoardInfo();
   }, [memberId]);
+
+  useEffect(() => {
+    getChatText();
+  }, [otherMemberId]);
+
+  useEffect(() => {
+    if (imagePath !== '' && userDo === '구매') {
+      getFile();
+    }
+  }, [imagePath]);
 
   useEffect(() => {
     initSocketConnect();
@@ -562,10 +571,6 @@ function ChatRoom({ user }) {
   }, [notice]);
 
   useEffect(() => {
-    getChatText();
-  }, [otherMemberId]);
-
-  useEffect(() => {
     socket.on('chat', addChatList);
     return () => socket.off('chat', addChatList);
   }, [addChatList]);
@@ -576,29 +581,23 @@ function ChatRoom({ user }) {
   }, [addChatNotice]);
 
   useEffect(() => {
-    return () => {
-      socket.emit('disconnection', { roomName: roomName, userDo: userDo });
-    };
-  }, []);
+    socket.on('sellConfirmed', sellConfirmed);
+    return () => socket.off('sellConfirmed', sellConfirmed);
+  }, [sellConfirmed]);
 
   useEffect(() => {
     socket.on('stateReceive', stateReceive);
   }, [chatState]);
 
   useEffect(() => {
-    socket.on('sellConfirmed', sellConfirmed);
-    return () => socket.off('sellConfirmed', sellConfirmed);
-  }, [sellConfirmed]);
-
-  useEffect(() => {
     socket.on('fileReceive', fileReceive);
   }, [fileReceive]);
 
   useEffect(() => {
-    if (imagePath !== '' && userDo === '구매') {
-      getFile();
-    }
-  }, [imagePath]);
+    return () => {
+      socket.emit('disconnection', { roomName: roomName, userDo: userDo });
+    };
+  }, []);
 
   useEffect(() => {
     if (memberId) {
@@ -609,7 +608,7 @@ function ChatRoom({ user }) {
   useEffect(() => {
     if (!memberId) navigate('/member/signin');
   }, [memberId]);
-
+  
   return (
     <>
       {memberId && (

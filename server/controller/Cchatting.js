@@ -111,8 +111,6 @@ exports.getSellRoomList = async (req, res) => {
 
       res.send(formattedData);
     } else {
-      // console.log("채팅방 조회 오류");
-      // res.status(500).send("채팅방 조회 오류");
        // 판매하는 상품이 없는 경우 빈 배열을 반환
        res.send([]);
     }

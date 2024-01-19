@@ -9,7 +9,6 @@ import ModalBasic from '../ModalBasic';
 import ChattingRoomList from './ChattingRoomList';
 import useToggle from '../hook/UseToggle';
 
-
 function Chatting({ user }) {
   const { memberId, nickname } = user; // reduc 사용자의 memberId와 nickname을 추출
   const navigate = useNavigate(); // React Router의 navigate 함수를 사용하여 페이지 이동을 관리
