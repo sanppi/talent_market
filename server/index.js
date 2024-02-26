@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     roomArr[socket.id].push(res.roomName);
   });
 
-  // SB: 소켓 연결시 실행되는 함수입니다.
+  // SB: 메세지를 보낼 때 실행되는 함수입니다.
   socket.on("sendMsg", (res) => {
     io.to(res.roomName).emit("chat", { memberId: res.memberId, msg: res.msg });
   });
@@ -88,6 +88,8 @@ io.on("connection", (socket) => {
     io.to(res.roomName).emit("transactionNotice", { memberId: res.memberId, msg: res.msg });
   });
 
+
+  
   // SB: 소켓 연결시 실행되는 함수입니다.
   socket.on("sell", (res) => {
     io.emit("sellConfirmed", { memberId: res.memberId , bankName: res.bankName, accountNum: res.accountNum });
